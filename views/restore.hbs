@@ -1,0 +1,101 @@
+<!-- 2 columns form -->
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title">Restore Wallet</h5>
+    </div>
+
+    <div class="card-body">
+        If you've forgotten your passphrase, you can restore your wallet and set a new passphrase by pasting the saved private and public key below
+    </div>
+
+    <div class="card-body">
+        <!--        <form action="/actions/myProfile" method="post">-->
+        <div class="row">
+
+            <div class="col-lg-6">
+                <fieldset>
+                    <legend class="font-weight-semibold"><i class="icon-wallet mr-2"></i> KDA account details</legend>
+
+                    <div class="form-group row">
+                        <label class="col-lg-2 col-form-label">Wallet address:</label>
+                        <div class="col-lg-10">
+                            <input type="text" id="wallet" value="{{userDetails.wallet}}" class="form-control" readonly>
+                        </div>
+                    </div>
+
+                    <div id="pubPrivForm" class="form-group row">
+                        <label class="col-form-label col-lg-2">Public and private key:</label>
+                        <div class="col-lg-10">
+                            <textarea rows="3" cols="3" id="pubPriv" class="form-control" placeholder="Copy / paste your saved credentials here"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-form-label col-lg-2">Passphrase:</label>
+                        <div class="col-lg-10">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group form-group-feedback form-group-feedback-left">
+                                        <input type="password" id="passPhrase" class="form-control" placeholder="Passphrase">
+                                        <div class="form-control-feedback">
+                                            <i class="icon-spinner2 spinner"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-form-label col-lg-2">Passphrase repeat:</label>
+                        <div class="col-lg-10">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group form-group-feedback form-group-feedback-left">
+                                        <input type="password" id="passPhrase2" class="form-control" placeholder="Passphrase">
+                                        <div class="form-control-feedback">
+                                            <i class="icon-spinner2 spinner"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+        <div class="text-right">
+            <button id="button" class="btn btn-primary">Save passphrase encrypted private key locally <i class="icon-paperplane ml-2"></i></button>
+        </div>
+        <!--        </form>-->
+    </div>
+</div>
+<!-- /2 columns form -->
+<script>
+    $(document).ready(function() {
+        $( "#button" ).click(function(e) {
+            e.preventDefault()
+            const pubPriv = $('#pubPriv').val()
+            const KP = JSON.parse(pubPriv)
+            const passPhrase = $('#passPhrase').val()
+            const passPhrase2 = $('#passPhrase2').val()
+            if (passPhrase.length < 8 || passPhrase !== passPhrase2) {
+                alert('Passphrase must be at least 8 characters and match!')
+                return
+            }
+            let cipher = CryptoJS.AES.encrypt(KP.secretKey, passPhrase);
+            cipher = cipher.toString()
+            localStorage.setItem('cipher-pactAgent', cipher)
+            localStorage.setItem('public-pactAgent', KP.publicKey)
+            sessionStorage.removeItem('prKey-pactAgent')
+            const data = KP
+            $.ajax({
+                type: 'POST',
+                url: '/ajax/wallet',
+                data,
+            });
+            setTimeout(() => {
+                window.location.href = '/'
+            }, 1000)
+        });
+    });
+</script>

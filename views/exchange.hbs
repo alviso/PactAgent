@@ -1,0 +1,320 @@
+<div class="row">
+    <div class="col-lg-4">
+        <div class="card">
+            <!--            <div class="card-header">-->
+            <!--                <h5 class="card-title">Create new trade</h5>-->
+            <!--            </div>-->
+            <!--        -->
+            <!--            <div class="card-body">-->
+            <!--                Create new trade-->
+            <!--            </div>-->
+            <!--        -->
+            <div class="card-body">
+                <!--        <form action="/actions/myProfile" method="post">-->
+                <div class="row">
+
+                    <div class="col-lg-12">
+                        <fieldset>
+                            <legend class="font-weight-semibold"><i class="icon-wallet mr-2"></i> Create new trade</legend>
+
+<!--                            <div class="text-right" id="buttonForm">-->
+<!--                                <button id="toBlockchain" class="btn btn-primary">Send <i class="icon-paperplane ml-2"></i></button>-->
+<!--                            </div>-->
+
+                            <div class="form-group row">
+<!--                                <label class="col-form-label col-lg-6">Exchange:</label>-->
+                                <div class="col-lg-12">
+                                    <div class="input-group">
+                                        <span class="input-group-prepend">
+<!--                                            <button class="btn btn-light" type="button">Button</button>-->
+                                                <button id="toBlockchain" class="btn btn-primary">Send <i class="icon-paperplane ml-2"></i></button>
+                                        </span>
+<!--                                        <input type="text" class="form-control" placeholder="Left button">-->
+                                        <select id="tokenpair" name="tokenpair" class="form-control">
+                                            <option value="coin/free.crankk01">Sell KDA, get CRKK</option>
+                                            <option value="free.crankk01/coin">Sell CRKK, get KDA</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+<!--                            <div class="form-group row">-->
+<!--                                <label class="col-form-label col-lg-6">Buy token:</label>-->
+<!--                                <div class="col-lg-6">-->
+<!--                                    <select id="token1" name="token1" class="form-control">-->
+<!--                                        <option value="free.crankk01">CRKK</option>-->
+<!--                                        <option value="coin">KDA</option>-->
+<!--                                    </select>-->
+<!--                                </div>-->
+<!--                            </div>-->
+
+<!--                            <div class="form-group row">-->
+<!--                                <label class="col-lg-6 col-form-label">Sell amount:</label>-->
+<!--                                <div class="col-lg-6">-->
+<!--                                    <input type="number" id="amount" name="amount" value="{{offer.amount}}" class="form-control">-->
+<!--                                </div>-->
+<!--                            </div>-->
+                            <div class="form-group">
+                                <input type="text" id="amount" name="amount" value="0" class="form-control touchspin-amount">
+                            </div>
+                            <input type="text" id="lastPrice" value="{{lastPrice}}" hidden>
+
+                            <!--                            <div class="form-group row">-->
+<!--                                <label class="col-lg-6 col-form-label">Rate:</label>-->
+<!--                                <div class="col-lg-6">-->
+<!--                                    <input type="number" id="rate" name="rate" value="{{offer.rate}}" class="form-control">-->
+<!--                                </div>-->
+<!--                            </div>-->
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <input type="text" id="rate" name="rate" value="0" class="form-control touchspin-rate">
+
+                                    <div class="input-group-append">
+                                        <button type="button" id="marketrate" class="btn btn-primary">Market rate</button>
+                                    </div>
+                                </div>
+
+                            </div>
+
+<!--                            <div class="form-group row">-->
+<!--                                <label class="col-lg-6 col-form-label">Validity in minutes:</label>-->
+<!--                                <div class="col-lg-6">-->
+<!--                                    <input type="number" id="validityMinutes" name="validityMinutes" value="600" class="form-control">-->
+<!--                                </div>-->
+<!--                            </div>-->
+
+                            <div class="form-group">
+                                <input type="text" id="validityMinutes" name="validityMinutes" value="0" class="form-control touchspin-validity">
+                            </div>
+
+                        </fieldset>
+                    </div>
+                </div>
+                <!--        </form>-->
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card bg-primary">
+            <div class="card-body">
+                <div class="d-flex">
+                    <h3 class="font-weight-semibold mb-0">{{crankcount}}</h3>
+                    <div class="list-icons ml-auto">
+                        <a class="list-icons-item" data-action="reload"></a>
+                    </div>
+                </div>
+
+                <div>
+                    CRKK / KDA Price
+                    <div class="font-size-sm opacity-75">24 day history</div>
+                </div>
+            </div>
+
+            <div id="crkk-price"></div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card">
+
+<!--    <div class="card-header">-->
+<!--        <h5 class="card-title">Account details</h5>-->
+<!--    </div>-->
+
+<!--    <div class="card-body">-->
+<!--        Account details-->
+<!--    </div>-->
+
+    <div class="card-body">
+        <!--        <form action="/actions/myProfile" method="post">-->
+        <div class="row">
+
+            <div class="col-lg-12">
+                <fieldset>
+                    <legend class="font-weight-semibold"><i class="icon-wallet mr-2"></i> Account details</legend>
+
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-form-label">Address:</label>
+                        <div class="col-lg-8">
+                            <input type="text" id="wallet" value="{{userDetails.wallet}}" class="form-control" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-form-label">KDA Balance:</label>
+                        <div class="col-lg-8">
+                            <input type="text" value="{{userDetails.balance}}" class="form-control" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-form-label">USD Balance:</label>
+                        <div class="col-lg-8">
+                            <input type="text" value="{{userDetails.fiatBalance}}" class="form-control" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-lg-4 col-form-label">CRKK Balance:</label>
+                        <div class="col-lg-8">
+                            <input type="text" value="{{userDetails.crankkBalance}}" class="form-control" readonly>
+                        </div>
+                    </div>
+
+
+                </fieldset>
+            </div>
+        </div>
+        <!--        </form>-->
+    </div>
+</div>
+    </div>
+
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title">My pending trades</h5>
+    </div>
+
+<!--    <div class="card-body">-->
+<!--        My pending trades-->
+<!--    </div>-->
+
+    <table class="table table-bordered table-hover datatable-highlight">
+        <thead>
+        <tr>
+            <th>Status</th>
+            <th>Amount sent</th>
+            <th>Amount expected</th>
+            <th>USD value</th>
+            <th>Valid until</th>
+            <th>Created at</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+
+
+        {{#each offers}}
+            <tr>
+                <td><span class="badge badge-{{color}}">{{status}}</span></td>
+                <td>{{display0}}</td>
+                <td>{{display1}}</td>
+                <td>{{display2}}</td>
+                <td>{{validUntil}}</td>
+                <td>{{createdAt.timep}}</td>
+                <td class="text-center">
+                    <div class="list-icons">
+                        <div class="dropdown">
+                            <a href="#" class="list-icons-item" data-toggle="dropdown">
+                                <i class="icon-menu9"></i>
+                            </a>
+
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a href="#" data="{{key}}" class="dropdown-item cancelTrade"><i class="icon-cancel-circle2"></i>Cancel trade</a>
+                                <a href="#" data="{{key}}" data1="{{key1}}" class="dropdown-item executeTrade"><i class="icon-checkmark-circle"></i>Execute trade</a>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        {{/each}}
+        </tbody>
+    </table>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title">Available pending trades</h5>
+    </div>
+
+<!--    <div class="card-body">-->
+<!--        Available pending trades-->
+<!--    </div>-->
+
+    <table class="table table-bordered table-hover datatable-highlight">
+        <thead>
+        <tr>
+            <th>Amount sent</th>
+            <th>Amount expected</th>
+            <th>USD value</th>
+            <th>Valid until</th>
+            <th>Created at</th>
+        </tr>
+        </thead>
+        <tbody>
+
+
+        {{#each otherOffers}}
+            <tr>
+                <td>{{display0}}</td>
+                <td>{{display1}}</td>
+                <td>{{display2}}</td>
+                <td>{{validUntil}}</td>
+                <td>{{createdAt.timep}}</td>
+            </tr>
+        {{/each}}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('#marketrate').click(async function(event){
+            event.preventDefault()
+            const lastPrice = $('#lastPrice').val()
+            const tokenpair = $('#tokenpair').val()
+            const token0 = tokenpair.split('/')[0]
+            const token1 = tokenpair.split('/')[1]
+            if (token0 === 'coin') $('#rate').val(lastPrice)
+            else $('#rate').val(1/lastPrice)
+        })
+        $('#toBlockchain').click(async function(event){
+            event.preventDefault()
+            const wallet = $('#wallet').val()
+            const tokenpair = $('#tokenpair').val()
+            const token0 = tokenpair.split('/')[0]
+            const token1 = tokenpair.split('/')[1]
+            const amount = $('#amount').val()
+            const rate   = $('#rate').val()
+            const validityMinutes = $('#validityMinutes').val()
+            if (token0 === token1) {
+                alert('Tokens can\'t be the same'); return
+            }
+            if (!parseFloat(amount)>0) {
+                alert('Amount must be greater than zero'); return
+            }
+            if (!parseFloat(rate)>0) {
+                alert('Rate must be greater than zero'); return
+            }
+            const cmdObj = prepareExchange(wallet, token0, token1, amount, rate, validityMinutes)
+            const resp = await Pact.fetch.send(cmdObj, apiServer)
+            console.log(resp)
+            $.post( "/actions/addTxn", { txn: resp?.requestKeys[0], type:'Add trade' } );
+            setTimeout(() => { window.location.href = '/actions/exchange' }, 1000);
+        });
+        $(document).on('click', '.cancelTrade', async function(event){
+            event.preventDefault()
+            const wallet = $('#wallet').val()
+            const key   = $(event.target).attr('data')
+            const cmdObj = prepareCancel(wallet, key)
+            const resp = await Pact.fetch.send(cmdObj, apiServer)
+            console.log(resp)
+            $.post( "/actions/addTxn", { txn: resp?.requestKeys[0], type:'Cancel trade' } );
+            setTimeout(() => { window.location.href = '/actions/exchange' }, 1000);
+        });
+        $(document).on('click', '.executeTrade', async function(event){
+            event.preventDefault()
+            const wallet = $('#wallet').val()
+            const key   = $(event.target).attr('data')
+            const key1  = $(event.target).attr('data1')
+            const cmdObj = prepareExecTrade(wallet, key, key1)
+            const resp = await Pact.fetch.send(cmdObj, apiServer)
+            console.log(resp)
+            $.post( "/actions/addTxn", { txn: resp?.requestKeys[0], type:'Execute trade' } );
+            setTimeout(() => { window.location.href = '/actions/exchange' }, 1000);
+        });
+    })
+</script>

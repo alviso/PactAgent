@@ -1,0 +1,320 @@
+<!-- Quick stats boxes -->
+<div class="row">
+    <div class="col-lg-3">
+
+        <!-- Members online -->
+        <div class="card bg-teal">
+            <div class="card-body">
+                <div class="d-flex">
+                    <h3 class="font-weight-semibold mb-0">{{nodecount}}</h3>
+                    <span class="badge badge-pill align-self-center ml-auto">+53,6%</span>
+                </div>
+
+                <div>
+                    Active nodes online
+                    <div class="font-size-sm opacity-75">24 day history</div>
+                </div>
+            </div>
+
+            <div class="container-fluid">
+                <div id="daily-nodes"></div>
+            </div>
+        </div>
+        <!-- /members online -->
+
+    </div>
+
+    <div class="col-lg-3">
+
+        <!-- Current server load -->
+        <div class="card bg-pink">
+            <div class="card-body">
+                <div class="d-flex">
+                    <h3 class="font-weight-semibold mb-0">49.4%</h3>
+                    <div class="list-icons ml-auto">
+                        <div class="dropdown">
+                            <a href="#" class="list-icons-item dropdown-toggle" data-toggle="dropdown"><i class="icon-cog3"></i></a>
+                            <div class="dropdown-menu dropdown-menu-right">
+                                <a href="#" class="dropdown-item"><i class="icon-sync"></i> Update data</a>
+                                <a href="#" class="dropdown-item"><i class="icon-list-unordered"></i> Detailed log</a>
+                                <a href="#" class="dropdown-item"><i class="icon-pie5"></i> Statistics</a>
+                                <a href="#" class="dropdown-item"><i class="icon-cross3"></i> Clear list</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    Current server load
+                    <div class="font-size-sm opacity-75">34.6% avg</div>
+                </div>
+            </div>
+
+            <div id="server-load"></div>
+        </div>
+        <!-- /current server load -->
+
+    </div>
+
+    <div class="col-lg-3">
+
+        <!-- Today's revenue -->
+        <div class="card bg-primary">
+            <div class="card-body">
+                <div class="d-flex">
+                    <h3 class="font-weight-semibold mb-0">{{crankcount}}</h3>
+                    <div class="list-icons ml-auto">
+                        <a class="list-icons-item" data-action="reload"></a>
+                    </div>
+                </div>
+
+                <div>
+                    Cranks today (UTC)
+                    <div class="font-size-sm opacity-75">24 day history</div>
+                </div>
+            </div>
+
+            <div id="daily-cranks"></div>
+        </div>
+        <!-- /today's revenue -->
+
+    </div>
+
+    <div class="col-lg-3">
+        <!-- Sales stats -->
+        <div class="card">
+            <div class="card-header header-elements-sm-inline py-sm-0">
+                <h6 class="card-title py-sm-3">Balances & History</h6>
+                <div class="header-elements">
+                    <select class="form-control custom-select" id="select_date">
+                        <option value="val1" selected>{{dates.monthago}} - {{dates.today}}</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="card-body py-0">
+                <div class="row text-center">
+                    <div class="col-4">
+                        <div class="mb-3">
+                            <h5 class="font-weight-semibold mb-0">{{balances.crkk}}</h5>
+                            <span class="text-muted font-size-sm">CRKK</span>
+                        </div>
+                    </div>
+
+                    <div class="col-4">
+                        <div class="mb-3">
+                            <h5 class="font-weight-semibold mb-0">{{balances.kda}}</h5>
+                            <span class="text-muted font-size-sm">KDA</span>
+                        </div>
+                    </div>
+
+                    <div class="col-4">
+                        <div class="mb-3">
+                            <h5 class="font-weight-semibold mb-0">${{balances.usd}}</h5>
+                            <span class="text-muted font-size-sm">USD</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+<!--            <div class="chart mb-2" id="app_sales"></div>-->
+            <div class="chart" id="balances"></div>
+        </div>
+
+    </div>
+    <!-- /sales stats -->
+</div>
+<!-- /quick stats boxes -->
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title">Modules</h5>
+    </div>
+
+<!--    <div class="card-body">-->
+<!--        Modules-->
+<!--    </div>-->
+
+    <table class="table table-bordered table-hover datatable-highlight">
+        <thead>
+        <tr>
+            <th>Pact Module</th>
+            <th>Frequency</th>
+            <th>Crank</th>
+            <th>Not before</th>
+            <th>Planned executor</th>
+            <th>Created at</th>
+        </tr>
+        </thead>
+        <tbody>
+
+
+        {{#each modules}}
+            <tr>
+                <td>{{pactModule}}</td>
+                <td>{{frequency.int}}</td>
+                <td>{{crank}}</td>
+                <td>{{net.timep}}</td>
+                <td>{{executor}}</td>
+                <td>{{createdAt.timep}}</td>
+            </tr>
+        {{/each}}
+        </tbody>
+    </table>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title">Active nodes</h5>
+    </div>
+
+    <div class="card-body">
+        Active nodes
+    </div>
+
+    <table class="table table-bordered table-hover datatable-highlight">
+        <thead>
+        <tr>
+            <th>Address</th>
+            <th>Last action</th>
+        </tr>
+        </thead>
+        <tbody>
+
+
+        {{#each nodes}}
+            <tr>
+                <td>{{address}}</td>
+                <td>{{lastAction.timep}}</td>
+            </tr>
+        {{/each}}
+        </tbody>
+    </table>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title">Scripts</h5>
+    </div>
+
+    <div class="card-body">
+        Scripts
+    </div>
+
+    <table class="table table-bordered table-hover datatable-highlight">
+        <thead>
+        <tr>
+            <th>Pact Module</th>
+            <th>Script Id</th>
+            <th>Frequency</th>
+            <th>Min Executions</th>
+            <th>Max Executions</th>
+            <th>Consensus percent</th>
+            <th>Function</th>
+            <th>Input</th>
+            <th>Created at</th>
+        </tr>
+        </thead>
+        <tbody>
+
+
+        {{#each scripts}}
+            <tr>
+                <td>{{pactModule}}</td>
+                <td>{{scriptId}}</td>
+                <td>{{frequency.int}}</td>
+                <td>{{minExecutors.int}}</td>
+                <td>{{maxExecutors.int}}</td>
+                <td>{{percent.int}}</td>
+                <td>{{function}}</td>
+                <td>{{input}}</td>
+                <td>{{createdAt.timep}}</td>
+            </tr>
+        {{/each}}
+        </tbody>
+    </table>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title">Tasks</h5>
+    </div>
+
+    <div class="card-body">
+        Tasks
+    </div>
+
+    <table class="table table-bordered table-hover datatable-highlight">
+        <thead>
+        <tr>
+            <th>Task Id</th>
+            <th>Script Id</th>
+            <!--            <th>Sender</th>-->
+            <th>Input</th>
+            <th>Consensus result</th>
+            <th>Executions</th>
+            <th>Active</th>
+            <th>Not earlier than</th>
+            <th>Run count</th>
+            <th>Max runs</th>
+            <th>Stop result</th>
+            <th>Created At</th>
+        </tr>
+        </thead>
+        <tbody>
+
+
+        {{#each tasks}}
+            <tr>
+                <td>{{taskId}}</td>
+                <td>{{scriptId}}</td>
+                <!--                <td>{{sender}}</td>-->
+                <td>{{input}}</td>
+                <td>{{resultConsensus}}</td>
+                <td>{{executions.int}}</td>
+                <td>{{active}}</td>
+                <td>{{net.timep}}</td>
+                <td>{{runCount.int}}</td>
+                <td>{{maxRuns.int}}</td>
+                <td>{{stopResult}}</td>
+                <td>{{createdAt.timep}}</td>
+            </tr>
+        {{/each}}
+        </tbody>
+    </table>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title">Executions</h5>
+    </div>
+
+    <div class="card-body">
+        Executions
+    </div>
+
+    <table class="table table-bordered table-hover datatable-highlight">
+        <thead>
+        <tr>
+            <th>Task Id</th>
+            <th>Script Id</th>
+            <th>Executor</th>
+            <th>Result</th>
+            <th>Created At</th>
+        </tr>
+        </thead>
+        <tbody>
+
+
+        {{#each executions}}
+            <tr>
+                <td>{{taskId}}</td>
+                <td>{{scriptId}}</td>
+                <td>{{executor}}</td>
+                <td>{{result}}</td>
+                <td>{{createdAt.timep}}</td>
+            </tr>
+        {{/each}}
+        </tbody>
+    </table>
+</div>

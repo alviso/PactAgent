@@ -1,0 +1,64 @@
+<!-- 2 columns form -->
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title">Reset keys</h5>
+    </div>
+
+    <div class="card-body">
+        Reset keys
+    </div>
+
+    <div class="card-body">
+        <!--        <form action="/actions/myProfile" method="post">-->
+<!--        <div class="row">-->
+
+<!--            <div class="col-lg-6">-->
+<!--                <fieldset>-->
+<!--                    <div class="form-group row">-->
+<!--                        <label class="col-form-label col-lg-2">Passphrase:</label>-->
+<!--                        <div class="col-lg-10">-->
+<!--                            <div class="row">-->
+<!--                                <div class="col-lg-6">-->
+<!--                                    <div class="form-group form-group-feedback form-group-feedback-left">-->
+<!--                                        <input type="password" id="passPhrase" class="form-control" placeholder="Passphrase">-->
+<!--                                        <div class="form-control-feedback">-->
+<!--                                            <i class="icon-spinner2 spinner"></i>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </fieldset>-->
+<!--            </div>-->
+<!--        </div>-->
+        <div class="text-left">
+            <button id="button" class="btn btn-primary">Press to reset keys <i class="icon-unlocked ml-2"></i></button>
+        </div>
+        <!--        </form>-->
+    </div>
+</div>
+<!-- /2 columns form -->
+<script>
+    $(document).ready(function() {
+        const public = localStorage.getItem('public-pactAgent')
+        const cipher = localStorage.getItem('cipher-pactAgent')
+        if (cipher) {
+            $( "#button" ).click(function(e) {
+                e.preventDefault()
+                sessionStorage.removeItem('prKey-pactAgent')
+                localStorage.removeItem('public-pactAgent')
+                localStorage.removeItem('cipher-pactAgent')
+                const data = {}
+                $.ajax({
+                    type: 'POST',
+                    url: '/actions/reset',
+                    data,
+                });
+                setTimeout(() => {
+                    window.location.href = '/'
+                }, 1000)
+            });
+        }
+    });
+</script>

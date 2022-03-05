@@ -1,0 +1,70 @@
+<!-- 2 columns form -->
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title">Passphrase</h5>
+    </div>
+
+    <div class="card-body">
+        Enter your passphrase to unlock your wallet. Your encrypted private key is stored locally in your browser. This passphrase is used to decrypt it.
+    </div>
+
+    <div class="card-body">
+        <!--        <form action="/actions/myProfile" method="post">-->
+        <div class="row">
+
+            <div class="col-lg-6">
+                <fieldset>
+                    <div class="form-group row">
+                        <label class="col-form-label col-lg-2">Passphrase:</label>
+                        <div class="col-lg-10">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="form-group form-group-feedback form-group-feedback-left">
+                                        <input type="password" id="passPhrase" class="form-control" placeholder="Passphrase">
+                                        <div class="form-control-feedback">
+                                            <i class="icon-spinner2 spinner"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+        <div class="text-right">
+            <button id="button" class="btn btn-primary">Press to unlock <i class="icon-unlocked ml-2"></i></button>
+        </div>
+        <!--        </form>-->
+    </div>
+</div>
+<!-- /2 columns form -->
+<script>
+    $(document).ready(function() {
+        const public = localStorage.getItem('public-pactAgent')
+        const cipher = localStorage.getItem('cipher-pactAgent')
+        if (cipher) {
+            $( "#button" ).click(function(e) {
+                e.preventDefault()
+                const passPhrase = $('#passPhrase').val()
+                if (passPhrase.length < 8) {
+                    alert('Passphrase must be at least 8 characters!')
+                    return
+                }
+                let decipher = CryptoJS.AES.decrypt(cipher, passPhrase).toString(CryptoJS.enc.Utf8)
+                sessionStorage.setItem('prKey-pactAgent', decipher)
+                const data = {}
+                data.publicKey = public
+                data.secretKey = decipher
+                $.ajax({
+                    type: 'POST',
+                    url: '/actions/wallet',
+                    data,
+                });
+                setTimeout(() => {
+                    window.location.href = '/'
+                }, 1000)
+            });
+        }
+    });
+</script>
