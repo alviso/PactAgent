@@ -30,6 +30,15 @@ module.exports = {
         gatewayId: JSON.parse(fs.readFileSync('/opt/ttn-gateway/packet_forwarder/lora_pkt_fwd/local_conf.json', 'utf8')).gateway_conf.gateway_ID.toLowerCase(), //'e45f01fffe1744ab',
         email: 'admin',
         password: 'admin'
+    },
+    autoUpdate: {
+        repository: 'https://github.com/alviso/PactAgent',
+        fromReleases: true,
+        tempLocation: '../update',
+        ignoreFiles: [],
+        // executeOnComplete: '',
+        exitOnComplete: true
     }
+
 
 };

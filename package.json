@@ -9,6 +9,7 @@
     "@chirpstack/chirpstack-api": "^3.12.4",
     "@crankk.io/chirpstack-api-fork": "^3.12.5",
     "@grpc/grpc-js": "^1.5.7",
+    "auto-git-update": "^2.1.0",
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
     "express": "~4.16.1",
