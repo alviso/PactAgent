@@ -46,7 +46,7 @@ class chirpstackService {
                 const payloadJson = obj.uplinkFrame?.phyPayloadJson
                 if (!payloadJson) return
                 const payload = JSON.parse(payloadJson)
-                if (payload?.mhdr?.mType !== 'Proprietary') return
+                if (payload?.mhdr?.mType !== 'Proprietary' || !obj?.downlinkFrame?.gatewayId) return
                 console.log(payload, obj.downlinkFrame.gatewayId)
             });
             clientReadableStream.on('end', function(response){ //status, error, close
