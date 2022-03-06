@@ -33,7 +33,7 @@ module.exports = {
     },
     autoUpdate: {
         repository: 'https://github.com/alviso/PactAgent',
-        fromReleases: true,
+        fromReleases: false,
         tempLocation: '../update',
         ignoreFiles: [],
         // executeOnComplete: '',
