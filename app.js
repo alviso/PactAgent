@@ -7,7 +7,7 @@ const pactAgentService = require('./services/pactAgentService')
 const machineService = require('./services/machineService')
 const chirpstackService = require('./services/chirpstackService')
 const config = require('./config')
-const AutoGitUpdate = require('auto-git-update');
+// const AutoGitUpdate = require('auto-git-update');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -87,7 +87,7 @@ for (let i in config.chains) {
 app.locals.mS = new machineService()
 app.locals.cS = new chirpstackService()
 
-const updater = new AutoGitUpdate(config.autoUpdate);
-updater.autoUpdate();
+// const updater = new AutoGitUpdate(config.autoUpdate);
+// updater.autoUpdate();
 
 module.exports = app;
