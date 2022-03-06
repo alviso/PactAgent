@@ -10,7 +10,7 @@ module.exports = {
         {coin: 'CRKK', module: 'free.crankk01'}
     ],
     chains: [
-        // {name: 'test', host: 'testnet.crankk.io', color: 'danger', networkId: 'testnet04', chainId: '1'}
+        {name: 'test', host: 'testnet.crankk.io', color: 'danger', networkId: 'testnet04', chainId: '1'}
         // {name: 'main', host: 'api.chainweb.com', color: 'success', networkId: 'mainnet01', chainId: '0'}
     ],
     kadena: {
