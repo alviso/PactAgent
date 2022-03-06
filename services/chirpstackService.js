@@ -47,7 +47,7 @@ class chirpstackService {
                 if (!payloadJson) return
                 const payload = JSON.parse(payloadJson)
                 if (payload?.mhdr?.mType !== 'Proprietary') return
-                console.log(payload, obj.uplinkFrame.gatewayId)
+                console.log(payload)
             });
             clientReadableStream.on('end', function(response){ //status, error, close
                 console.log('Disconnected!!!')
