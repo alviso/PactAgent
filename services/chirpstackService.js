@@ -21,11 +21,13 @@ class chirpstackService {
         loginRequest.setEmail(config.chirpstack.email);
         loginRequest.setPassword(config.chirpstack.password);
 
+        let metadata
+
 // Send the login request
         internalServiceClient.login(loginRequest, (error, response) => {
             // Build a gRPC metadata object, setting the authorization key to the JWT we
             // got back from logging in.
-            const metadata = new grpc.Metadata();
+            metadata = new grpc.Metadata();
             metadata.set('authorization', response.getJwt());
 
             // This metadata can now be passed for requests to APIs that require authorization
@@ -68,6 +70,13 @@ class chirpstackService {
                 })
 
             }, 5 * 60 * 1000);
+
+            setInterval(async ()=>{
+                internalServiceClient.login(loginRequest, (error, response) => {
+                    metadata = new grpc.Metadata();
+                    metadata.set('authorization', response.getJwt());
+                })
+            }, 20 * 60 * 60 * 1000);
 
         })
 
