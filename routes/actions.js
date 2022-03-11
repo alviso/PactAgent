@@ -113,34 +113,34 @@ router.get('/balances', asyncHandler(async (req, res, next) => {
 
 router.get('/nodestats', asyncHandler(async (req, res, next) => {
     const service = res.app.locals.pAS[res.app.locals.chain.name]
-    let nodestats = await service.getNodestats()
-    nodestats.shift()
-    const dailys = []
-    for (let i in nodestats) {
-        dailys.push(nodestats[i].count.int)
-    }
-    if (dailys.length < 24){
-        for (let i=0; i < 24 - nodestats.length; i++ ) {
-            dailys.push(3)
-        }
-    }
-    dailys.reverse()
-    res.json(dailys)
+    // let nodestats = await service.getNodestats()
+    // nodestats.shift()
+    // const dailys = []
+    // for (let i in nodestats) {
+    //     dailys.push(nodestats[i].count.int)
+    // }
+    // if (dailys.length < 24){
+    //     for (let i=0; i < 24 - nodestats.length; i++ ) {
+    //         dailys.push(3)
+    //     }
+    // }
+    // dailys.reverse()
+    res.json({}) //dailys
 }))
 
 router.get('/crankstats', asyncHandler(async (req, res, next) => {
     const service = res.app.locals.pAS[res.app.locals.chain.name]
-    let crankstats = await service.getCrankstats()
-    crankstats.shift()
-    const stats = crankstats.length
-    const date = stats > 0 ? new Date(crankstats[stats-1].day) : Date.now()
-    if (crankstats.length < 7){
-        for (let i=0; i < 7 - stats; i++ ) {
-            crankstats.push({day:moment.utc(date).subtract(i+1, 'd').format("YYYY-MM-DD"), count:{int:10}})
-        }
-    }
-    crankstats.reverse()
-    res.json(crankstats)
+    // let crankstats = await service.getCrankstats()
+    // crankstats.shift()
+    // const stats = crankstats.length
+    // const date = stats > 0 ? new Date(crankstats[stats-1].day) : Date.now()
+    // if (crankstats.length < 7){
+    //     for (let i=0; i < 7 - stats; i++ ) {
+    //         crankstats.push({day:moment.utc(date).subtract(i+1, 'd').format("YYYY-MM-DD"), count:{int:10}})
+    //     }
+    // }
+    // crankstats.reverse()
+    res.json({}) //crankstats
 }))
 
 router.get('/crankkprice', asyncHandler(async (req, res, next) => {

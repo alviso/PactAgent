@@ -8,16 +8,16 @@ const {format} = require("morgan");
 
 router.get('/', asyncHandler(async (req, res, next) => {
   const service = res.app.locals.pAS[res.app.locals.chain.name]
-  const modules = await service.getActiveModules()
-  const crankcount = await service.getTodaysCranks()
-  const nodes = await service.getActiveNodes()
-  const scripts = await service.getScripts()
-  const tasks = await service.getTasks()
-  const executions = await service.getExecutions()
+  // const modules = await service.getActiveModules()
+  // const crankcount = await service.getTodaysCranks()
+  // const nodes = await service.getActiveNodes()
+  // const scripts = await service.getScripts()
+  // const tasks = await service.getTasks()
+  // const executions = await service.getExecutions()
   const balances = await service.getBalances()
   const dates = {monthago: moment().subtract(21, 'days').format('MMM Do'), today:moment().format('MMM Do')}
-  const nodecount = nodes.length
-  res.render('agentDash', {category: 'Pact Agent', modules, nodes, scripts, tasks, executions, nodecount, crankcount, balances, dates})
+  // const nodecount = nodes.length
+  res.render('agentDash', {category: 'Pact Agent', balances, dates}) //modules, nodes, scripts, tasks, executions, nodecount, crankcount, balances, dates
 }))
 
 router.get('/home', asyncHandler(async (req, res, next) => {

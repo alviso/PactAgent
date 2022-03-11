@@ -4,6 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const pactAgentService = require('./services/pactAgentService')
+const pactRadioService = require('./services/pactRadioService')
 const machineService = require('./services/machineService')
 const chirpstackService = require('./services/chirpstackService')
 const config = require('./config')
@@ -78,14 +79,15 @@ app.use(function(err, req, res, next) {
 });
 
 app.locals.pAS = {}
+app.locals.mS = new machineService()
+app.locals.cS = new chirpstackService()
+
 for (let i in config.chains) {
   const chain = config.chains[i]
   app.locals.chain = chain
-  app.locals.pAS[chain.name] = new pactAgentService(chain)
+  app.locals.pAS[chain.name] = new pactRadioService(chain, app.locals.cS) //new pactAgentService(chain)
 }
 
-app.locals.mS = new machineService()
-app.locals.cS = new chirpstackService()
 
 // const updater = new AutoGitUpdate(config.autoUpdate);
 // updater.autoUpdate();

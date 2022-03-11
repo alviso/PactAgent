@@ -10,7 +10,7 @@ class chirpstackService {
 
     constructor() {
         // Create the client for the 'internal' service
-        const internalServiceClient = new internalService.InternalServiceClient(
+        this.internalServiceClient = new internalService.InternalServiceClient(
             config.chirpstack.apiUrl,
             grpc.credentials.createInsecure()
         );
@@ -21,19 +21,19 @@ class chirpstackService {
         loginRequest.setEmail(config.chirpstack.email);
         loginRequest.setPassword(config.chirpstack.password);
 
-        let metadata
+        this.metadata = {}
 
 // Send the login request
-        internalServiceClient.login(loginRequest, (error, response) => {
+        this.internalServiceClient.login(loginRequest, (error, response) => {
             // Build a gRPC metadata object, setting the authorization key to the JWT we
             // got back from logging in.
-            metadata = new grpc.Metadata();
-            metadata.set('authorization', response.getJwt());
+            this.metadata = new grpc.Metadata();
+            this.metadata.set('authorization', response.getJwt());
 
             // This metadata can now be passed for requests to APIs that require authorization
             // e.g.
             // deviceServiceClient.create(createDeviceRequest, metadata, callback);
-            const gatewayServiceClient = new gatewayService.GatewayServiceClient(
+            this.gatewayServiceClient = new gatewayService.GatewayServiceClient(
                 config.chirpstack.apiUrl,
                 grpc.credentials.createInsecure()
             )
@@ -41,7 +41,7 @@ class chirpstackService {
             const streamFrameLogsRequest = new gatewayMessages.StreamGatewayFrameLogsRequest()
             streamFrameLogsRequest.setGatewayId(config.chirpstack.gatewayId)
 
-            const clientReadableStream = gatewayServiceClient.streamFrameLogs(streamFrameLogsRequest, metadata)
+            const clientReadableStream = this.gatewayServiceClient.streamFrameLogs(streamFrameLogsRequest, this.metadata)
 
             clientReadableStream.on('data', function(response){
                 const obj = response.toObject()
@@ -56,30 +56,30 @@ class chirpstackService {
             });
 
             setInterval(async ()=>{
-                const sendPingRequest = new gatewayMessages.SendPingRequest()
-
-                sendPingRequest.setGatewayId(config.chirpstack.gatewayId)
-
-                gatewayServiceClient.sendPing(sendPingRequest, metadata, function (err, res) {
-                    try {
-                        const string = new TextDecoder().decode(res.getMic());
-                        console.log(string)
-                    } catch (e) {
-                        console.log(e)
-                    }
-                })
-
-            }, 5 * 60 * 1000);
-
-            setInterval(async ()=>{
-                internalServiceClient.login(loginRequest, (error, response) => {
-                    metadata = new grpc.Metadata();
-                    metadata.set('authorization', response.getJwt());
+                this.internalServiceClient.login(loginRequest, (error, response) => {
+                    this.metadata = new grpc.Metadata();
+                    this.metadata.set('authorization', response.getJwt());
                 })
             }, 20 * 60 * 60 * 1000);
 
         })
 
+    }
+
+    sendPing() {
+        return new Promise((resolve, reject)=>{
+            const sendPingRequest = new gatewayMessages.SendPingRequest()
+            sendPingRequest.setGatewayId(config.chirpstack.gatewayId)
+            this.gatewayServiceClient.sendPing(sendPingRequest, this.metadata, function (err, res) {
+                try {
+                    const MIC = new TextDecoder().decode(res.getMic());
+                    resolve(MIC)
+                } catch (e) {
+                    console.log(e)
+                    resolve('')
+                }
+            })
+        })
     }
 
 

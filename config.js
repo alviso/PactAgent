@@ -16,6 +16,7 @@ module.exports = {
     kadena: {
         agentModule: 'free.pactAgent18',
         exchModule: 'free.crankkx',
+        radioModule: 'free.radio02',
         gasPrice: 0.000001,
         gasLimit: 150000,
         ttl: 28800,
