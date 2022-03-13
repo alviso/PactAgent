@@ -9,6 +9,8 @@ const Pact = require("pact-lang-api");
 class chirpstackService {
 
     constructor() {
+
+        this.mics = new Set()
         // Create the client for the 'internal' service
         this.internalServiceClient = new internalService.InternalServiceClient(
             config.chirpstack.apiUrl,
@@ -63,6 +65,10 @@ class chirpstackService {
             }, 20 * 60 * 60 * 1000);
 
         })
+
+        setInterval(async ()=>{
+            await this.sendPing()
+        }, 1 * 60 * 1000);
 
     }
 
