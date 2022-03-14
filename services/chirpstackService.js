@@ -10,7 +10,8 @@ class chirpstackService {
 
     constructor() {
 
-        this.mics = new Set()
+        this.recs = new Set()
+        this.startupTs = Date.now()
         // Create the client for the 'internal' service
         this.internalServiceClient = new internalService.InternalServiceClient(
             config.chirpstack.apiUrl,
@@ -45,13 +46,19 @@ class chirpstackService {
 
             const clientReadableStream = this.gatewayServiceClient.streamFrameLogs(streamFrameLogsRequest, this.metadata)
 
-            clientReadableStream.on('data', function(response){
+            clientReadableStream.on('data', (response) => {
                 const obj = response.toObject()
                 const payloadJson = obj.uplinkFrame?.phyPayloadJson
                 if (!payloadJson) return
                 const payload = JSON.parse(payloadJson)
                 if (payload?.mhdr?.mType !== 'Proprietary') return
-                console.log(payload)
+                const buff = new Buffer(payload.macPayload.bytes, 'base64');
+                const gatewayId = buff.toString('ascii');
+                const rec = {mic: payload?.mic, gatewayId}
+                //Not at startup
+                if (Date.now() - this.startupTs > 1000) {
+                    this.recs.add(rec)
+                }
             });
             clientReadableStream.on('end', function(response){ //status, error, close
                 console.log('Disconnected!!!')
@@ -66,9 +73,9 @@ class chirpstackService {
 
         })
 
-        setInterval(async ()=>{
-            await this.sendPing()
-        }, 1 * 60 * 1000);
+        // setInterval(async ()=>{
+        //     await this.sendPing()
+        // }, 1 * 60 * 1000);
 
     }
 
@@ -86,6 +93,14 @@ class chirpstackService {
                 }
             })
         })
+    }
+
+    removeRec(rec) {
+        this.recs.delete(rec)
+    }
+
+    getRecs() {
+        return this.recs
     }
 
 

@@ -18,7 +18,7 @@ module.exports = {
         exchModule: 'free.crankkx',
         radioModule: 'free.radio02',
         gasPrice: 0.000001,
-        gasLimit: 150000,
+        gasLimit: 10000,
         ttl: 28800,
         exchangeRate: 0.0001
     },

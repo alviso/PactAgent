@@ -113,6 +113,11 @@ class pactRadioService {
                 console.log(MIC)
                 await this.updateSent(MIC)
             }
+            const recs = this.cS.getRecs()
+            recs.forEach(rec => {
+                this.addReceived(rec)
+                this.cS.removeRec(rec)
+            })
         }
     }
 
@@ -145,6 +150,19 @@ class pactRadioService {
         const resp = await Pact.fetch.send(cmdObj, this.API_HOST)
         console.log(this.chain.name, 'Update sent: ', resp)
         if (resp?.requestKeys) await this.addTxn(resp?.requestKeys[0], 'Update sent')
+        return resp || {}
+    }
+
+    async addReceived(rec) {
+        const cmdObj = {
+            pactCode: Pact.lang.mkExp(`free.radio02.add-received  \"${rec.gatewayId}\" \"${rec.mic}\"`),
+            keyPairs: this.KP,
+            meta: this.makeMeta(),
+            networkId: this.chain.networkId,
+        };
+        const resp = await Pact.fetch.send(cmdObj, this.API_HOST)
+        console.log(this.chain.name, 'Add received: ', resp)
+        if (resp?.requestKeys) await this.addTxn(resp?.requestKeys[0], 'Add received')
         return resp || {}
     }
 
