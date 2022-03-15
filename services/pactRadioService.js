@@ -250,6 +250,10 @@ class pactRadioService {
         return this.wallet
     }
 
+    getGatewayId() {
+        return config.chirpstack.gatewayId
+    }
+
     async addTxn(txn, type) {
         this.txnColl.insert({txn, type, tsc:Date.now()})
     }

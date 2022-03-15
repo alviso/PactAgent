@@ -9,6 +9,7 @@ router.get('/wallet', asyncHandler(async (req, res, next) => {
     const userDetails = {}
     if (service.hasKey() === true) {
         userDetails.wallet = await service.getWallet()
+        userDetails.gatewayId = service.getGatewayId()
         userDetails.balance = await service.getBalance(userDetails.wallet, 'coin')
         userDetails.crankkBalance = await service.getBalance(userDetails.wallet, 'free.crankk01')
         userDetails.fiatBalance = await service.getFiatBalance(userDetails.balance)
