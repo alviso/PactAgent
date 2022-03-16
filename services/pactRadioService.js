@@ -74,12 +74,22 @@ class pactRadioService {
             const nodes = await this.getNodes()
             const directableNodes = nodes.filter(e => e.send === false && e.sent.length === 0)
             const len = directableNodes.length
-            if (len < 1) return
-            const ind = Math.floor(Math.random() * len)
-            const sel = directableNodes[ind]
-            await this.directToSend(sel.address)
+            if (len > 0) {
+                const ind = Math.floor(Math.random() * len)
+                const sel = directableNodes[ind]
+                await this.directToSend(sel.address)
+            }
+            const checkableNodes = nodes.filter(e => e.send === false && e.sent.length > 0)
+            for (let i in checkableNodes) {
+                const node = checkableNodes[i]
+                const sent = node.sent
+                const receives = await this.getGateway(node.gatewayId)
+                //ToDo: analyze and reward here
+                await this.closeSendReceive(node.address, JSON.stringify(receives))
+                console.log(sent, receives)
+            }
 
-        }, 1 * 60 * 1000);
+        }, 10 * 60 * 1000);
 
     }
 
@@ -143,6 +153,17 @@ class pactRadioService {
         return resp.result?.data || {}
     }
 
+    async getGateway(gatewayId) {
+        const cmdObj = {
+            pactCode: Pact.lang.mkExp(`free.radio02.get-gateway  \"${gatewayId}\"`),
+            keyPairs: this.KP,
+            meta: this.makeMeta(),
+            networkId: this.chain.networkId,
+        };
+        const resp = await Pact.fetch.local(cmdObj, this.API_HOST)
+        return JSON.parse(resp.result?.data) || {}
+    }
+
     async getNodes() {
         const cmdObj = this.makeCmdObj('free.radio02.get-nodes')
         cmdObj.meta.gasLimit = cmdObj.meta.gasLimit * 20
@@ -151,15 +172,35 @@ class pactRadioService {
     }
 
     async insertMyNode() {
+        const envData = {
+            keyset: {
+                pred: "keys-all",
+                keys: [this.KP.publicKey]
+            }
+        }
         const cmdObj = {
             pactCode: Pact.lang.mkExp(`free.radio02.insert-my-node  \"${config.chirpstack.gatewayId}\"`),
             keyPairs: this.KP,
             meta: this.makeMeta(),
             networkId: this.chain.networkId,
+            envData
         };
         const resp = await Pact.fetch.send(cmdObj, this.API_HOST)
         console.log(this.chain.name, 'Insert my node: ', resp)
         if (resp?.requestKeys) await this.addTxn(resp?.requestKeys[0], 'Insert my node')
+        return resp || {}
+    }
+
+    async closeSendReceive(address, receives) {
+        const cmdObj = {
+            pactCode: Pact.lang.mkExp(`free.radio02.close-send-receive  \"${address}\" ${receives}`),
+            keyPairs: this.KP,
+            meta: this.makeMeta(),
+            networkId: this.chain.networkId,
+        };
+        const resp = await Pact.fetch.send(cmdObj, this.API_HOST)
+        console.log(this.chain.name, 'Close send / receive: ', resp)
+        if (resp?.requestKeys) await this.addTxn(resp?.requestKeys[0], 'Close send / receive')
         return resp || {}
     }
 
