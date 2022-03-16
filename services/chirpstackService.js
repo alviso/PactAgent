@@ -63,6 +63,9 @@ class chirpstackService {
             clientReadableStream.on('end', function(response){ //status, error, close
                 console.log('Disconnected!!!')
             });
+            clientReadableStream.on('error', function(response){ //status, error, close
+                console.log('Disconnected!!!')
+            });
 
             setInterval(async ()=>{
                 this.internalServiceClient.login(loginRequest, (error, response) => {

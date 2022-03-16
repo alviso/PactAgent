@@ -108,7 +108,7 @@ router.get('/balances', asyncHandler(async (req, res, next) => {
         const date = moment().subtract(i, 'days').format('YYYY-MM-DD')
         if (newBalances.filter(e => e.date === date).length === 0) newBalances.push({date, value:0})
     }
-    newBalances = newBalances.reverse()
+    newBalances = newBalances.reverse().slice(Math.max(newBalances.length - 21, 1))
     res.json(newBalances)
 }))
 

@@ -15,6 +15,7 @@ class pactRadioService {
         this.KP = {}
         this.wallet = ''
         this.chain = chain
+        this.consMember = false
         this.cS = cS
         this.API_HOST = `https://${chain.host}/chainweb/0.0/${chain.networkId}/chain/${chain.chainId}/pact`
         this.secsBase = 600
@@ -48,7 +49,7 @@ class pactRadioService {
             await this.checkMyNode()
 
 
-        }, 10 * 1000);
+        }, 10 * 1000); //pending transactions, node check, insert
 
         setInterval(async ()=>{
             if (await this.goodToGo() === false) return
@@ -64,7 +65,21 @@ class pactRadioService {
                     }
                 }
             } )
-        }, 60 * 1000);
+        }, 60 * 1000); //balance update
+
+        setInterval(async ()=>{
+            if (await this.goodToGo() === false) return
+            if (await this.allowedToGo() !== 0) return
+            if (this.consMember === false) return
+            const nodes = await this.getNodes()
+            const directableNodes = nodes.filter(e => e.send === false && e.sent.length === 0)
+            const len = directableNodes.length
+            if (len < 1) return
+            const ind = Math.floor(Math.random() * len)
+            const sel = directableNodes[ind]
+            await this.directToSend(sel.address)
+
+        }, 1 * 60 * 1000);
 
     }
 
@@ -108,6 +123,7 @@ class pactRadioService {
         if (!myNode?.address) {
             await this.insertMyNode()
         } else {
+            this.consMember = myNode.consMember
             if (myNode.send === true) {
                 const MIC = await this.cS.sendPing()
                 console.log(MIC)
@@ -127,6 +143,13 @@ class pactRadioService {
         return resp.result?.data || {}
     }
 
+    async getNodes() {
+        const cmdObj = this.makeCmdObj('free.radio02.get-nodes')
+        cmdObj.meta.gasLimit = cmdObj.meta.gasLimit * 20
+        const resp = await Pact.fetch.local(cmdObj, this.API_HOST)
+        return resp.result?.data || {}
+    }
+
     async insertMyNode() {
         const cmdObj = {
             pactCode: Pact.lang.mkExp(`free.radio02.insert-my-node  \"${config.chirpstack.gatewayId}\"`),
@@ -137,6 +160,19 @@ class pactRadioService {
         const resp = await Pact.fetch.send(cmdObj, this.API_HOST)
         console.log(this.chain.name, 'Insert my node: ', resp)
         if (resp?.requestKeys) await this.addTxn(resp?.requestKeys[0], 'Insert my node')
+        return resp || {}
+    }
+
+    async directToSend(address) {
+        const cmdObj = {
+            pactCode: Pact.lang.mkExp(`free.radio02.direct-to-send  \"${address}\"`),
+            keyPairs: this.KP,
+            meta: this.makeMeta(),
+            networkId: this.chain.networkId,
+        };
+        const resp = await Pact.fetch.send(cmdObj, this.API_HOST)
+        console.log(this.chain.name, 'Direct to send: ', resp)
+        if (resp?.requestKeys) await this.addTxn(resp?.requestKeys[0], 'Direct to send')
         return resp || {}
     }
 
