@@ -18,67 +18,42 @@ class chirpstackService {
             grpc.credentials.createInsecure()
         );
 
-// Create and build the login request message
-        const loginRequest = new internalMessages.LoginRequest();
-
-        loginRequest.setEmail(config.chirpstack.email);
-        loginRequest.setPassword(config.chirpstack.password);
-
         this.metadata = {}
 
-// Send the login request
-        this.internalServiceClient.login(loginRequest, (error, response) => {
-            // Build a gRPC metadata object, setting the authorization key to the JWT we
-            // got back from logging in.
-            this.metadata = new grpc.Metadata();
-            this.metadata.set('authorization', response.getJwt());
+        this.metadata = new grpc.Metadata();
+        this.metadata.set('authorization', config.chirpstack.apiKey);
 
-            // This metadata can now be passed for requests to APIs that require authorization
-            // e.g.
-            // deviceServiceClient.create(createDeviceRequest, metadata, callback);
-            this.gatewayServiceClient = new gatewayService.GatewayServiceClient(
-                config.chirpstack.apiUrl,
-                grpc.credentials.createInsecure()
-            )
+        this.gatewayServiceClient = new gatewayService.GatewayServiceClient(
+            config.chirpstack.apiUrl,
+            grpc.credentials.createInsecure()
+        )
 
-            const streamFrameLogsRequest = new gatewayMessages.StreamGatewayFrameLogsRequest()
-            streamFrameLogsRequest.setGatewayId(config.chirpstack.gatewayId)
+        const streamFrameLogsRequest = new gatewayMessages.StreamGatewayFrameLogsRequest()
+        streamFrameLogsRequest.setGatewayId(config.chirpstack.gatewayId)
 
-            const clientReadableStream = this.gatewayServiceClient.streamFrameLogs(streamFrameLogsRequest, this.metadata)
+        const clientReadableStream = this.gatewayServiceClient.streamFrameLogs(streamFrameLogsRequest, this.metadata)
 
-            clientReadableStream.on('data', (response) => {
-                const obj = response.toObject()
-                const payloadJson = obj.uplinkFrame?.phyPayloadJson
-                if (!payloadJson) return
-                const payload = JSON.parse(payloadJson)
-                if (payload?.mhdr?.mType !== 'Proprietary') return
-                const buff = new Buffer(payload.macPayload.bytes, 'base64');
-                const gatewayId = buff.toString('ascii');
-                const rec = {mic: payload?.mic, gatewayId}
-                //Not at startup
-                if (Date.now() - this.startupTs > 1000) {
-                    this.recs.add(rec)
-                }
-            });
-            clientReadableStream.on('end', function(response){ //status, error, close
-                console.log('Disconnected!!!')
-            });
-            clientReadableStream.on('error', function(response){ //status, error, close
-                console.log('Disconnected!!!')
-            });
+        clientReadableStream.on('data', (response) => {
+            const obj = response.toObject()
+            const payloadJson = obj.uplinkFrame?.phyPayloadJson
+            if (!payloadJson) return
+            const payload = JSON.parse(payloadJson)
+            if (payload?.mhdr?.mType !== 'Proprietary') return
+            const buff = new Buffer(payload.macPayload.bytes, 'base64');
+            const gatewayId = buff.toString('ascii');
+            const rec = {mic: payload?.mic, gatewayId}
+            //Not at startup
+            if (Date.now() - this.startupTs > 1000) {
+                this.recs.add(rec)
+            }
+        });
+        clientReadableStream.on('end', function(response){ //status, error, close
+            console.log('Disconnected!!!')
+        });
+        clientReadableStream.on('error', function(response){ //status, error, close
+            console.log('Disconnected!!!')
+        });
 
-            setInterval(async ()=>{
-                this.internalServiceClient.login(loginRequest, (error, response) => {
-                    this.metadata = new grpc.Metadata();
-                    this.metadata.set('authorization', response.getJwt());
-                })
-            }, 20 * 60 * 60 * 1000);
-
-        })
-
-        // setInterval(async ()=>{
-        //     await this.sendPing()
-        // }, 1 * 60 * 1000);
 
     }
 

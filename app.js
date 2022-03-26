@@ -50,7 +50,7 @@ app.use(async function (req, res, next) {
     }
     next();
   } else {
-      if (req.url === '/actions/wallet' || req.url === '/actions/restore' || req.url === '/actions/reset') {
+      if (req.url === '/actions/wallet' || req.url === '/actions/restore' || req.url === '/actions/reset' || req.url === '/home') {
         next();
       }
       else res.render('passPhrase')

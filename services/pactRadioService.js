@@ -24,12 +24,13 @@ class pactRadioService {
         else this.name = chain.name
         this.balanceColl = this.db.collection("balance"+this.name)
         this.txnColl = this.db.collection("txns0"+this.name)
+        this.feeColl = this.db.collection("fee0"+this.name)
         this.asKey = this.db.collection("asimkey") //same for all
         this.price = 0
 
         setInterval(async ()=>{
             if (await this.goodToGo() === false) return
-            this.txnColl.find({ }).toArray(async (err, txns) => { //"result" : { "$exists" : false }
+            this.txnColl.find({ }).toArray(async (err, txns) => {
                 for (let i in txns) {
                     const txn = txns[i].txn
                     const tsf = Date.now()
@@ -41,7 +42,7 @@ class pactRadioService {
                         continue
                     }
                     console.log(this.chain.name, resp[txn].result, elapsedSec)
-                    this.txnColl.remove({"txn": txn}) // this.txnColl.update({"txn": txn}, { $set: {"result": resp[txn].result, tsf}})
+                    this.txnColl.remove({"txn": txn})
                 }
             } )
 
@@ -62,6 +63,7 @@ class pactRadioService {
                     const balance = this.round(await this.getBalance(this.wallet, coin), 3)
                     if (balance !== oldBalance) {
                         this.balanceColl.insert({coin, ts:now, balance})
+                        this.balanceColl.remove({'ts': {$lt: now - 21 * 24 * 60 * 1000}})
                     }
                 }
             } )
@@ -71,25 +73,28 @@ class pactRadioService {
             if (await this.goodToGo() === false) return
             if (await this.allowedToGo() !== 0) return
             if (this.consMember === false) return
-            const nodes = await this.getNodes()
-            const directableNodes = nodes.filter(e => e.send === false && e.sent.length === 0)
+            const nodes = await this.pactCall('L', 'free.radio02.get-nodes')
+            const directableNodes = nodes.filter(e => e.send === false && e.sent.length === 0 && moment(e.net.timep).unix() < moment().unix())
             const len = directableNodes.length
             if (len > 0) {
                 const ind = Math.floor(Math.random() * len)
                 const sel = directableNodes[ind]
-                await this.directToSend(sel.address)
+                await this.pactCall('S', 'free.radio02.direct-to-send', sel.address)
             }
             const checkableNodes = nodes.filter(e => e.send === false && e.sent.length > 0)
             for (let i in checkableNodes) {
                 const node = checkableNodes[i]
                 const sent = node.sent
-                const receives = await this.getGateway(node.gatewayId)
-                //ToDo: analyze and reward here
-                await this.closeSendReceive(node.address, JSON.stringify(receives))
+                const resp = await this.pactCall('L', 'free.radio02.get-gateway', node.gatewayId)
+                const receives = JSON.parse(resp.replaceAll('} {','},{')) || []
+                //Analyze and reward here
+                const validReceives = receives.filter(e => e.mic === sent)
+                const unique = [...new Map(validReceives.map(item => [item['address'], item])).values()]
+                await this.closeSendReceive(node.address, JSON.stringify(unique))
                 console.log(sent, receives)
             }
 
-        }, 10 * 60 * 1000);
+        }, 5 * 60 * 1000);
 
     }
 
@@ -129,49 +134,25 @@ class pactRadioService {
     }
 
     async checkMyNode() {
-        const myNode = await this.getMyNode()
+        const myNode = await this.pactCall('L', 'free.radio02.get-my-node')
         if (!myNode?.address) {
-            await this.insertMyNode()
+            await this.pactCall('S', 'free.radio02.insert-my-node', config.chirpstack.gatewayId)
         } else {
             this.consMember = myNode.consMember
             if (myNode.send === true) {
                 const MIC = await this.cS.sendPing()
                 console.log(MIC)
-                await this.updateSent(MIC)
+                await this.pactCall('S', 'free.radio02.update-sent', MIC)
             }
             const recs = this.cS.getRecs()
             recs.forEach(rec => {
-                this.addReceived(rec)
+                this.pactCall('S', 'free.radio02.add-received', rec.gatewayId, rec.mic)
                 this.cS.removeRec(rec)
             })
         }
     }
 
-    async getMyNode() {
-        const cmdObj = this.makeCmdObj('free.radio02.get-my-node')
-        const resp = await Pact.fetch.local(cmdObj, this.API_HOST)
-        return resp.result?.data || {}
-    }
-
-    async getGateway(gatewayId) {
-        const cmdObj = {
-            pactCode: Pact.lang.mkExp(`free.radio02.get-gateway  \"${gatewayId}\"`),
-            keyPairs: this.KP,
-            meta: this.makeMeta(),
-            networkId: this.chain.networkId,
-        };
-        const resp = await Pact.fetch.local(cmdObj, this.API_HOST)
-        return JSON.parse(resp.result?.data) || {}
-    }
-
-    async getNodes() {
-        const cmdObj = this.makeCmdObj('free.radio02.get-nodes')
-        cmdObj.meta.gasLimit = cmdObj.meta.gasLimit * 20
-        const resp = await Pact.fetch.local(cmdObj, this.API_HOST)
-        return resp.result?.data || {}
-    }
-
-    async insertMyNode() {
+    async pactCall(mode, module) {
         const envData = {
             keyset: {
                 pred: "keys-all",
@@ -179,16 +160,28 @@ class pactRadioService {
             }
         }
         const cmdObj = {
-            pactCode: Pact.lang.mkExp(`free.radio02.insert-my-node  \"${config.chirpstack.gatewayId}\"`),
+            pactCode: Pact.lang.mkExp(`${module}`).slice(0, -2),
             keyPairs: this.KP,
             meta: this.makeMeta(),
             networkId: this.chain.networkId,
             envData
         };
-        const resp = await Pact.fetch.send(cmdObj, this.API_HOST)
-        console.log(this.chain.name, 'Insert my node: ', resp)
-        if (resp?.requestKeys) await this.addTxn(resp?.requestKeys[0], 'Insert my node')
-        return resp || {}
+        for (let i in arguments) {
+            if (i < 2) continue
+            cmdObj.pactCode += ' ' + `\"${arguments[i]}\"`
+        }
+        cmdObj.pactCode += ' )'
+        if (mode === 'L') {
+            cmdObj.meta.gasLimit = cmdObj.meta.gasLimit * 20
+            const resp = await Pact.fetch.local(cmdObj, this.API_HOST)
+            return resp.result?.data || {}
+        } else {
+            const resp = await Pact.fetch.send(cmdObj, this.API_HOST)
+            console.log(this.chain.name, module, resp)
+            console.log(resp)
+            if (resp?.requestKeys) await this.addTxn(resp?.requestKeys[0], module)
+            return resp || {}
+        }
     }
 
     async closeSendReceive(address, receives) {
@@ -201,45 +194,6 @@ class pactRadioService {
         const resp = await Pact.fetch.send(cmdObj, this.API_HOST)
         console.log(this.chain.name, 'Close send / receive: ', resp)
         if (resp?.requestKeys) await this.addTxn(resp?.requestKeys[0], 'Close send / receive')
-        return resp || {}
-    }
-
-    async directToSend(address) {
-        const cmdObj = {
-            pactCode: Pact.lang.mkExp(`free.radio02.direct-to-send  \"${address}\"`),
-            keyPairs: this.KP,
-            meta: this.makeMeta(),
-            networkId: this.chain.networkId,
-        };
-        const resp = await Pact.fetch.send(cmdObj, this.API_HOST)
-        console.log(this.chain.name, 'Direct to send: ', resp)
-        if (resp?.requestKeys) await this.addTxn(resp?.requestKeys[0], 'Direct to send')
-        return resp || {}
-    }
-
-    async updateSent(MIC) {
-        const cmdObj = {
-            pactCode: Pact.lang.mkExp(`free.radio02.update-sent  \"${MIC}\"`),
-            keyPairs: this.KP,
-            meta: this.makeMeta(),
-            networkId: this.chain.networkId,
-        };
-        const resp = await Pact.fetch.send(cmdObj, this.API_HOST)
-        console.log(this.chain.name, 'Update sent: ', resp)
-        if (resp?.requestKeys) await this.addTxn(resp?.requestKeys[0], 'Update sent')
-        return resp || {}
-    }
-
-    async addReceived(rec) {
-        const cmdObj = {
-            pactCode: Pact.lang.mkExp(`free.radio02.add-received  \"${rec.gatewayId}\" \"${rec.mic}\"`),
-            keyPairs: this.KP,
-            meta: this.makeMeta(),
-            networkId: this.chain.networkId,
-        };
-        const resp = await Pact.fetch.send(cmdObj, this.API_HOST)
-        console.log(this.chain.name, 'Add received: ', resp)
-        if (resp?.requestKeys) await this.addTxn(resp?.requestKeys[0], 'Add received')
         return resp || {}
     }
 
@@ -273,23 +227,6 @@ class pactRadioService {
                 resolve(balances)
             })
         })
-    }
-
-    makeCmdObj(func) {
-        const envData = {
-            keyset: {
-                pred: "keys-all",
-                keys: [this.KP.publicKey]
-            }
-        }
-        const cmdObj = {
-            pactCode: Pact.lang.mkExp(`${func}`),
-            keyPairs: this.KP,
-            meta: this.makeMeta(),
-            networkId: this.chain.networkId,
-            envData
-        };
-        return cmdObj
     }
 
     makeMeta() {
@@ -362,6 +299,9 @@ class pactRadioService {
 
 }
 
+String.prototype.replaceAll = function(match, replace) {
+    return this.replace(new RegExp(match, 'g'), () => replace);
+}
 
 
 module.exports = pactRadioService

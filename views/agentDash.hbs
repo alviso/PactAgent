@@ -126,195 +126,195 @@
 </div>
 <!-- /quick stats boxes -->
 
-<div class="card">
-    <div class="card-header">
-        <h5 class="card-title">Modules</h5>
-    </div>
-
-<!--    <div class="card-body">-->
-<!--        Modules-->
+<!--<div class="card">-->
+<!--    <div class="card-header">-->
+<!--        <h5 class="card-title">Modules</h5>-->
 <!--    </div>-->
 
-    <table class="table table-bordered table-hover datatable-highlight">
-        <thead>
-        <tr>
-            <th>Pact Module</th>
-            <th>Frequency</th>
-            <th>Crank</th>
-            <th>Not before</th>
-            <th>Planned executor</th>
-            <th>Created at</th>
-        </tr>
-        </thead>
-        <tbody>
+<!--&lt;!&ndash;    <div class="card-body">&ndash;&gt;-->
+<!--&lt;!&ndash;        Modules&ndash;&gt;-->
+<!--&lt;!&ndash;    </div>&ndash;&gt;-->
+
+<!--    <table class="table table-bordered table-hover datatable-highlight">-->
+<!--        <thead>-->
+<!--        <tr>-->
+<!--            <th>Pact Module</th>-->
+<!--            <th>Frequency</th>-->
+<!--            <th>Crank</th>-->
+<!--            <th>Not before</th>-->
+<!--            <th>Planned executor</th>-->
+<!--            <th>Created at</th>-->
+<!--        </tr>-->
+<!--        </thead>-->
+<!--        <tbody>-->
 
 
-        {{#each modules}}
-            <tr>
-                <td>{{pactModule}}</td>
-                <td>{{frequency.int}}</td>
-                <td>{{crank}}</td>
-                <td>{{net.timep}}</td>
-                <td>{{executor}}</td>
-                <td>{{createdAt.timep}}</td>
-            </tr>
-        {{/each}}
-        </tbody>
-    </table>
-</div>
+<!--        {{#each modules}}-->
+<!--            <tr>-->
+<!--                <td>{{pactModule}}</td>-->
+<!--                <td>{{frequency.int}}</td>-->
+<!--                <td>{{crank}}</td>-->
+<!--                <td>{{net.timep}}</td>-->
+<!--                <td>{{executor}}</td>-->
+<!--                <td>{{createdAt.timep}}</td>-->
+<!--            </tr>-->
+<!--        {{/each}}-->
+<!--        </tbody>-->
+<!--    </table>-->
+<!--</div>-->
 
-<div class="card">
-    <div class="card-header">
-        <h5 class="card-title">Active nodes</h5>
-    </div>
+<!--<div class="card">-->
+<!--    <div class="card-header">-->
+<!--        <h5 class="card-title">Active nodes</h5>-->
+<!--    </div>-->
 
-    <div class="card-body">
-        Active nodes
-    </div>
+<!--    <div class="card-body">-->
+<!--        Active nodes-->
+<!--    </div>-->
 
-    <table class="table table-bordered table-hover datatable-highlight">
-        <thead>
-        <tr>
-            <th>Address</th>
-            <th>Last action</th>
-        </tr>
-        </thead>
-        <tbody>
-
-
-        {{#each nodes}}
-            <tr>
-                <td>{{address}}</td>
-                <td>{{lastAction.timep}}</td>
-            </tr>
-        {{/each}}
-        </tbody>
-    </table>
-</div>
-
-<div class="card">
-    <div class="card-header">
-        <h5 class="card-title">Scripts</h5>
-    </div>
-
-    <div class="card-body">
-        Scripts
-    </div>
-
-    <table class="table table-bordered table-hover datatable-highlight">
-        <thead>
-        <tr>
-            <th>Pact Module</th>
-            <th>Script Id</th>
-            <th>Frequency</th>
-            <th>Min Executions</th>
-            <th>Max Executions</th>
-            <th>Consensus percent</th>
-            <th>Function</th>
-            <th>Input</th>
-            <th>Created at</th>
-        </tr>
-        </thead>
-        <tbody>
+<!--    <table class="table table-bordered table-hover datatable-highlight">-->
+<!--        <thead>-->
+<!--        <tr>-->
+<!--            <th>Address</th>-->
+<!--            <th>Last action</th>-->
+<!--        </tr>-->
+<!--        </thead>-->
+<!--        <tbody>-->
 
 
-        {{#each scripts}}
-            <tr>
-                <td>{{pactModule}}</td>
-                <td>{{scriptId}}</td>
-                <td>{{frequency.int}}</td>
-                <td>{{minExecutors.int}}</td>
-                <td>{{maxExecutors.int}}</td>
-                <td>{{percent.int}}</td>
-                <td>{{function}}</td>
-                <td>{{input}}</td>
-                <td>{{createdAt.timep}}</td>
-            </tr>
-        {{/each}}
-        </tbody>
-    </table>
-</div>
+<!--        {{#each nodes}}-->
+<!--            <tr>-->
+<!--                <td>{{address}}</td>-->
+<!--                <td>{{lastAction.timep}}</td>-->
+<!--            </tr>-->
+<!--        {{/each}}-->
+<!--        </tbody>-->
+<!--    </table>-->
+<!--</div>-->
 
-<div class="card">
-    <div class="card-header">
-        <h5 class="card-title">Tasks</h5>
-    </div>
+<!--<div class="card">-->
+<!--    <div class="card-header">-->
+<!--        <h5 class="card-title">Scripts</h5>-->
+<!--    </div>-->
 
-    <div class="card-body">
-        Tasks
-    </div>
+<!--    <div class="card-body">-->
+<!--        Scripts-->
+<!--    </div>-->
 
-    <table class="table table-bordered table-hover datatable-highlight">
-        <thead>
-        <tr>
-            <th>Task Id</th>
-            <th>Script Id</th>
-            <!--            <th>Sender</th>-->
-            <th>Input</th>
-            <th>Consensus result</th>
-            <th>Executions</th>
-            <th>Active</th>
-            <th>Not earlier than</th>
-            <th>Run count</th>
-            <th>Max runs</th>
-            <th>Stop result</th>
-            <th>Created At</th>
-        </tr>
-        </thead>
-        <tbody>
+<!--    <table class="table table-bordered table-hover datatable-highlight">-->
+<!--        <thead>-->
+<!--        <tr>-->
+<!--            <th>Pact Module</th>-->
+<!--            <th>Script Id</th>-->
+<!--            <th>Frequency</th>-->
+<!--            <th>Min Executions</th>-->
+<!--            <th>Max Executions</th>-->
+<!--            <th>Consensus percent</th>-->
+<!--            <th>Function</th>-->
+<!--            <th>Input</th>-->
+<!--            <th>Created at</th>-->
+<!--        </tr>-->
+<!--        </thead>-->
+<!--        <tbody>-->
 
 
-        {{#each tasks}}
-            <tr>
-                <td>{{taskId}}</td>
-                <td>{{scriptId}}</td>
-                <!--                <td>{{sender}}</td>-->
-                <td>{{input}}</td>
-                <td>{{resultConsensus}}</td>
-                <td>{{executions.int}}</td>
-                <td>{{active}}</td>
-                <td>{{net.timep}}</td>
-                <td>{{runCount.int}}</td>
-                <td>{{maxRuns.int}}</td>
-                <td>{{stopResult}}</td>
-                <td>{{createdAt.timep}}</td>
-            </tr>
-        {{/each}}
-        </tbody>
-    </table>
-</div>
+<!--        {{#each scripts}}-->
+<!--            <tr>-->
+<!--                <td>{{pactModule}}</td>-->
+<!--                <td>{{scriptId}}</td>-->
+<!--                <td>{{frequency.int}}</td>-->
+<!--                <td>{{minExecutors.int}}</td>-->
+<!--                <td>{{maxExecutors.int}}</td>-->
+<!--                <td>{{percent.int}}</td>-->
+<!--                <td>{{function}}</td>-->
+<!--                <td>{{input}}</td>-->
+<!--                <td>{{createdAt.timep}}</td>-->
+<!--            </tr>-->
+<!--        {{/each}}-->
+<!--        </tbody>-->
+<!--    </table>-->
+<!--</div>-->
 
-<div class="card">
-    <div class="card-header">
-        <h5 class="card-title">Executions</h5>
-    </div>
+<!--<div class="card">-->
+<!--    <div class="card-header">-->
+<!--        <h5 class="card-title">Tasks</h5>-->
+<!--    </div>-->
 
-    <div class="card-body">
-        Executions
-    </div>
+<!--    <div class="card-body">-->
+<!--        Tasks-->
+<!--    </div>-->
 
-    <table class="table table-bordered table-hover datatable-highlight">
-        <thead>
-        <tr>
-            <th>Task Id</th>
-            <th>Script Id</th>
-            <th>Executor</th>
-            <th>Result</th>
-            <th>Created At</th>
-        </tr>
-        </thead>
-        <tbody>
+<!--    <table class="table table-bordered table-hover datatable-highlight">-->
+<!--        <thead>-->
+<!--        <tr>-->
+<!--            <th>Task Id</th>-->
+<!--            <th>Script Id</th>-->
+<!--            &lt;!&ndash;            <th>Sender</th>&ndash;&gt;-->
+<!--            <th>Input</th>-->
+<!--            <th>Consensus result</th>-->
+<!--            <th>Executions</th>-->
+<!--            <th>Active</th>-->
+<!--            <th>Not earlier than</th>-->
+<!--            <th>Run count</th>-->
+<!--            <th>Max runs</th>-->
+<!--            <th>Stop result</th>-->
+<!--            <th>Created At</th>-->
+<!--        </tr>-->
+<!--        </thead>-->
+<!--        <tbody>-->
 
 
-        {{#each executions}}
-            <tr>
-                <td>{{taskId}}</td>
-                <td>{{scriptId}}</td>
-                <td>{{executor}}</td>
-                <td>{{result}}</td>
-                <td>{{createdAt.timep}}</td>
-            </tr>
-        {{/each}}
-        </tbody>
-    </table>
-</div>
+<!--        {{#each tasks}}-->
+<!--            <tr>-->
+<!--                <td>{{taskId}}</td>-->
+<!--                <td>{{scriptId}}</td>-->
+<!--                &lt;!&ndash;                <td>{{sender}}</td>&ndash;&gt;-->
+<!--                <td>{{input}}</td>-->
+<!--                <td>{{resultConsensus}}</td>-->
+<!--                <td>{{executions.int}}</td>-->
+<!--                <td>{{active}}</td>-->
+<!--                <td>{{net.timep}}</td>-->
+<!--                <td>{{runCount.int}}</td>-->
+<!--                <td>{{maxRuns.int}}</td>-->
+<!--                <td>{{stopResult}}</td>-->
+<!--                <td>{{createdAt.timep}}</td>-->
+<!--            </tr>-->
+<!--        {{/each}}-->
+<!--        </tbody>-->
+<!--    </table>-->
+<!--</div>-->
+
+<!--<div class="card">-->
+<!--    <div class="card-header">-->
+<!--        <h5 class="card-title">Executions</h5>-->
+<!--    </div>-->
+
+<!--    <div class="card-body">-->
+<!--        Executions-->
+<!--    </div>-->
+
+<!--    <table class="table table-bordered table-hover datatable-highlight">-->
+<!--        <thead>-->
+<!--        <tr>-->
+<!--            <th>Task Id</th>-->
+<!--            <th>Script Id</th>-->
+<!--            <th>Executor</th>-->
+<!--            <th>Result</th>-->
+<!--            <th>Created At</th>-->
+<!--        </tr>-->
+<!--        </thead>-->
+<!--        <tbody>-->
+
+
+<!--        {{#each executions}}-->
+<!--            <tr>-->
+<!--                <td>{{taskId}}</td>-->
+<!--                <td>{{scriptId}}</td>-->
+<!--                <td>{{executor}}</td>-->
+<!--                <td>{{result}}</td>-->
+<!--                <td>{{createdAt.timep}}</td>-->
+<!--            </tr>-->
+<!--        {{/each}}-->
+<!--        </tbody>-->
+<!--    </table>-->
+<!--</div>-->

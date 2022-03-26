@@ -98,17 +98,18 @@ router.get('/balances', asyncHandler(async (req, res, next) => {
     let balances = await service.balances(req.query?.coin)
     balances = balances.reverse()
     let newBalances = []
+    const cutoff = moment().subtract(14, 'd').format('YYYY-MM-DD')
     for (let i in balances) {
         const newBalance = {}
         newBalance.date = moment(balances[i].ts).format('YYYY-MM-DD')
-        newBalance.value = balances[i].balance
+        newBalance.value = balances[i].balance.toString()
         if (newBalances.filter(e => e.date === newBalance.date).length === 0) newBalances.push(newBalance)
     }
     for (let i = 0; i<21; i++) {
         const date = moment().subtract(i, 'days').format('YYYY-MM-DD')
         if (newBalances.filter(e => e.date === date).length === 0) newBalances.push({date, value:0})
     }
-    newBalances = newBalances.reverse().slice(Math.max(newBalances.length - 21, 1))
+    newBalances = newBalances.filter(e => e.date >= cutoff)
     res.json(newBalances)
 }))
 
