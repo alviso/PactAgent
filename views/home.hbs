@@ -66,11 +66,12 @@
                     <ul class="nav">
                         <li class="scroll active"><a href="#hme">Home</a></li>
                         <li class="scroll"> <a href="#about">About </a> </li>
+                        <li class="scroll"> <a href="#token">Token</a> </li>
                         <li class="scroll"> <a href="#activity">Activity</a> </li>
+                        <li class="scroll"> <a href="#buy">Buy gateway</a> </li>
                         <li class="scroll"> <a href="#roadmap">Road Map</a> </li>
                         <li class="scroll"> <a href="#faq">FAQ</a> </li>
                         <li class="scroll"> <a href="#contact">Contact</a> </li>
-                        <li class="scroll"> <a href="/login">Login</a> </li>
                     </ul>
                 </div>
             </nav>
@@ -211,10 +212,10 @@
                                 <span>10,000,000</span> </div>
                             <div class="col">
                                 <h6> Distributed amount</h6>
-                                <span>105.5 CNKK</span> </div>
+                                <span>{{dCRKK}} CRNKK</span> </div>
                             <div class="col">
                                 <h6> Distributed percentage</h6>
-                                <span>0.001%</span> </div>
+                                <span>{{prc}}%</span> </div>
                         </div>
 
                         <!-- CountdownEnd -->
@@ -224,7 +225,7 @@
                             <ul class="row">
                                 <!-- Days -->
                                 <li class="col-md-6">
-                                    <article> <span class="days">2 / 10,000</span>
+                                    <article> <span class="days">{{nGw}} / 10,000</span>
                                         <p class="days_ref">Live nodes on chain 0</p>
                                     </article>
                                 </li>
@@ -260,8 +261,8 @@
                             <ul class="row">
                                 <!-- Days -->
                                 <li class="col-md-6">
-                                    <article> <span class="days">2</span>
-                                        <p class="days_ref">Miners sold</p>
+                                    <article> <span class="days">{{nGw}}</span>
+                                        <p class="days_ref">Active Miners</p>
                                     </article>
                                 </li>
                                 <!-- Hours -->
@@ -283,10 +284,26 @@
 <!--                                    </article>-->
 <!--                                </li>-->
                             </ul>
-                            <a href="#." class="btn">Join Us</a> <a href="#." class="btn btn-inverse">Buy Now</a>
+                            <div>
+<!--                            <a href="#." class="btn">Join Us</a>-->
+                            <a href="#buy" class="btn btn-inverse">Order gateway with Coinbase</a>
 
+<!--                            <div>-->
+<!--                                <a class="buy-with-crypto"-->
+<!--                                   href="https://commerce.coinbase.com/checkout/fca0ab0b-ff1c-4767-8eb0-8bc1a7952619">-->
+<!--                                    Buy with Crypto-->
+<!--                                </a>-->
+<!--                                <script src="https://commerce.coinbase.com/v1/checkout.js?version=201807">-->
+<!--                                </script>-->
+<!--                            </div>-->
+
+                            </div>
                             <!-- Buy Option -->
-                            <div class="card-info"> <i class="fab  fa-bitcoin"></i> <i class="fab  fa-cc-discover"></i> <i class="fab  fa-cc-visa"></i> <i class="fab  fa-cc-mastercard"></i> </div>
+                            <div class="card-info">
+                                <i class="fab  fa-bitcoin"></i>
+                                <i class="fab  fa-ethereum"></i>
+<!--                                <i class="fab  fa-cc-mastercard"></i> -->
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -315,28 +332,31 @@
         </section>
 
         <!-- ABOUT -->
-<!--        <section class="about light-bg">-->
-<!--            &lt;!&ndash; Right Background &ndash;&gt;-->
-<!--            <div class="main-page-section half_left_layout">-->
-<!--                <div class="main-half-layout half_right_layout"> </div>-->
+        <section class="about light-bg" id="buy">
+            <!-- Right Background -->
+            <div class="main-page-section half_left_layout">
+                <div class="main-half-layout half_right_layout"> </div>
 
-<!--                &lt;!&ndash; Left Content &ndash;&gt;-->
-<!--                <div class="main-half-layout-container half_right_layout">-->
-<!--                    <div class="about-us-con">-->
-<!--                        <h3>Growing Global Network</h3>-->
-<!--                        <p>Join our community who believe in the advantages of decentralization and want to feel safer buying and selling online </p>-->
-<!--                        <ul class="count-info row">-->
-<!--                            <li class="col"> <span class="counter">500</span><span>+</span>-->
-<!--                                <p>Customers</p>-->
-<!--                            </li>-->
-<!--                            <li class="col"> <span class="counter">75</span><span>+</span>-->
-<!--                                <p>Vendors</p>-->
-<!--                            </li>-->
-<!--                        </ul>-->
-<!--                        &lt;!&ndash;                        <a href="#." class="btn">White Paper</a> <a href="#." class="btn btn-inverse">Find an Exchange</a> </div>&ndash;&gt;-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--        </section>-->
+                <!-- Left Content -->
+                <div class="main-half-layout-container half_right_layout">
+                    <div class="about-us-con">
+                        <h3>Our currently available LoRa Gateway Choices</h3>
+                        <p>You can order the Crankk LoRa Gateway now to be shipped to you and operated by you or you can go for the hosted option and start earning sooner.
+                        At this stage of our network development you'll earn about as much per gateway by ordering 2 gateways and operating them yourself or ordering just
+                        one hosted one. (Projected earning per gateway per day should be roughly equal for both options)</p>
+                        <ul class="count-info row">
+                            <li class="col"> <span class="">$499 Each</span>
+                                <p>US version, shipped to you within US</p>
+                            </li>
+                            <li class="col"> <span class="">$499 Each</span>
+                                <p>US version with free unlimited hosting. Owned by you. Requires running your own wallet.</p>
+                            </li>
+                        </ul>
+                        <a href="https://commerce.coinbase.com/checkout/09ee61bc-83e6-4014-83e1-dc0a066d5277" class="btn padding-left-50 padding-right-50">Order 2 gateways shipped</a>
+                        <a href="https://commerce.coinbase.com/checkout/fca0ab0b-ff1c-4767-8eb0-8bc1a7952619" class="btn btn-inverse padding-left-50 padding-right-50">Order 1 hosted gateway</a> </div>
+                    </div>
+                </div>
+        </section>
 
         <!-- Road Map -->
         <section class="road-map padding-top-150 padding-bottom-50" id="roadmap">

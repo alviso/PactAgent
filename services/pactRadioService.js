@@ -1,12 +1,8 @@
 const Pact = require("pact-lang-api");
 const config = require("../config.js");
-const runTasks = require("./runTasks.js");
 const moment = require("moment")
 const axios = require("axios")
-const crypto = require("crypto");
-const CryptoJS = require("crypto-js");
 const Engine = require('tingodb')()
-const app = require('../app')
 
 
 class pactRadioService {
@@ -63,7 +59,7 @@ class pactRadioService {
                     const balance = this.round(await this.getBalance(this.wallet, coin), 3)
                     if (balance !== oldBalance) {
                         this.balanceColl.insert({coin, ts:now, balance})
-                        this.balanceColl.remove({'ts': {$lt: now - 21 * 24 * 60 * 1000}})
+                        this.balanceColl.remove({'ts': {$lt: now - 21 * 24 * 60 * 60 * 1000}})
                     }
                 }
             } )
@@ -90,7 +86,8 @@ class pactRadioService {
                 //Analyze and reward here
                 const validReceives = receives.filter(e => e.mic === sent)
                 const unique = [...new Map(validReceives.map(item => [item['address'], item])).values()]
-                await this.closeSendReceive(node.address, JSON.stringify(unique))
+                await this.pactCall('S', 'free.radio02.close-send-receive', node.address, unique)
+                // await this.closeSendReceive(node.address, JSON.stringify(unique))
                 console.log(sent, receives)
             }
 
@@ -168,7 +165,11 @@ class pactRadioService {
         };
         for (let i in arguments) {
             if (i < 2) continue
-            cmdObj.pactCode += ' ' + `\"${arguments[i]}\"`
+            if (typeof arguments[i] === 'object') {
+                const obj = JSON.stringify(arguments[i])
+                cmdObj.pactCode += ' ' + `${obj}`
+            }
+            else cmdObj.pactCode += ' ' + `\"${arguments[i]}\"`
         }
         cmdObj.pactCode += ' )'
         if (mode === 'L') {
@@ -176,25 +177,23 @@ class pactRadioService {
             const resp = await Pact.fetch.local(cmdObj, this.API_HOST)
             return resp.result?.data || {}
         } else {
-            const resp = await Pact.fetch.send(cmdObj, this.API_HOST)
+            const lresp = await Pact.fetch.local(cmdObj, this.API_HOST)
+            console.log(this.chain.name, module, lresp)
+            const ncmdObj = this.clone(cmdObj)
+            if (lresp?.gas) {
+                ncmdObj.meta.gasLimit = lresp.gas
+                console.log('Gas corrected!')
+            }
+            const resp = await Pact.fetch.send(ncmdObj, this.API_HOST)
             console.log(this.chain.name, module, resp)
-            console.log(resp)
             if (resp?.requestKeys) await this.addTxn(resp?.requestKeys[0], module)
             return resp || {}
         }
     }
 
-    async closeSendReceive(address, receives) {
-        const cmdObj = {
-            pactCode: Pact.lang.mkExp(`free.radio02.close-send-receive  \"${address}\" ${receives}`),
-            keyPairs: this.KP,
-            meta: this.makeMeta(),
-            networkId: this.chain.networkId,
-        };
-        const resp = await Pact.fetch.send(cmdObj, this.API_HOST)
-        console.log(this.chain.name, 'Close send / receive: ', resp)
-        if (resp?.requestKeys) await this.addTxn(resp?.requestKeys[0], 'Close send / receive')
-        return resp || {}
+    async getNumberOfGateways() {
+        const gwKeys = await this.pactCall('L', 'free.radio02.get-gateways-keys')
+        return gwKeys.length
     }
 
     async getBalances() {
@@ -204,16 +203,14 @@ class pactRadioService {
         return {kda, crkk, usd}
     }
 
-    async getBalance(wallet, coin) {
-        const cmdObj = {
-            pactCode: Pact.lang.mkExp(`${coin}.details \"${wallet}\"`),
-            keyPairs: this.KP,
-            meta: this.makeMeta(),
-            networkId: this.chain.networkId,
-        };
+    async getDistributedCRKK() {
+        const radioBankBalance = this.round(await this.getBalance(config.kadena.radioBank, 'free.crankk01'), 2)
+        return 10000 - radioBankBalance
+    }
 
-        const resp = await Pact.fetch.local(cmdObj, this.API_HOST)
-        return resp.result?.data?.balance || 0
+    async getBalance(wallet, coin) {
+        const data = await this.pactCall('L', `${coin}.details`, wallet)
+        return data?.balance || 0
     }
 
     async getFiatBalance(balance) {
@@ -297,6 +294,10 @@ class pactRadioService {
         ).pop();
     }
 
+    clone(a) {
+        return JSON.parse(JSON.stringify(a));
+    }
+
 }
 
 String.prototype.replaceAll = function(match, replace) {
@@ -305,5 +306,35 @@ String.prototype.replaceAll = function(match, replace) {
 
 
 module.exports = pactRadioService
+
+// async closeSendReceive(address, receives) {
+//     const cmdObj = {
+//         pactCode: Pact.lang.mkExp(`free.radio02.close-send-receive  \"${address}\" ${receives}`),
+//         keyPairs: this.KP,
+//         meta: this.makeMeta(),
+//         networkId: this.chain.networkId,
+//     };
+//     const resp = await Pact.fetch.send(cmdObj, this.API_HOST)
+//     console.log(this.chain.name, 'Close send / receive: ', resp)
+//     if (resp?.requestKeys) await this.addTxn(resp?.requestKeys[0], 'Close send / receive')
+//     return resp || {}
+// }
+
+// async getBalance(wallet, coin) {
+    // const cmdObj = {
+    //     pactCode: Pact.lang.mkExp(`${coin}.details \"${wallet}\"`),
+    //     keyPairs: this.KP,
+    //     meta: this.makeMeta(),
+    //     networkId: this.chain.networkId,
+    // };
+    //
+    // const resp = await Pact.fetch.local(cmdObj, this.API_HOST)
+//     return resp.result?.data?.balance || 0
+// }
+
+// const runTasks = require("./runTasks.js");
+// const crypto = require("crypto");
+// const CryptoJS = require("crypto-js");
+// const app = require('../app')
 
 

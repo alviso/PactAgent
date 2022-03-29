@@ -17,6 +17,8 @@ module.exports = {
         agentModule: 'free.pactAgent18',
         exchModule: 'free.crankkx',
         radioModule: 'free.radio02',
+        radioBank: 'radio01-bank',
+        totSup: 10000000,
         gasPrice: 0.000001,
         gasLimit: 10000,
         ttl: 28800,
