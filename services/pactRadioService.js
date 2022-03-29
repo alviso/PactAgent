@@ -139,7 +139,7 @@ class pactRadioService {
             if (myNode.send === true) {
                 const MIC = await this.cS.sendPing()
                 console.log(MIC)
-                await this.pactCall('S', 'free.radio02.update-sent', MIC)
+                if (MIC.length > 0) await this.pactCall('S', 'free.radio02.update-sent', MIC)
             }
             const recs = this.cS.getRecs()
             recs.forEach(rec => {

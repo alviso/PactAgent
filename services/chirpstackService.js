@@ -62,12 +62,16 @@ class chirpstackService {
             const sendPingRequest = new gatewayMessages.SendPingRequest()
             sendPingRequest.setGatewayId(config.chirpstack.gatewayId)
             this.gatewayServiceClient.sendPing(sendPingRequest, this.metadata, function (err, res) {
+                if (err) {
+                    console.log(err)
+                    return resolve('')
+                }
                 try {
                     const MIC = new TextDecoder().decode(res.getMic());
-                    resolve(MIC)
+                    return resolve(MIC)
                 } catch (e) {
                     console.log(e)
-                    resolve('')
+                    return resolve('')
                 }
             })
         })
