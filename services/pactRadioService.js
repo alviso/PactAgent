@@ -178,7 +178,7 @@ class pactRadioService {
             return resp.result?.data || {}
         } else {
             const lresp = await Pact.fetch.local(cmdObj, this.API_HOST)
-            console.log(this.chain.name, module, lresp)
+            // console.log(this.chain.name, module, lresp)
             const ncmdObj = this.clone(cmdObj)
             if (lresp?.gas) {
                 ncmdObj.meta.gasLimit = lresp.gas
