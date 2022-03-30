@@ -1,25 +1,20 @@
 const config = require("../config.js");
 const grpc = require('@grpc/grpc-js')
-const internalService = require('@crankk.io/chirpstack-api-fork/as/external/api/internal_grpc_pb')
-const internalMessages = require('@crankk.io/chirpstack-api-fork/as/external/api/internal_pb')
+// const internalService = require('@crankk.io/chirpstack-api-fork/as/external/api/internal_grpc_pb')
+// const internalMessages = require('@crankk.io/chirpstack-api-fork/as/external/api/internal_pb')
 const gatewayService = require('@crankk.io/chirpstack-api-fork/as/external/api/gateway_grpc_pb')
 const gatewayMessages = require('@crankk.io/chirpstack-api-fork/as/external/api/gateway_pb')
-const Pact = require("pact-lang-api");
+// const Pact = require("pact-lang-api");
 
 class chirpstackService {
 
     constructor() {
+        this.streamEvents()
+    }
 
+    streamEvents() {
         this.recs = new Set()
         this.startupTs = Date.now()
-        // Create the client for the 'internal' service
-        this.internalServiceClient = new internalService.InternalServiceClient(
-            config.chirpstack.apiUrl,
-            grpc.credentials.createInsecure()
-        );
-
-        this.metadata = {}
-
         this.metadata = new grpc.Metadata();
         this.metadata.set('authorization', config.chirpstack.apiKey);
 
@@ -34,6 +29,7 @@ class chirpstackService {
         const clientReadableStream = this.gatewayServiceClient.streamFrameLogs(streamFrameLogsRequest, this.metadata)
 
         clientReadableStream.on('data', (response) => {
+            console.log('Data received')
             const obj = response.toObject()
             const payloadJson = obj.uplinkFrame?.phyPayloadJson
             if (!payloadJson) return
@@ -47,14 +43,15 @@ class chirpstackService {
                 this.recs.add(rec)
             }
         });
-        clientReadableStream.on('end', function(response){ //status, error, close
-            console.log('Disconnected!!!')
+        clientReadableStream.on('error', (response)=>{
+            console.log('Disconnected (error)!!!')
         });
-        clientReadableStream.on('error', function(response){ //status, error, close
-            console.log('Disconnected!!!')
+        clientReadableStream.on('end', async (response)=>{
+            console.log('Disconnected (end)!!!')
+            console.log('Reconnecting!!! (10s sleep)')
+            await this.sleep(10 * 1000)
+            this.streamEvents()
         });
-
-
     }
 
     sendPing() {
@@ -85,8 +82,23 @@ class chirpstackService {
         return this.recs
     }
 
+    async sleep(ms) {
+        return new Promise((resolve) => {
+            setTimeout(resolve, ms);
+        });
+    }
 
 }
 
 
 module.exports = chirpstackService
+
+// clientReadableStream.on('status', function(response){ //status, error, close
+//     console.log('Disconnected (status)!!!', response)
+// });
+// clientReadableStream.on('end', function(response){ //status, error, close
+//     console.log('Disconnected (end)!!!')
+// });
+// clientReadableStream.on('error', function(response){ //status, error, close
+//     console.log('Disconnected (error)!!!', response)
+// });
