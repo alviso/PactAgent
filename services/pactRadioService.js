@@ -145,8 +145,8 @@ class pactRadioService {
             recs.forEach(rec => {
                 console.log(rec)
                 this.pactCall('S', 'free.radio02.add-received', rec.gatewayId, rec.mic)
-                this.cS.removeRec(rec)
             })
+            this.cS.rmRecs()
         }
     }
 

@@ -13,7 +13,7 @@ class chirpstackService {
     }
 
     streamEvents() {
-        this.recs = new Set()
+        this.recs = []
         this.startupTs = Date.now()
         this.metadata = new grpc.Metadata();
         this.metadata.set('authorization', config.chirpstack.apiKey);
@@ -40,7 +40,7 @@ class chirpstackService {
             const rec = {mic: payload?.mic, gatewayId}
             //Not at startup
             if (Date.now() - this.startupTs > 1000) {
-                this.recs.add(rec)
+                this.recs.push(rec)
             }
         });
         clientReadableStream.on('error', (response)=>{
@@ -74,12 +74,12 @@ class chirpstackService {
         })
     }
 
-    removeRec(rec) {
-        this.recs.delete(rec)
+    getRecs() {
+        return Array.from(new Set(this.recs))
     }
 
-    getRecs() {
-        return this.recs
+    rmRecs() {
+        this.recs = []
     }
 
     async sleep(ms) {
