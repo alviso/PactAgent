@@ -75,7 +75,7 @@ class chirpstackService {
     }
 
     getRecs() {
-        return Array.from(new Set(this.recs))
+        return [...new Map(this.recs.map(item => [item['mic'], item])).values()]
     }
 
     rmRecs() {

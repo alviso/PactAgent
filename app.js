@@ -88,7 +88,6 @@ for (let i in config.chains) {
   app.locals.pAS[chain.name] = new pactRadioService(chain, app.locals.cS) //new pactAgentService(chain)
 }
 
-
 // const updater = new AutoGitUpdate(config.autoUpdate);
 // updater.autoUpdate();
 
