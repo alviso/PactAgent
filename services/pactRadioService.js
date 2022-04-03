@@ -14,7 +14,6 @@ class pactRadioService {
         this.consMember = false
         this.cS = cS
         this.API_HOST = `https://${chain.host}/chainweb/0.0/${chain.networkId}/chain/${chain.chainId}/pact`
-        this.secsBase = 600
         this.db = new Engine.Db('./data', {});
         if (chain.name === 'test') this.name = ''
         else this.name = chain.name
@@ -308,34 +307,7 @@ String.prototype.replaceAll = function(match, replace) {
 
 module.exports = pactRadioService
 
-// async closeSendReceive(address, receives) {
-//     const cmdObj = {
-//         pactCode: Pact.lang.mkExp(`free.radio02.close-send-receive  \"${address}\" ${receives}`),
-//         keyPairs: this.KP,
-//         meta: this.makeMeta(),
-//         networkId: this.chain.networkId,
-//     };
-//     const resp = await Pact.fetch.send(cmdObj, this.API_HOST)
-//     console.log(this.chain.name, 'Close send / receive: ', resp)
-//     if (resp?.requestKeys) await this.addTxn(resp?.requestKeys[0], 'Close send / receive')
-//     return resp || {}
-// }
-
-// async getBalance(wallet, coin) {
-    // const cmdObj = {
-    //     pactCode: Pact.lang.mkExp(`${coin}.details \"${wallet}\"`),
-    //     keyPairs: this.KP,
-    //     meta: this.makeMeta(),
-    //     networkId: this.chain.networkId,
-    // };
-    //
-    // const resp = await Pact.fetch.local(cmdObj, this.API_HOST)
-//     return resp.result?.data?.balance || 0
-// }
-
-// const runTasks = require("./runTasks.js");
 // const crypto = require("crypto");
 // const CryptoJS = require("crypto-js");
-// const app = require('../app')
 
 

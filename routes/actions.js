@@ -105,11 +105,12 @@ router.get('/balances', asyncHandler(async (req, res, next) => {
         newBalance.value = balances[i].balance.toString()
         if (newBalances.filter(e => e.date === newBalance.date).length === 0) newBalances.push(newBalance)
     }
-    for (let i = 0; i<21; i++) {
+    for (let i = 0; i<14; i++) {
         const date = moment().subtract(i, 'days').format('YYYY-MM-DD')
         if (newBalances.filter(e => e.date === date).length === 0) newBalances.push({date, value:0})
     }
     newBalances = newBalances.filter(e => e.date >= cutoff)
+    newBalances = newBalances.sort((a,b)=>(moment(b.date) - moment(a.date)))
     res.json(newBalances)
 }))
 
@@ -140,19 +141,4 @@ module.exports = router;
 // }
 // dailys.reverse()
 //     res.json({}) //dailys
-// }))
-//
-// router.get('/crankstats', asyncHandler(async (req, res, next) => {
-//     const service = res.app.locals.pAS[res.app.locals.chain.name]
-// let crankstats = await service.getCrankstats()
-// crankstats.shift()
-// const stats = crankstats.length
-// const date = stats > 0 ? new Date(crankstats[stats-1].day) : Date.now()
-// if (crankstats.length < 7){
-//     for (let i=0; i < 7 - stats; i++ ) {
-//         crankstats.push({day:moment.utc(date).subtract(i+1, 'd').format("YYYY-MM-DD"), count:{int:10}})
-//     }
-// }
-// crankstats.reverse()
-//     res.json({}) //crankstats
 // }))

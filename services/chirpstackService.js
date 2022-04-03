@@ -1,10 +1,7 @@
 const config = require("../config.js");
 const grpc = require('@grpc/grpc-js')
-// const internalService = require('@crankk.io/chirpstack-api-fork/as/external/api/internal_grpc_pb')
-// const internalMessages = require('@crankk.io/chirpstack-api-fork/as/external/api/internal_pb')
 const gatewayService = require('@crankk.io/chirpstack-api-fork/as/external/api/gateway_grpc_pb')
 const gatewayMessages = require('@crankk.io/chirpstack-api-fork/as/external/api/gateway_pb')
-// const Pact = require("pact-lang-api");
 
 class chirpstackService {
 
@@ -102,3 +99,6 @@ module.exports = chirpstackService
 // clientReadableStream.on('error', function(response){ //status, error, close
 //     console.log('Disconnected (error)!!!', response)
 // });
+// const internalService = require('@crankk.io/chirpstack-api-fork/as/external/api/internal_grpc_pb')
+// const internalMessages = require('@crankk.io/chirpstack-api-fork/as/external/api/internal_pb')
+
