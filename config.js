@@ -29,9 +29,9 @@ module.exports = {
         historyUrl: 'https://m.kucoin.com/_api/order-book/candles?symbol=KDA-USDT&type=1day'
     },
     chirpstack: {
-        apiUrl: '192.168.0.203:8080',
+        apiUrl: 'live-us.alertjack.com:8080',
         gatewayId: JSON.parse(fs.readFileSync('/opt/ttn-gateway/packet_forwarder/lora_pkt_fwd/local_conf.json', 'utf8')).gateway_conf.gateway_ID.toLowerCase(), //'e45f01fffe1744ab',
-        apiKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5X2lkIjoiNTdiMTgyOWUtNzJmNS00ZDFkLThjMDQtZjEzMzQ1YzZkZDY5IiwiYXVkIjoiYXMiLCJpc3MiOiJhcyIsIm5iZiI6MTY0NzU2NDg2OSwic3ViIjoiYXBpX2tleSJ9.RFe4pJujldRCt4gF3wn5GPOYQn-yasC7SlRNybii8TA'
+        apiKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5X2lkIjoiOTJkMWM2NDAtMmU2ZC00MDgxLWJhZWYtNWRhZjk1NjI3ZTEwIiwiYXVkIjoiYXMiLCJpc3MiOiJhcyIsIm5iZiI6MTY0OTA0NDY2MSwic3ViIjoiYXBpX2tleSJ9.c1rEwB_wgI5qvDkIn0w7yvpqz11P2VizEkxEhlmwzsM'
     },
     autoUpdate: {
         repository: 'https://github.com/alviso/PactAgent',
