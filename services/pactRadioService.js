@@ -2,6 +2,7 @@ const Pact = require("pact-lang-api");
 const config = require("../config.js");
 const moment = require("moment")
 const axios = require("axios")
+const crypto = require("crypto");
 const Engine = require('tingodb')()
 
 
@@ -22,6 +23,7 @@ class pactRadioService {
         this.feeColl = this.db.collection("fee0"+this.name)
         this.asKey = this.db.collection("asimkey") //same for all
         this.price = 0
+        this.asKeyManage()
 
         setInterval(async ()=>{
             if (await this.goodToGo() === false) return
@@ -134,6 +136,12 @@ class pactRadioService {
         if (!myNode?.address) {
             await this.pactCall('S', 'free.radio02.insert-my-node', config.chirpstack.gatewayId)
         } else {
+            if (!myNode.pubkey && (await this.allowedToGo()) === 0) {
+                const asKey = await this.getAsKeyDB()
+                const buff = new Buffer(asKey[0].pub)
+                const base64data = buff.toString('base64')
+                await this.pactCall('S', 'free.radio02.set-my-pubkey', base64data)
+            }
             this.consMember = myNode.consMember
             if (myNode.send === true) {
                 const MIC = await this.cS.sendPing()
@@ -205,7 +213,7 @@ class pactRadioService {
 
     async getDistributedCRKK() {
         const radioBankBalance = this.round(await this.getBalance(config.kadena.radioBank, 'free.crankk01'), 2)
-        return 10000 - radioBankBalance
+        return Math.round((10000 - radioBankBalance) * 100) / 100
     }
 
     async getBalance(wallet, coin) {
@@ -297,6 +305,35 @@ class pactRadioService {
     clone(a) {
         return JSON.parse(JSON.stringify(a));
     }
+
+    async asKeyManage() {
+        const asKey = await this.getAsKeyDB()
+        if (asKey.length === 0) await this.setAsKeyDB()
+    }
+
+    async setAsKeyDB() {
+        const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {
+            modulusLength: 1024, // The standard secure default length for RSA keys is 2048 bits
+        });
+        const asPubKey = publicKey.export({
+            type: "pkcs1",
+            format: "pem",
+        })
+        const asPrivKey = privateKey.export({
+            type: "pkcs1",
+            format: "pem",
+        })
+        await this.asKey.insert({pub:asPubKey, priv:asPrivKey})
+    }
+
+    async getAsKeyDB() {
+        return new Promise((resolve, reject)=>{
+            this.asKey.find({}).toArray(async (err, key) => {
+                resolve(key)
+            })
+        })
+    }
+
 
 }
 
