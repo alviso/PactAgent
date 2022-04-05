@@ -31,7 +31,7 @@ module.exports = {
     chirpstack: {
         apiUrl: 'live-us.alertjack.com:8080',
         gatewayId: JSON.parse(fs.readFileSync('/opt/ttn-gateway/packet_forwarder/lora_pkt_fwd/local_conf.json', 'utf8')).gateway_conf.gateway_ID.toLowerCase(), //'e45f01fffe1744ab',
-        apiKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5X2lkIjoiOTJkMWM2NDAtMmU2ZC00MDgxLWJhZWYtNWRhZjk1NjI3ZTEwIiwiYXVkIjoiYXMiLCJpc3MiOiJhcyIsIm5iZiI6MTY0OTA0NDY2MSwic3ViIjoiYXBpX2tleSJ9.c1rEwB_wgI5qvDkIn0w7yvpqz11P2VizEkxEhlmwzsM'
+        apiKey: JSON.parse(fs.readFileSync('./apikey.json', 'utf8')).apikey,
     },
     autoUpdate: {
         repository: 'https://github.com/alviso/PactAgent',
