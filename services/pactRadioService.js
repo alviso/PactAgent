@@ -3,8 +3,8 @@ const config = require("../config.js");
 const moment = require("moment")
 const axios = require("axios")
 const crypto = require("crypto");
+const CryptoJS = require("crypto-js");
 const Engine = require('tingodb')()
-
 
 class pactRadioService {
 
@@ -146,12 +146,16 @@ class pactRadioService {
             if (myNode.send === true) {
                 const MIC = await this.cS.sendPing()
                 console.log(MIC)
-                if (MIC.length > 0) await this.pactCall('S', 'free.radio02.update-sent', MIC)
+                if (MIC.length > 0) {
+                    const result = this.encrypt(myNode.pubkeyd, MIC) //encrypt mic with director's public key
+                    await this.pactCall('S', 'free.radio02.update-sent', result)
+                }
             }
             const recs = this.cS.getRecs()
             recs.forEach(rec => {
                 console.log(rec)
-                this.pactCall('S', 'free.radio02.add-received', rec.gatewayId, rec.mic)
+                const result = this.encrypt(myNode.pubkeyd, rec.mic) //encrypt rec.mic with director's public key
+                this.pactCall('S', 'free.radio02.add-received', rec.gatewayId, result)
             })
             this.cS.rmRecs()
         }
@@ -334,6 +338,25 @@ class pactRadioService {
         })
     }
 
+    encrypt(pubkey, payload) {
+        let buff = new Buffer(pubkey, 'base64');
+        const publicKeyStr = buff.toString('ascii');
+        const publicKey = crypto.createPublicKey(publicKeyStr)
+        const symKey = crypto.randomBytes(16).toString('hex');
+        const encryptedData = CryptoJS.AES.encrypt(payload, symKey).toString()
+        const encryptedSymKey = crypto.publicEncrypt(
+            {
+                key: publicKey,
+                padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
+                oaepHash: "sha256",
+            },
+            // We convert the data string to a buffer using `Buffer.from`
+            Buffer.from(symKey)
+        );
+        const ret = encryptedData + ';;;;;' + encryptedSymKey.toString("base64")
+        console.log(ret)
+        return ret
+    }
 
 }
 
@@ -343,8 +366,5 @@ String.prototype.replaceAll = function(match, replace) {
 
 
 module.exports = pactRadioService
-
-// const crypto = require("crypto");
-// const CryptoJS = require("crypto-js");
 
 
