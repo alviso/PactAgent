@@ -79,13 +79,17 @@ class pactRadioService {
                 await this.pactCall('S', 'free.radio02.direct-to-send', sel.address)
             }
             const checkableNodes = nodes.filter(e => e.send === false && e.sent.length > 0)
+            const asKey = await this.getAsKeyDB()
             for (let i in checkableNodes) {
                 const node = checkableNodes[i]
-                const sent = this.decrypt(node.sent)
+                const sent = this.decrypt(asKey[0].priv, node.sent)
                 const resp = await this.pactCall('L', 'free.radio02.get-gateway', node.gatewayId)
                 const receives = JSON.parse(resp.replaceAll('} {','},{')) || []
+                for (let j in receives) {
+                    receives[j].mic = this.decrypt(asKey[0].priv, receives[j].mic)
+                }
                 //Analyze and reward here
-                const validReceives = receives.filter(e => this.decrypt(e.mic) === sent)
+                const validReceives = receives.filter(e => e.mic === sent)
                 const unique = [...new Map(validReceives.map(item => [item['address'], item])).values()]
                 await this.pactCall('S', 'free.radio02.close-send-receive', node.address, unique)
                 // await this.closeSendReceive(node.address, JSON.stringify(unique))
@@ -358,17 +362,16 @@ class pactRadioService {
         return ret
     }
 
-    async decrypt(result) {
+    decrypt(privkey, result) {
         if (!result.includes(';;;;;')) {
             return result
         } else {
             const encryptedData = result.split(';;;;;')[0]
             const encryptedSymKey64 = result.split(';;;;;')[1]
             const encryptedSymKey = Buffer.from(encryptedSymKey64, "base64");
-            const asKey = await this.getAsKeyDB()
             const symKeyHex = crypto.privateDecrypt(
                 {
-                    key: asKey[0].priv,
+                    key: privkey,
                     padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
                     oaepHash: "sha256",
                 },
