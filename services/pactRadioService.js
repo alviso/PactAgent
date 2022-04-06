@@ -81,11 +81,11 @@ class pactRadioService {
             const checkableNodes = nodes.filter(e => e.send === false && e.sent.length > 0)
             for (let i in checkableNodes) {
                 const node = checkableNodes[i]
-                const sent = node.sent
+                const sent = this.decrypt(node.sent)
                 const resp = await this.pactCall('L', 'free.radio02.get-gateway', node.gatewayId)
                 const receives = JSON.parse(resp.replaceAll('} {','},{')) || []
                 //Analyze and reward here
-                const validReceives = receives.filter(e => e.mic === sent)
+                const validReceives = receives.filter(e => this.decrypt(e.mic) === sent)
                 const unique = [...new Map(validReceives.map(item => [item['address'], item])).values()]
                 await this.pactCall('S', 'free.radio02.close-send-receive', node.address, unique)
                 // await this.closeSendReceive(node.address, JSON.stringify(unique))
@@ -356,6 +356,28 @@ class pactRadioService {
         const ret = encryptedData + ';;;;;' + encryptedSymKey.toString("base64")
         console.log(ret)
         return ret
+    }
+
+    async decrypt(result) {
+        if (!result.includes(';;;;;')) {
+            return result
+        } else {
+            const encryptedData = result.split(';;;;;')[0]
+            const encryptedSymKey64 = result.split(';;;;;')[1]
+            const encryptedSymKey = Buffer.from(encryptedSymKey64, "base64");
+            const asKey = await this.getAsKeyDB()
+            const symKeyHex = crypto.privateDecrypt(
+                {
+                    key: asKey[0].priv,
+                    padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
+                    oaepHash: "sha256",
+                },
+                encryptedSymKey
+            );
+            const symKey = symKeyHex.toString()
+            const decryptedData = CryptoJS.AES.decrypt(encryptedData, symKey).toString(CryptoJS.enc.Utf8)
+            return decryptedData
+        }
     }
 
 }
