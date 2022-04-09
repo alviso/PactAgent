@@ -9,8 +9,9 @@ const {format} = require("morgan");
 router.get('/', asyncHandler(async (req, res, next) => {
   const service = res.app.locals.pAS[res.app.locals.chain.name]
   const balances = await service.getBalances()
+  const cycles = await service.readCycles()
   const dates = {monthago: moment().subtract(14, 'days').format('MMM Do'), today:moment().format('MMM Do')}
-  res.render('agentDash', {category: 'Pact Agent', balances, dates})
+  res.render('agentDash', {category: 'Pact Agent', balances, dates, cycles})
 }))
 
 router.get('/home', asyncHandler(async (req, res, next) => {

@@ -20,8 +20,8 @@ class pactRadioService {
         else this.name = chain.name
         this.balanceColl = this.db.collection("balance"+this.name)
         this.txnColl = this.db.collection("txns0"+this.name)
-        this.feeColl = this.db.collection("fee0"+this.name)
         this.asKey = this.db.collection("asimkey") //same for all
+        this.cyclesColl = this.db.collection("cycles0"+this.name)
         this.price = 0
         this.asKeyManage()
 
@@ -59,6 +59,13 @@ class pactRadioService {
                     const oldBalance = coinBalances[coinBalances.length - 1]?.balance || 0
                     const balance = this.round(await this.getBalance(this.wallet, coin), 3)
                     if (balance !== oldBalance) {
+                        if (coin.includes('crankk')) {
+                            const cycles = await this.readCycles()
+                            const lastCycle = cycles[0]
+                            if (!lastCycle.award) lastCycle.award = balance - oldBalance
+                            this.cyclesColl.update({"ts" : lastCycle.ts},
+                                {$set: { "award" : lastCycle.award}})
+                        }
                         this.balanceColl.insert({coin, ts:now, balance})
                         this.balanceColl.remove({'ts': {$lt: now - 21 * 24 * 60 * 60 * 1000}})
                     }
@@ -153,6 +160,7 @@ class pactRadioService {
                 if (MIC.length > 0) {
                     const result = this.encrypt(myNode.pubkeyd, MIC) //encrypt mic with director's public key
                     await this.pactCall('S', 'free.radio02.update-sent', result)
+                    this.cyclesColl.insert({event:'send', mic:MIC, ts:Date.now()})
                 }
             }
             const recs = this.cS.getRecs()
@@ -160,6 +168,7 @@ class pactRadioService {
                 console.log(rec)
                 const result = this.encrypt(myNode.pubkeyd, rec.mic) //encrypt rec.mic with director's public key
                 this.pactCall('S', 'free.radio02.add-received', rec.gatewayId, result)
+                this.cyclesColl.insert({event:'receive', gatewayId:rec.gatewayId, mic:rec.mic, ts:Date.now()})
             })
             this.cS.rmRecs()
         }
@@ -201,7 +210,7 @@ class pactRadioService {
                 console.log('Gas corrected!')
             }
             const resp = await Pact.fetch.send(ncmdObj, this.API_HOST)
-            console.log(this.chain.name, module, resp)
+            console.log(this.chain.name, moment().format(), module, resp)
             if (resp?.requestKeys) await this.addTxn(resp?.requestKeys[0], module)
             return resp || {}
         }
@@ -317,6 +326,18 @@ class pactRadioService {
     async asKeyManage() {
         const asKey = await this.getAsKeyDB()
         if (asKey.length === 0) await this.setAsKeyDB()
+    }
+
+    async readCycles() {
+        return new Promise((resolve, reject)=>{
+            this.cyclesColl.find({}).toArray(async (err, key) => {
+                for (let i in key) {
+                    key[i].fromNow = moment(key[i].ts).fromNow()
+                }
+                key = key.sort((a,b) => b.ts - a.ts)
+                resolve(key)
+            })
+        })
     }
 
     async setAsKeyDB() {

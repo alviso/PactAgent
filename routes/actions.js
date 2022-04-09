@@ -44,6 +44,12 @@ router.get('/exchange', asyncHandler(async (req, res, next) => {
     res.render('exchange',  {category: 'Exchange', userDetails, offers, otherOffers, lastPrice})
 }))
 
+router.get('/cycles', asyncHandler(async (req, res, next) => {
+    const service = res.app.locals.pAS[res.app.locals.chain.name]
+    const cycles = await service.readCycles()
+    res.json(cycles)
+}))
+
 router.post('/wallet', asyncHandler(async (req, res, next) => {
     for (let i in res.app.locals.pAS) {
         res.app.locals.pAS[i].setKey(req.body) //set key for all services

@@ -126,42 +126,40 @@
 </div>
 <!-- /quick stats boxes -->
 
-<!--<div class="card">-->
-<!--    <div class="card-header">-->
-<!--        <h5 class="card-title">Modules</h5>-->
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title">Send / Receive Cycles</h5>
+    </div>
+
+<!--    <div class="card-body">-->
+<!--        Modules-->
 <!--    </div>-->
 
-<!--&lt;!&ndash;    <div class="card-body">&ndash;&gt;-->
-<!--&lt;!&ndash;        Modules&ndash;&gt;-->
-<!--&lt;!&ndash;    </div>&ndash;&gt;-->
-
-<!--    <table class="table table-bordered table-hover datatable-highlight">-->
-<!--        <thead>-->
-<!--        <tr>-->
-<!--            <th>Pact Module</th>-->
-<!--            <th>Frequency</th>-->
-<!--            <th>Crank</th>-->
-<!--            <th>Not before</th>-->
-<!--            <th>Planned executor</th>-->
-<!--            <th>Created at</th>-->
-<!--        </tr>-->
-<!--        </thead>-->
-<!--        <tbody>-->
+    <table class="table table-bordered table-hover datatable-highlight">
+        <thead>
+        <tr>
+            <th>Time</th>
+            <th>Event</th>
+            <th>Message</th>
+            <th>Sender</th>
+            <th>Award</th>
+        </tr>
+        </thead>
+        <tbody>
 
 
-<!--        {{#each modules}}-->
-<!--            <tr>-->
-<!--                <td>{{pactModule}}</td>-->
-<!--                <td>{{frequency.int}}</td>-->
-<!--                <td>{{crank}}</td>-->
-<!--                <td>{{net.timep}}</td>-->
-<!--                <td>{{executor}}</td>-->
-<!--                <td>{{createdAt.timep}}</td>-->
-<!--            </tr>-->
-<!--        {{/each}}-->
-<!--        </tbody>-->
-<!--    </table>-->
-<!--</div>-->
+        {{#each cycles}}
+            <tr>
+                <td>{{fromNow}}</td>
+                <td>{{event}}</td>
+                <td>{{mic}}</td>
+                <td>{{gatewayId}}</td>
+                <td>{{award}}</td>
+            </tr>
+        {{/each}}
+        </tbody>
+    </table>
+</div>
 
 <!--<div class="card">-->
 <!--    <div class="card-header">-->
