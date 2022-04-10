@@ -71,7 +71,7 @@ class pactRadioService {
                     }
                 }
             } )
-        }, 60 * 1000); //balance update
+        }, 60 * 1000); //balance update, received award update,
 
         setInterval(async ()=>{
             if (await this.goodToGo() === false) return
@@ -99,11 +99,10 @@ class pactRadioService {
                 const validReceives = receives.filter(e => e.mic === sent)
                 const unique = [...new Map(validReceives.map(item => [item['address'], item])).values()]
                 await this.pactCall('S', 'free.radio02.close-send-receive', node.address, unique)
-                // await this.closeSendReceive(node.address, JSON.stringify(unique))
                 console.log(sent, receives)
             }
 
-        }, 5 * 60 * 1000);
+        }, 5 * 60 * 1000); //Arbitration, award
 
     }
 
@@ -171,6 +170,13 @@ class pactRadioService {
                 this.cyclesColl.insert({event:'receive', gatewayId:rec.gatewayId, mic:rec.mic, ts:Date.now()})
             })
             this.cS.rmRecs()
+
+            const cycles = await this.readCycles()
+            const lastCycle = cycles[0]
+            if (lastCycle.event === 'send' && !lastCycle.validReceives) {
+                this.cyclesColl.update({"ts" : lastCycle.ts},
+                    {$set: { "validReceives" : myNode.validReceives}})
+            }
         }
     }
 
@@ -330,11 +336,14 @@ class pactRadioService {
 
     async readCycles() {
         return new Promise((resolve, reject)=>{
-            this.cyclesColl.find({}).toArray(async (err, key) => {
+            const dayAgo = Date.now() - 24 * 60 * 60 * 1000
+            this.cyclesColl.find({ts: {$gt: dayAgo}}).toArray(async (err, key) => {
                 for (let i in key) {
                     key[i].fromNow = moment(key[i].ts).fromNow()
+                    key[i].jsonValRec = JSON.stringify(key[i].validReceives)
                 }
                 key = key.sort((a,b) => b.ts - a.ts)
+                key = key.slice(0,10)
                 resolve(key)
             })
         })

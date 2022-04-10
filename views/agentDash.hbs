@@ -138,11 +138,13 @@
     <table class="table table-bordered table-hover datatable-highlight">
         <thead>
         <tr>
+            <th>TS</th>
             <th>Time</th>
             <th>Event</th>
             <th>Message</th>
             <th>Sender</th>
             <th>Award</th>
+            <th>Valid receives</th>
         </tr>
         </thead>
         <tbody>
@@ -150,11 +152,13 @@
 
         {{#each cycles}}
             <tr>
+                <td>{{ts}}</td>
                 <td>{{fromNow}}</td>
                 <td>{{event}}</td>
                 <td>{{mic}}</td>
                 <td>{{gatewayId}}</td>
                 <td>{{award}}</td>
+                <td>{{jsonValRec}}</td>
             </tr>
         {{/each}}
         </tbody>
