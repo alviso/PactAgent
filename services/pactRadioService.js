@@ -88,9 +88,10 @@ class pactRadioService {
             const checkableNodes = nodes.filter(e => e.send === false && e.sent.length > 0)
             const asKey = await this.getAsKeyDB()
             for (let i in checkableNodes) {
-                const node = checkableNodes[i]
-                const sent = this.decrypt(asKey[0].priv, node.sent)
-                const resp = await this.pactCall('L', 'free.radio02.get-gateway', node.gatewayId)
+                const sendNode = checkableNodes[i]
+                sendNode.gps = this.cS.getGatewayGPS(sendNode.gatewayId)
+                const sent = this.decrypt(asKey[0].priv, sendNode.sent)
+                const resp = await this.pactCall('L', 'free.radio02.get-gateway', sendNode.gatewayId)
                 const receives = JSON.parse(resp.replaceAll('} {','},{')) || []
                 for (let j in receives) {
                     receives[j].mic = this.decrypt(asKey[0].priv, receives[j].mic)
@@ -98,7 +99,13 @@ class pactRadioService {
                 //Analyze and reward here
                 const validReceives = receives.filter(e => e.mic === sent)
                 const unique = [...new Map(validReceives.map(item => [item['address'], item])).values()]
-                await this.pactCall('S', 'free.radio02.close-send-receive', node.address, unique)
+                const gateways = []
+                for (let j in unique) {
+                    const node = nodes.find(e => e.address === unique[j].address)
+                    node.gps = await this.cS.getGatewayGPS(config.chirpstack.gatewayId)
+                    if (node) gateways.push(JSON.stringify({id:node.gatewayId, gps:node.gps}))
+                }
+                await this.pactCall('S', 'free.radio02.close-send-receive', sendNode.address, unique, gateways)
                 console.log(sent, receives)
             }
 
@@ -171,9 +178,9 @@ class pactRadioService {
             })
             this.cS.rmRecs()
 
-            const cycles = await this.readCycles()
+            const cycles = await this.readSendCycles()
             const lastCycle = cycles[0]
-            if (lastCycle.event === 'send' && !lastCycle.validReceives) {
+            if (lastCycle.event === 'send' && (!lastCycle.validReceives || lastCycle.validReceives.length === 0)) {
                 this.cyclesColl.update({"ts" : lastCycle.ts},
                     {$set: { "validReceives" : myNode.validReceives}})
             }
@@ -348,6 +355,12 @@ class pactRadioService {
             })
         })
     }
+
+    async readSendCycles() {
+        const cycles = await this.readCycles()
+        return cycles.filter(e => e.event === 'send')
+    }
+
 
     async setAsKeyDB() {
         const { publicKey, privateKey } = crypto.generateKeyPairSync("rsa", {

@@ -72,6 +72,22 @@ class chirpstackService {
         })
     }
 
+    getGatewayGPS(gatewayId) {
+        return new Promise((resolve, reject)=>{
+            const request = new gatewayMessages.GetGatewayRequest()
+            request.setId(gatewayId)
+            this.gatewayServiceClient.get(request, this.metadata, function (err, res) {
+                if (err) {
+                    console.log(err)
+                    return resolve('')
+                }
+                const gpsObject = res.getGateway().getLocation().toObject()
+                console.log(gpsObject)
+                return resolve(gpsObject)
+            })
+        })
+    }
+
     getRecs() {
         return [...new Map(this.recs.map(item => [item['mic'], item])).values()]
     }
