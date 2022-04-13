@@ -116,7 +116,7 @@ class pactRadioService {
     async allowedToGo() {
         return new Promise((resolve, reject)=>{
             this.txnColl.find({ "result" : { "$exists" : false } }).toArray(async (err, txns) => {
-                // console.log(this.chain.name, txns.length)
+                if (err) return resolve(0)
                 resolve(txns.length)
             })
         })
