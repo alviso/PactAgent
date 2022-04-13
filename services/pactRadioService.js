@@ -345,6 +345,7 @@ class pactRadioService {
         return new Promise((resolve, reject)=>{
             const dayAgo = Date.now() - 24 * 60 * 60 * 1000
             this.cyclesColl.find({ts: {$gt: dayAgo}}).toArray(async (err, key) => {
+                if (err) return resolve([])
                 for (let i in key) {
                     key[i].fromNow = moment(key[i].ts).fromNow()
                     key[i].jsonValRec = JSON.stringify(key[i].validReceives)
