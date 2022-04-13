@@ -338,7 +338,7 @@ class pactRadioService {
 
     async asKeyManage() {
         const asKey = await this.getAsKeyDB()
-        if (asKey.length === 0) await this.setAsKeyDB()
+        if (!asKey || asKey.length === 0) await this.setAsKeyDB()
     }
 
     async readCycles() {
