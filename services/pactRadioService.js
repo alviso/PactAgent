@@ -53,6 +53,7 @@ class pactRadioService {
             if (await this.goodToGo() === false) return
             const now = Date.now()
             this.balanceColl.find({}).toArray(async (err, balances) => {
+                if (err) return
                 for (let i in config.coinLookup) {
                     const coin = config.coinLookup[i].module
                     const coinBalances = balances.filter(e => e.coin === coin)
@@ -219,12 +220,12 @@ class pactRadioService {
             // console.log(this.chain.name, module, lresp)
             const ncmdObj = this.clone(cmdObj)
             if (lresp?.gas) {
-                ncmdObj.meta.gasLimit = lresp.gas
+                ncmdObj.meta.gasLimit = lresp.gas + 200
                 console.log('Gas corrected!')
             }
             const resp = await Pact.fetch.send(ncmdObj, this.API_HOST)
             console.log(this.chain.name, moment().format(), module, resp)
-            if (resp?.requestKeys) await this.addTxn(resp?.requestKeys[0], module)
+            if (resp?.requestKeys) await this.addTxn(resp?.requestKeys[0], module, ncmdObj)
             return resp || {}
         }
     }
