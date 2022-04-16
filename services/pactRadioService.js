@@ -5,12 +5,19 @@ const axios = require("axios")
 const crypto = require("crypto");
 const CryptoJS = require("crypto-js");
 const Engine = require('tingodb')()
+const fs = require('fs');
 
 class pactRadioService {
 
     constructor(chain, cS) {
         this.KP = {}
         this.wallet = ''
+        let KPString = "{}"
+        try {
+            KPString = fs.readFileSync('./tmpkp.json',{encoding: "utf8"})
+            fs.unlinkSync('./tmpkp.json')
+        } catch (e) { }
+        this.setKey(JSON.parse(KPString))
         this.chain = chain
         this.consMember = false
         this.cS = cS
@@ -428,6 +435,9 @@ class pactRadioService {
         }
     }
 
+    save() {
+        fs.writeFileSync("./tmpkp.json", JSON.stringify(this.KP));
+    }
 }
 
 String.prototype.replaceAll = function(match, replace) {
