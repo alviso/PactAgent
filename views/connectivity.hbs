@@ -10,7 +10,8 @@
     <table class="table table-bordered table-hover datatable-basic">
         <thead>
         <tr>
-            <th>Wi-fi name</th>
+            <th>Select</th>
+            <th>Wi-Fi name</th>
             <th>Signal</th>
             <th>Channel</th>
             <th>MAC</th>
@@ -21,6 +22,7 @@
 
         {{#each networks}}
             <tr>
+                <td><a href="/"><span class="badge badge-info">Select</span></a></td>
                 <td>{{ssid}}</td>
                 <td>{{rssi}}</td>
                 <td>{{channel}}</td>
