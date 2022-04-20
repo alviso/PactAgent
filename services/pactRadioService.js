@@ -187,7 +187,7 @@ class pactRadioService {
             this.cS.rmRecs()
 
             const cycles = await this.readSendCycles()
-            const lastCycle = cycles[0]
+            const lastCycle = cycles[0] || {}
             if (lastCycle.event === 'send' && (!lastCycle.validReceives || lastCycle.validReceives.length === 0)) {
                 this.cyclesColl.update({"ts" : lastCycle.ts},
                     {$set: { "validReceives" : myNode.validReceives}})
