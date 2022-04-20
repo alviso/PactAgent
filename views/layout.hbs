@@ -298,14 +298,14 @@
     <!-- /page content -->
     <script>
         $(document).ready(function() {
-            const prKey = sessionStorage.getItem('prKey-pactAgent')
-            const cipher = localStorage.getItem('cipher-pactAgent')
-            if (!cipher && !window.location.href.includes('/actions/wallet') && !window.location.href.includes('/actions/restore')) {
-                window.location.href = '/actions/wallet'
-            }
-            if (cipher && !prKey && !window.location.href.includes('/actions/passPhrase')) {
-                window.location.href = '/actions/passPhrase'
-            }
+            // const prKey = sessionStorage.getItem('prKey-pactAgent')
+            // const cipher = localStorage.getItem('cipher-pactAgent')
+            // if (!cipher && !window.location.href.includes('/actions/wallet') && !window.location.href.includes('/actions/restore')) {
+            //     window.location.href = '/actions/wallet'
+            // }
+            // if (cipher && !prKey && !window.location.href.includes('/actions/passPhrase')) {
+            //     window.location.href = '/actions/passPhrase'
+            // }
         })
     </script>
     </body>
