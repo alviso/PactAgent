@@ -20,7 +20,6 @@
 </div>
 
 
-
 <div class="card">
     <div class="card-header">
         <h5 class="card-title">Connectivity</h5>
@@ -45,7 +44,7 @@
 
         {{#each networks}}
             <tr>
-                <td><a href="/"><span class="badge badge-info">Select</span></a></td>
+                <td><span class="badge badge-info">Select</span></td>
                 <td>{{ssid}}</td>
                 <td>{{rssi}}</td>
                 <td>{{channel}}</td>
@@ -56,6 +55,7 @@
     </table>
 </div>
 <script>
-    $(document).ready(function() {
+    $( "span" ).click(function() {
+        alert( "Handler for .click() called." );
     });
 </script>
