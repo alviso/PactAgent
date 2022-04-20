@@ -56,6 +56,6 @@
 </div>
 <script>
     $( "span" ).click(function() {
-        alert( "Handler for .click() called." );
+        alert( $(this).parent().next().val() );
     });
 </script>
