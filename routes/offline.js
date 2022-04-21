@@ -13,7 +13,8 @@ router.get('/connectivity', asyncHandler(async (req, res, next) => {
 router.post('/addWifi', asyncHandler(async (req, res, next) => {
   const {name, pwd} = req.body
   const service = res.app.locals.connS
-  const index = await service.exec(`sudo wpa_cli -i wlan0 add_network`)
+  const ind = await service.exec(`sudo wpa_cli -i wlan0 add_network`)
+  const index = parseInt(ind).toString()
   console.log(index)
   const resp1 = await service.exec(`sudo wpa_cli -i wlan0 set_network ${index} ssid '"${name}"'`)
   console.log(resp1)
