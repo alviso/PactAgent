@@ -20,6 +20,10 @@ router.post('/addWifi', asyncHandler(async (req, res, next) => {
   console.log(resp1)
   const resp2 = await service.exec(`sudo wpa_cli -i wlan0 set_network ${index} psk '"${pwd}"'`)
   console.log(resp2)
+  const resp3 = await service.exec(`sudo wpa_cli -i wlan0 save_config`)
+  console.log(resp3)
+  const resp4 = await service.exec(`sudo sed -i '/disabled/d' /etc/wpa_supplicant/wpa_supplicant.conf`)
+  console.log(resp4)
   res.json({a:1})
 }))
 
