@@ -21,12 +21,7 @@ var app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(logger('dev'));
 
 app.use(async function (req, res, next) {
   res.locals.status = {}
@@ -39,8 +34,9 @@ app.use(async function (req, res, next) {
   if (!app.locals.pAS[app.locals.chain.name] && req.url === '/') {
     res.locals.status.color = 'primary'
     res.locals.status.message = 'Offline'
-    const networks = await app.locals.connS.scan()
-    res.render('connectivity', {category: 'Connectivity', networks})
+    req.url = '/offline/connectivity'
+    // const networks = await app.locals.connS.scan()
+    // res.render('connectivity', {category: 'Connectivity', networks})
   }
   return next();
 
@@ -68,6 +64,11 @@ app.use(async function (req, res, next) {
   }
 
 })
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(logger('dev'));
 
 app.use('/', indexRouter);
 app.use('/actions', actionsRouter);
