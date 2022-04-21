@@ -19,8 +19,8 @@
             <input type="password" class="form-control" id="pwd" placeholder="Wi-Fi Password">
         </div>
         <div class="text-left">
-            <button type="submit" class="btn btn-primary">Add Wi-Fi <i class="icon-paperplane ml-2"></i></button>
-            <button type="submit" class="btn btn-danger">Reboot and connect to Wi-Fi <i class="icon-paperplane ml-2"></i></button>
+            <button type="submit" class="btn btn-primary" id="save">Add Wi-Fi <i class="icon-paperplane ml-2"></i></button>
+            <button type="submit" class="btn btn-danger" id="reboot">Reboot and connect to Wi-Fi <i class="icon-paperplane ml-2"></i></button>
         </div>
     </div>
 </div>
@@ -63,5 +63,10 @@
 <script>
     $( "span" ).click(function() {
         $('#name').val($(this).parent().next().html())
+    });
+    $( "#save" ).click(function() {
+        $.post( "/offline/addWifi", function( data ) {
+           console.log(data)
+        });
     });
 </script>
