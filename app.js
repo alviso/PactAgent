@@ -36,7 +36,7 @@ app.use(async function (req, res, next) {
   res.locals.status.net = app.locals.chain.name + '/' + app.locals.chain.chainId
   res.locals.status.netcolor = app.locals.chain.color
 
-  if (!app.locals.pAS[app.locals.chain.name]) {
+  if (!app.locals.pAS[app.locals.chain.name] && req.url === '/') {
     res.locals.status.color = 'primary'
     res.locals.status.message = 'Offline'
     const networks = await app.locals.connS.scan()
