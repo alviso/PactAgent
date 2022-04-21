@@ -65,7 +65,9 @@
         $('#name').val($(this).parent().next().html())
     });
     $( "#save" ).click(function() {
-        $.get( "/offline/addWifi", function( data ) {
+        const name =  $('#name').val()
+        const pwd =  $('#pwd').val()
+        $.post( "/offline/addWifi", {name, pwd}, function( data ) {
            console.log(data)
         });
     });
