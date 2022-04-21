@@ -10,7 +10,7 @@ router.get('/connectivity', asyncHandler(async (req, res, next) => {
   res.render('connectivity', {category: 'Connectivity', networks})
 }))
 
-router.post('/addWifi', asyncHandler(async (req, res, next) => {
+router.get('/addWifi', asyncHandler(async (req, res, next) => {
   const service = res.app.locals.connS
   const log = await service.exec('sudo wpa_cli -i wlan0 list_networks')
   res.send(log)
