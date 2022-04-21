@@ -1,4 +1,5 @@
 const scanner = require('node-wifi-scanner');
+const { exec } = require("child_process");
 
 class connectionService {
 
@@ -17,6 +18,24 @@ class connectionService {
             })
         })
     }
+
+    async exec(command) {
+        return new Promise((resolve, reject)=>{
+            exec(command, (error, stdout, stderr) => {
+                if (error) {
+                    console.log(`error: ${error.message}`);
+                    return resolve('');
+                }
+                if (stderr) {
+                    console.log(`stderr: ${stderr}`);
+                    return resolve('');
+                }
+                console.log(`stdout: ${stdout}`);
+                return resolve(stdout);
+            });
+        })
+    }
+
 }
 
 module.exports = connectionService

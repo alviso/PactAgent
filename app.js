@@ -40,6 +40,7 @@ app.use(async function (req, res, next) {
     res.locals.status.color = 'primary'
     res.locals.status.message = 'Offline'
     const networks = await app.locals.connS.scan()
+    await app.locals.connS.exec('sudo wpa_cli -i wlan0 list_networks')
     res.render('connectivity', {category: 'Connectivity', networks})
   }
 
