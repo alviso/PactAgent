@@ -42,7 +42,7 @@ app.use(async function (req, res, next) {
     const networks = await app.locals.connS.scan()
     res.render('connectivity', {category: 'Connectivity', networks})
   }
-  next();
+  return next();
 
   if (app.locals.pAS[app.locals.chain.name]?.hasKey() === true) {
     const wallet = res.app.locals.pAS[app.locals.chain.name].getWallet()
