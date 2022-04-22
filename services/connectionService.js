@@ -1,8 +1,26 @@
 const scanner = require('node-wifi-scanner');
 const { exec } = require("child_process");
+const dns = require('dns')
 
 class connectionService {
 
+    constructor() {
+        this.online = false
+        this.checkIfOnline()
+    }
+
+    checkIfOnline = async () => {
+        setTimeout(this.checkIfOnline, 10 * 1000)
+        dns.resolve('google.com', function (err) {
+            if (err) {
+                this.online = false
+                console.log('offline')
+            } else {
+                this.online = true
+                console.log('online')
+            }
+        });
+    }
 
     async scan() {
         return new Promise((resolve, reject)=>{
