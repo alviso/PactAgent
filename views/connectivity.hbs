@@ -62,6 +62,7 @@
         </tbody>
     </table>
 </div>
+<script src="/global_assets/js/plugins/notifications/noty.min.js"></script>
 <script>
     $( "span" ).click(function() {
         $('#name').val($(this).parent().next().html())
@@ -75,7 +76,11 @@
     });
     $( "#enableAP" ).click(function() {
         $.post( "/offline/enableAP", function( data ) {
-            console.log(data)
+            new Noty({
+                layout: 'center',
+                text: 'AP mode enabled! Device will come back in AP mode after reboot.',
+                type: 'success'
+            }).show();
         });
     });
     $( "#disableAP" ).click(function() {
