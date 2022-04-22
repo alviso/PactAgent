@@ -64,6 +64,15 @@
 </div>
 <script src="/global_assets/js/plugins/notifications/noty.min.js"></script>
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Override Noty defaults
+        Noty.overrideDefaults({
+            theme: 'limitless',
+            layout: 'topRight',
+            type: 'alert',
+            timeout: 2500
+        });
+    });
     $( "span" ).click(function() {
         $('#name').val($(this).parent().next().html())
     });
