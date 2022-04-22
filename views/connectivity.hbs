@@ -80,26 +80,38 @@
         const name =  $('#name').val()
         const pwd =  $('#pwd').val()
         $.post( "/offline/addWifi", {name, pwd}, function( data ) {
-            console.log(data)
+            new Noty({
+                layout: 'center',
+                text: 'New Wi-Fi added!',
+                type: 'success'
+            }).show();
         });
     });
     $( "#enableAP" ).click(function() {
         $.post( "/offline/enableAP", function( data ) {
             new Noty({
                 layout: 'center',
-                text: 'AP mode enabled! \nDevice will come back in AP mode after reboot.',
+                text: 'AP mode enabled! Device will come back in AP mode after reboot.',
                 type: 'success'
             }).show();
         });
     });
     $( "#disableAP" ).click(function() {
         $.post( "/offline/disableAP", function( data ) {
-            console.log(data)
+            new Noty({
+                layout: 'center',
+                text: 'AP mode disabled! Device will come back in Client mode after reboot.',
+                type: 'success'
+            }).show();
         });
     });
     $( "#reboot" ).click(function() {
         $.post( "/offline/reboot", function( data ) {
-            console.log(data)
+            new Noty({
+                layout: 'center',
+                text: 'Rebooting... It may take up to 2 minutes.',
+                type: 'success'
+            }).show();
         });
     });
 </script>
