@@ -20,8 +20,12 @@
         </div>
         <div class="text-left">
             <button type="submit" class="btn btn-primary" id="save">Add Wi-Fi <i class="icon-paperplane ml-2"></i></button>
-            <button type="submit" class="btn btn-secondary" id="switchToAP">Switch to AP <i class="icon-paperplane ml-2"></i></button>
-            <button type="submit" class="btn btn-danger" id="reboot">Reboot to new Wi-Fi mode <i class="icon-paperplane ml-2"></i></button>
+            <button type="submit" class="btn btn-secondary" id="disableAP">Disable AP mode<i class="icon-paperplane ml-2"></i></button>
+            <button type="submit" class="btn btn-danger" id="reboot">Reboot<i class="icon-paperplane ml-2"></i></button>
+        </div>
+        <div class="text-right">
+            <button type="submit" class="btn btn-secondary" id="enableAP">Enable AP mode<i class="icon-paperplane ml-2"></i></button>
+            <button type="submit" class="btn btn-danger" id="reboot">Reboot<i class="icon-paperplane ml-2"></i></button>
         </div>
     </div>
 </div>
@@ -72,8 +76,13 @@
             console.log(data)
         });
     });
-    $( "#switchToAP" ).click(function() {
-        $.post( "/offline/switchToAP", function( data ) {
+    $( "#enableAP" ).click(function() {
+        $.post( "/offline/enableAP", function( data ) {
+            console.log(data)
+        });
+    });
+    $( "#disableAP" ).click(function() {
+        $.post( "/offline/disableAP", function( data ) {
             console.log(data)
         });
     });

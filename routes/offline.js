@@ -27,7 +27,7 @@ router.post('/addWifi', asyncHandler(async (req, res, next) => {
   res.json({a:1})
 }))
 
-router.post('/switchToAP', asyncHandler(async (req, res, next) => {
+router.post('/enableAP', asyncHandler(async (req, res, next) => {
   const service = res.app.locals.connS
   const resp1 = await service.exec(`sudo systemctl enable create_ap`)
   console.log(resp1)
@@ -35,6 +35,13 @@ router.post('/switchToAP', asyncHandler(async (req, res, next) => {
 update_config=1
 " > /etc/wpa_supplicant/wpa_supplicant.conf'`)
   console.log(resp2)
+  res.json({a:1})
+}))
+
+router.post('/disableAP', asyncHandler(async (req, res, next) => {
+  const service = res.app.locals.connS
+  const resp1 = await service.exec(`sudo systemctl disable create_ap`)
+  console.log(resp1)
   res.json({a:1})
 }))
 
