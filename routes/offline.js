@@ -31,9 +31,9 @@ router.post('/switchToAP', asyncHandler(async (req, res, next) => {
   const service = res.app.locals.connS
   const resp1 = await service.exec(`sudo systemctl enable create_ap`)
   console.log(resp1)
-  const resp2 = await service.exec(`sudo echo "ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+  const resp2 = await service.exec(`sudo bash -c 'echo "ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
 update_config=1
-" > /etc/wpa_supplicant/wpa_supplicant.conf`)
+" > /etc/wpa_supplicant/wpa_supplicant.conf'`)
   console.log(resp2)
   res.json({a:1})
 }))
