@@ -38,4 +38,11 @@ update_config=1
   res.json({a:1})
 }))
 
+router.post('/reboot', asyncHandler(async (req, res, next) => {
+  const service = res.app.locals.connS
+  const resp1 = await service.exec(`sudo reboot now`)
+  console.log(resp1)
+  res.json({a:1})
+}))
+
 module.exports = router;
