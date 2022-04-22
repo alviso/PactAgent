@@ -20,8 +20,8 @@
         </div>
         <div class="text-left">
             <button type="submit" class="btn btn-primary" id="save">Add Wi-Fi <i class="icon-paperplane ml-2"></i></button>
-            <button type="submit" class="btn btn-danger" id="reboot">Reboot and connect to Wi-Fi <i class="icon-paperplane ml-2"></i></button>
-            <button type="submit" class="btn btn-danger" id="switchToAP">Switch to AP <i class="icon-paperplane ml-2"></i></button>
+            <button type="submit" class="btn btn-secondary" id="switchToAP">Switch to AP <i class="icon-paperplane ml-2"></i></button>
+            <button type="submit" class="btn btn-danger" id="reboot">Reboot to new Wi-Fi mode <i class="icon-paperplane ml-2"></i></button>
         </div>
     </div>
 </div>
@@ -74,6 +74,11 @@
     });
     $( "#switchToAP" ).click(function() {
         $.post( "/offline/switchToAP", function( data ) {
+            console.log(data)
+        });
+    });
+    $( "#reboot" ).click(function() {
+        $.post( "/offline/reboot", function( data ) {
             console.log(data)
         });
     });
