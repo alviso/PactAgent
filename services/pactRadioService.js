@@ -70,9 +70,11 @@ class pactRadioService {
                         if (coin.includes('crankk')) {
                             const cycles = await this.readCycles()
                             const lastCycle = cycles[0]
-                            if (!lastCycle.award) lastCycle.award = balance - oldBalance
-                            this.cyclesColl.update({"ts" : lastCycle.ts},
-                                {$set: { "award" : lastCycle.award}})
+                            if (lastCycle && !lastCycle.award) {
+                                lastCycle.award = balance - oldBalance
+                                this.cyclesColl.update({"ts" : lastCycle.ts},
+                                    {$set: { "award" : lastCycle.award}})
+                            }
                         }
                         this.balanceColl.insert({coin, ts:now, balance})
                         this.balanceColl.remove({'ts': {$lt: now - 21 * 24 * 60 * 60 * 1000}})

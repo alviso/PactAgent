@@ -41,10 +41,10 @@ app.use(async function (req, res, next) {
     return next();
   }
 
-  if (app.locals.pAS[app.locals.chain.name]?.hasKey() === true) {
-    const wallet = res.app.locals.pAS[app.locals.chain.name].getWallet()
-    const balance = await res.app.locals.pAS[app.locals.chain.name].getBalance(wallet, 'coin')
-    res.locals.txns = await res.app.locals.pAS[app.locals.chain.name].getPending() || []
+  if (app.locals.pAS[activeChain.name]?.hasKey() === true) {
+    const wallet = res.app.locals.pAS[activeChain.name].getWallet()
+    const balance = await res.app.locals.pAS[activeChain.name].getBalance(wallet, 'coin')
+    res.locals.txns = await res.app.locals.pAS[activeChain.name].getPending() || []
     res.locals.status.pending = res.locals.txns.length
     if (res.locals.status.pending === 0) res.locals.status.pending = ''
 
