@@ -6,12 +6,12 @@ class connectionService {
 
     constructor() {
         this.online = false
-        this.checkIfOnline()
+        this.checkOnline()
     }
 
-    checkIfOnline = async () => {
-        setTimeout(this.checkIfOnline, 10 * 1000)
-        dns.resolve('google.com', function (err) {
+    checkOnline = async () => {
+        setTimeout(this.checkOnline, 10 * 1000)
+        dns.resolve('google.com',  (err) => {
             if (err) {
                 this.online = false
                 console.log('offline')
@@ -20,6 +20,10 @@ class connectionService {
                 console.log('online')
             }
         });
+    }
+
+    isOnline() {
+        return this.online
     }
 
     async scan() {

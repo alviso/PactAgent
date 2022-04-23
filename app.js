@@ -3,9 +3,6 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-// const pactAgentService = require('./services/pactAgentService')
-// const machineService = require('./services/machineService')
-// const AutoGitUpdate = require('auto-git-update');
 const pactRadioService = require('./services/pactRadioService')
 const chirpstackService = require('./services/chirpstackService')
 const connectionService = require('./services/connectionService')
@@ -15,6 +12,7 @@ const config = require('./config')
 var indexRouter = require('./routes/index');
 var actionsRouter = require('./routes/actions');
 var offlineRouter = require('./routes/offline');
+const Pact = require("pact-lang-api");
 
 var app = express();
 
@@ -22,23 +20,26 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 app.use(cookieParser());
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(logger('dev'));
 
 app.use(async function (req, res, next) {
   res.locals.status = {}
   res.locals.status.color = 'danger'
   res.locals.status.message = 'No key'
 
-  res.locals.status.net = app.locals.chain.name + '/' + app.locals.chain.chainId
-  res.locals.status.netcolor = app.locals.chain.color
+  const activeChain = config.chains[config.chains.length - 1]
+  res.locals.status.net = activeChain.name + '/' + activeChain.chainId
+  res.locals.status.netcolor = activeChain.color
 
-  if (!app.locals.pAS[app.locals.chain.name] && req.url === '/') {
+  if (!app.locals.connS.isOnline()) { //if offline, always go to connectivity
     res.locals.status.color = 'primary'
     res.locals.status.message = 'Offline'
     req.url = '/offline/connectivity'
-    // const networks = await app.locals.connS.scan()
-    // res.render('connectivity', {category: 'Connectivity', networks})
+    return next();
   }
-  return next();
 
   if (app.locals.pAS[app.locals.chain.name]?.hasKey() === true) {
     const wallet = res.app.locals.pAS[app.locals.chain.name].getWallet()
@@ -65,11 +66,6 @@ app.use(async function (req, res, next) {
 
 })
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(logger('dev'));
-
 app.use('/', indexRouter);
 app.use('/actions', actionsRouter);
 app.use('/offline', offlineRouter);
@@ -91,18 +87,31 @@ app.use(function(err, req, res, next) {
 });
 
 app.locals.pAS = {}
-// app.locals.mS = new machineService()
-// app.locals.cS = new chirpstackService()
 app.locals.connS = new connectionService()
 
-for (let i in config.chains) {
-  const chain = config.chains[i]
-  app.locals.chain = chain
-  // app.locals.pAS[chain.name] = new pactRadioService(chain, app.locals.cS) //new pactAgentService(chain)
-}
+setInterval(async ()=>{
+  if (!app.locals.cS && app.locals.connS.isOnline()) { //if no service yet and is online
+    app.locals.cS = new chirpstackService()
+  }
+  // if (app.locals.cS && !app.locals.connS.isOnline()) { //if service and offline, then stop service //this doesn't really work, GC doesn't seem to get rid of it
+  //   delete app.locals.cS
+  // }
+  for (let i in config.chains) {
+    const chain = config.chains[i]
+    app.locals.chain = chain
+    if (!app.locals.pAS[chain.name] && app.locals.connS.isOnline()) { //if no service yet an is online
+      app.locals.pAS[chain.name] = new pactRadioService(chain, app.locals.cS)
+    }
+    // if (app.locals.pAS[chain.name] && !app.locals.connS.isOnline()) { ///if service and offline, then stop service //this doesn't really work, GC doesn't seem to get rid of it
+    //   delete app.locals.pAS[chain.name]
+    // }
+  }
+
+}, 10 * 1000); //check connectivity, start and stop services
+
+
 
 process.stdin.resume();//so the program will not close instantly
-
 function exitHandler(options, exitCode) {
   if (options.cleanup) {
     for (let i in config.chains) {
@@ -114,21 +123,20 @@ function exitHandler(options, exitCode) {
   if (exitCode || exitCode === 0) console.log(exitCode);
   if (options.exit) process.exit();
 }
-
 //do something when app is closing
 process.on('exit', exitHandler.bind(null,{cleanup:true}));
-
 //catches ctrl+c event
 process.on('SIGINT', exitHandler.bind(null, {exit:true}));
-
 // catches "kill pid" (for example: nodemon restart)
 process.on('SIGUSR1', exitHandler.bind(null, {exit:true}));
 process.on('SIGUSR2', exitHandler.bind(null, {exit:true}));
-
 //catches uncaught exceptions
 process.on('uncaughtException', exitHandler.bind(null, {exit:true}));
 
+module.exports = app;
+
+// const pactAgentService = require('./services/pactAgentService')
+// const machineService = require('./services/machineService')
+// const AutoGitUpdate = require('auto-git-update');
 // const updater = new AutoGitUpdate(config.autoUpdate);
 // updater.autoUpdate();
-
-module.exports = app;
