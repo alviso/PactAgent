@@ -34,7 +34,7 @@ app.use(async function (req, res, next) {
   res.locals.status.net = activeChain.name + '/' + activeChain.chainId
   res.locals.status.netcolor = activeChain.color
 
-  if (!app.locals.connS.isOnline()) { //if offline, always go to connectivity
+  if (!app.locals.connS.isOnline() && !req.url.startsWith('/offline')) { //if offline, always go to connectivity
     res.locals.status.color = 'primary'
     res.locals.status.message = 'Offline'
     req.url = '/offline/connectivity'
