@@ -1,4 +1,5 @@
-const scanner = require('node-wifi-scanner');
+// const scanner = require('node-wifi-scanner');
+const scanner = require('node-wifi');
 const { exec } = require("child_process");
 const dns = require('dns')
 
@@ -7,6 +8,9 @@ class connectionService {
     constructor() {
         this.online = false
         this.checkOnline()
+        scanner.init({
+            iface: null // network interface, choose a random wifi interface if set to null
+        });
     }
 
     checkOnline = async () => {
@@ -34,7 +38,8 @@ class connectionService {
                     return resolve([])
                 }
                 networks = networks.filter(e=>e.ssid.length>0)
-                networks = networks.sort((a,b)=>(b.rssi - a.rssi))
+                // networks = networks.sort((a,b)=>(b.rssi - a.rssi))
+                networks = networks.sort((a,b)=>(b.signal_level - a.signal_level))
                 console.log(networks)
                 return resolve(networks)
             })
