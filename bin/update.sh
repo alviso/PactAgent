@@ -1,4 +1,3 @@
-cd ..
 git reset --hard
 git pull
 npm i
