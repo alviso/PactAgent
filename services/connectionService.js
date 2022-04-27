@@ -1,4 +1,4 @@
-const scanner = require('node-wifi-scanner');
+const scanner = require('node-wifi-scanner-fork');
 const { exec } = require("child_process");
 const dns = require('dns')
 
