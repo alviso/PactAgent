@@ -52,7 +52,7 @@ router.post('/reboot', asyncHandler(async (req, res, next) => {
   res.json({a:1})
 }))
 
-router.post('/update', asyncHandler(async (req, res, next) => {
+router.get('/update', asyncHandler(async (req, res, next) => {
   const service = res.app.locals.connS
   const resp1 = await service.exec(`../update.sh`)
   console.log(resp1)
