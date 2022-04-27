@@ -54,9 +54,14 @@ router.post('/reboot', asyncHandler(async (req, res, next) => {
 
 router.get('/update', asyncHandler(async (req, res, next) => {
   const service = res.app.locals.connS
-  const resp1 = await service.exec(`./bin/update.sh`)
+  const resp1 = await service.exec(`git reset --hard`)
   console.log(resp1)
-  res.json({a:1})
+  const resp2 = await service.exec(`git pull`)
+  console.log(resp2)
+  const resp3 = await service.exec(`npm i`)
+  console.log(resp3)
+  const resp4 = service.exec(`pm2 restart 0`)
+  res.redirect('/')
 }))
 
 module.exports = router;
