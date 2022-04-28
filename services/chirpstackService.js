@@ -37,7 +37,7 @@ class chirpstackService {
             const gatewayId = buff.toString('ascii');
             const rec = {mic: payload?.mic, gatewayId}
             //Not at startup
-            if (Date.now() - this.startupTs > 1000) {
+            if (Date.now() - this.startupTs > 5000) {
                 this.recs.push(rec)
             }
         });

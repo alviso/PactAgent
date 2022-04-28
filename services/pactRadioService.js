@@ -245,14 +245,14 @@ class pactRadioService {
     }
 
     async getBalances() {
-        const kda = this.round(await this.getBalance(this.wallet,'coin'), 3)
-        const crkk = this.round(await this.getBalance(this.wallet,'free.crankk01'), 3)
+        const kda = this.round(await this.getBalance(this.wallet,this.coinModule('KDA')), 3)
+        const crkk = this.round(await this.getBalance(this.wallet,this.coinModule('CRKK')), 3)
         const usd = await this.getFiatBalance(kda)
         return {kda, crkk, usd}
     }
 
     async getDistributedCRKK() {
-        const radioBankBalance = this.round(await this.getBalance(config.kadena.radioBank, 'free.crankk01'), 2)
+        const radioBankBalance = this.round(await this.getBalance(config.kadena.radioBank, this.coinModule('CRKK')), 2)
         return Math.round((10000 - radioBankBalance) * 100) / 100
     }
 
@@ -439,6 +439,10 @@ class pactRadioService {
 
     save() {
         fs.writeFileSync("./tmpkp.json", JSON.stringify(this.KP));
+    }
+
+    coinModule (coin) {
+        return config.coinLookup.find(e => e.coin === coin).module
     }
 }
 
