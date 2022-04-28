@@ -11,7 +11,7 @@ module.exports = {
     ],
     chains: [
         // {name: 'test', host: 'testnet.crankk.io', color: 'danger', networkId: 'testnet04', chainId: '1'}
-        {name: 'main', host: 'api.chainweb.com', color: 'success', networkId: 'mainnet01', chainId: '0'}
+        {name: 'main', host: 'mainnet.crankk.io', color: 'success', networkId: 'mainnet01', chainId: '0'} //api.chainweb.com
     ],
     kadena: {
         // agentModule: 'free.pactAgent18',
