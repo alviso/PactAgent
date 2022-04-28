@@ -222,8 +222,12 @@ class pactRadioService {
         cmdObj.pactCode += ' )'
         if (mode === 'L') {
             cmdObj.meta.gasLimit = cmdObj.meta.gasLimit * 20
-            const resp = await Pact.fetch.local(cmdObj, this.API_HOST)
-            return resp.result?.data || {}
+            try {
+                const resp = await Pact.fetch.local(cmdObj, this.API_HOST)
+                return resp.result?.data || {}
+            } catch (e) {
+                return {}
+            }
         } else {
             const lresp = await Pact.fetch.local(cmdObj, this.API_HOST)
             // console.log(this.chain.name, module, lresp)
@@ -232,10 +236,14 @@ class pactRadioService {
                 ncmdObj.meta.gasLimit = lresp.gas + 200
                 console.log('Gas corrected!')
             }
-            const resp = await Pact.fetch.send(ncmdObj, this.API_HOST)
-            console.log(this.chain.name, moment().format(), module, resp)
-            if (resp?.requestKeys) await this.addTxn(resp?.requestKeys[0], module, ncmdObj)
-            return resp || {}
+            try {
+                const resp = await Pact.fetch.send(ncmdObj, this.API_HOST)
+                console.log(this.chain.name, moment().format(), module, resp)
+                if (resp?.requestKeys) await this.addTxn(resp?.requestKeys[0], module, ncmdObj)
+                return resp || {}
+            } catch (e) {
+                return {}
+            }
         }
     }
 
