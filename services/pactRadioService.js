@@ -11,6 +11,7 @@ class pactRadioService {
 
     constructor(chain, cS) {
         this.KP = {}
+        this.haveANode = false
         this.wallet = ''
         let KPString = "{}"
         try {
@@ -99,7 +100,7 @@ class pactRadioService {
             const asKey = await this.getAsKeyDB()
             for (let i in checkableNodes) {
                 const sendNode = checkableNodes[i]
-                sendNode.gps = this.cS.getGatewayGPS(sendNode.gatewayId)
+                sendNode.gps = await this.cS.getGatewayGPS(sendNode.gatewayId)
                 const sent = this.decrypt(asKey[0].priv, sendNode.sent)
                 const resp = await this.pactCall('L', 'free.radio02.get-gateway', sendNode.gatewayId)
                 const receives = JSON.parse(resp.replaceAll('} {','},{')) || []
@@ -112,8 +113,10 @@ class pactRadioService {
                 const gateways = []
                 for (let j in unique) {
                     const node = nodes.find(e => e.address === unique[j].address)
-                    node.gps = await this.cS.getGatewayGPS(config.chirpstack.gatewayId)
-                    if (node) gateways.push(JSON.stringify({id:node.gatewayId, gps:node.gps}))
+                    if (!node) continue
+                    node.gps = await this.cS.getGatewayGPS(node.gatewayId)
+                    const distance = this.calcCrow(node.gps.latitude, node.gps.longitude, sendNode.gps.latitude, sendNode.gps.longitude)
+                    gateways.push(JSON.stringify({id:node.gatewayId, distance}))
                 }
                 await this.pactCall('S', 'free.radio02.close-send-receive', sendNode.address, unique, gateways)
                 console.log(sent, receives)
@@ -160,9 +163,10 @@ class pactRadioService {
 
     async checkMyNode() {
         const myNode = await this.pactCall('L', 'free.radio02.get-my-node')
-        if (!myNode?.address) {
+        if (!myNode?.address && !this.haveANode) {
             await this.pactCall('S', 'free.radio02.insert-my-node', config.chirpstack.gatewayId)
         } else {
+            this.haveANode = true
             if (!myNode.pubkey && (await this.allowedToGo()) === 0) {
                 const asKey = await this.getAsKeyDB()
                 const buff = new Buffer(asKey[0].pub)
@@ -451,6 +455,27 @@ class pactRadioService {
 
     coinModule (coin) {
         return config.coinLookup.find(e => e.coin === coin).module
+    }
+
+    calcCrow(lat1, lon1, lat2, lon2)
+    {
+        var R = 6371; // km
+        var dLat = this.toRad(lat2-lat1);
+        var dLon = this.toRad(lon2-lon1);
+        var lat1 = this.toRad(lat1);
+        var lat2 = this.toRad(lat2);
+
+        var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        var d = R * c;
+        return d;
+    }
+
+    // Converts numeric degrees to radians
+    toRad(Value)
+    {
+        return Value * Math.PI / 180;
     }
 }
 

@@ -10,8 +10,8 @@ router.get('/wallet', asyncHandler(async (req, res, next) => {
     if (service.hasKey() === true) {
         userDetails.wallet = await service.getWallet()
         userDetails.gatewayId = service.getGatewayId()
-        userDetails.balance = await service.getBalance(userDetails.wallet, this.coinModule('KDA'))
-        userDetails.crankkBalance = await service.getBalance(userDetails.wallet, this.coinModule('CRKK'))
+        userDetails.balance = await service.getBalance(userDetails.wallet, service.coinModule('KDA'))
+        userDetails.crankkBalance = await service.getBalance(userDetails.wallet, service.coinModule('CRKK'))
         userDetails.fiatBalance = await service.getFiatBalance(userDetails.balance)
     }
     res.render('wallet', { category: 'Wallet', userDetails});
@@ -22,8 +22,8 @@ router.get('/transfer', asyncHandler(async (req, res, next) => {
     const userDetails = {}
     if (service.hasKey() === true) {
         userDetails.wallet = await service.getPubKey()
-        userDetails.balance = await service.getBalance(userDetails.wallet, this.coinModule('KDA'))
-        userDetails.crankkBalance = await service.getBalance(userDetails.wallet, this.coinModule('CRKK'))
+        userDetails.balance = await service.getBalance(userDetails.wallet, service.coinModule('KDA'))
+        userDetails.crankkBalance = await service.getBalance(userDetails.wallet, service.coinModule('CRKK'))
         userDetails.fiatBalance = await service.getFiatBalance(userDetails.balance)
     }
     res.render('transfer', { category: 'Transfer', userDetails});
@@ -34,8 +34,8 @@ router.get('/transfer', asyncHandler(async (req, res, next) => {
 //     const userDetails = {}
 //     if (service.hasKey() === true) {
 //         userDetails.wallet = await service.getPubKey()
-//         userDetails.balance = await service.getBalance(userDetails.wallet, this.coinModule('KDA'))
-//         userDetails.crankkBalance = await service.getBalance(userDetails.wallet, this.coinModule('CRKK'))
+//         userDetails.balance = await service.getBalance(userDetails.wallet, service.coinModule('KDA'))
+//         userDetails.crankkBalance = await service.getBalance(userDetails.wallet, service.coinModule('CRKK'))
 //         userDetails.fiatBalance = await service.getFiatBalance(userDetails.balance)
 //     }
 //     const otherOffers = await service.getOtherOpenOffers()
