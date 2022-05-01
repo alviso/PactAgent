@@ -343,6 +343,7 @@ class pactRadioService {
     }
 
     round(value, decimals) {
+        if (isNaN(value)) return value
         const num = Number(Math.round(value+'e'+decimals)+'e-'+decimals);
         const str = '' + num
         const int = str.split('.')[0]
@@ -373,6 +374,7 @@ class pactRadioService {
                 if (err) return resolve([])
                 for (let i in key) {
                     key[i].fromNow = moment(key[i].ts).fromNow()
+                    key[i].award = this.round(key[i].award, 3)
                     key[i].jsonValRec = JSON.stringify(key[i].validReceives)
                 }
                 key = key.sort((a,b) => b.ts - a.ts)
