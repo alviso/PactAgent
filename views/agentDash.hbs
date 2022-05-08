@@ -117,14 +117,38 @@
                 </div>
             </div>
 
-<!--            <div class="chart mb-2" id="app_sales"></div>-->
+            <!--            <div class="chart mb-2" id="app_sales"></div>-->
             <div class="chart" id="balances"></div>
         </div>
+
+    </div>
+
+    <div class="col-lg-4">
+<!--        <div class="card">-->
+<!--            <div class="card-header">-->
+<!--                <h6 class="card-title">Map</h6>-->
+<!--            </div>-->
+
+<!--            <div class="card-body">-->
+                <div id="map" style="height: 230px;"></div>
+<!--            </div>-->
+<!--        </div>-->
 
     </div>
     <!-- /sales stats -->
 </div>
 <!-- /quick stats boxes -->
+<script>
+    var map = L.map('map').setView([{{myCoord.latitude}}, {{myCoord.longitude}}], 13);
+    L.tileLayer('https://api.mapbox.com/styles/v1/alviso99/cl2v4a4vi003b14qejqkv1kcl/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYWx2aXNvOTkiLCJhIjoiY2wydjJmeG8xMDBvZDNqbGYyeTEydWFqOSJ9.3g6OEczhes4JpU2hsA2ngA', {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        maxZoom: 18,
+        id: 'mapbox/streets-v11',
+        tileSize: 512,
+        zoomOffset: -1,
+        accessToken: 'pk.eyJ1IjoiYWx2aXNvOTkiLCJhIjoiY2wydjJmeG8xMDBvZDNqbGYyeTEydWFqOSJ9.3g6OEczhes4JpU2hsA2ngA'
+    }).addTo(map);
+</script>
 
 <div class="card">
     <div class="card-header">

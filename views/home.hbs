@@ -10,7 +10,7 @@
     <title>Crankk.io - A Proof-of-Coverage LoRaWAN Crypto Network</title>
     <!-- Bootstrap Core CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" integrity="sha512-hoalWLoI8r4UszCkZ5kL8vayOGVae1oxXe/2A4AO6J9+580uKHDO3JdHb7NzwwzK5xr/Fs0W40kiNHxM9vyTtQ==" crossorigin=""/>
     <!-- Custom CSS -->
     <link href="/assets/css/main.css" rel="stylesheet">
     <link href="/assets/css/style.css" rel="stylesheet">
@@ -40,6 +40,7 @@
     <script src="/global_assets/js/demo_charts/d3/lines/lines_basic.js"></script>
 
     <script src="/global_assets/js/demo_pages/dashboard.js"></script>
+    <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js" integrity="sha512-BB3hKbKWOc9Ez/TAwyWxNXeoV9c1v6FIeYiBieIWkpLjauysF18NzgR1MBNBXf8/KABdlkX68nAhlwcDFLGPCQ==" crossorigin=""></script>
 
 </head>
 <body>
@@ -91,6 +92,44 @@
                 <a href="/login" class="btn">Join Us</a> <a href="#faq" class="btn btn-inverse">Read FAQ</a> </div>
         </div>
     </section>
+
+    <section class="map light-bg">
+        <!-- Right Background -->
+        <div class="main-page-section half_left_layout">
+            <div class="main-half-layout half_right_layout">
+                <div id="map" style="height: 544px;"></div>
+            </div>
+
+            <!-- Left Content -->
+            <div class="main-half-layout-container half_right_layout">
+                <div class="about-us-con">
+                    <h3>Growing Global Network</h3>
+                    <p>We are just getting started. Come join our distributed network of IoT Gateway Nodes</p>
+                    <ul class="count-info row">
+                        <li class="col"> <span class="counter">{{PoCC}}</span><span>+</span>
+                            <p>Proof of Coverage checks</p>
+                        </li>
+                        <li class="col"> <span class="counter">{{dCRKK}}</span><span>+</span>
+                            <p>Crankk Token Distributed</p>
+                        </li>
+                    </ul>
+                    <a href="#." class="btn">Lite Paper</a> <a href="#." class="btn btn-inverse">Find an Exchange</a> </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        var map = L.map('map').setView([41.492, -103.386], 5);
+        L.tileLayer('https://api.mapbox.com/styles/v1/alviso99/cl2v4a4vi003b14qejqkv1kcl/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYWx2aXNvOTkiLCJhIjoiY2wydjJmeG8xMDBvZDNqbGYyeTEydWFqOSJ9.3g6OEczhes4JpU2hsA2ngA', {
+            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+            maxZoom: 18,
+            id: 'mapbox/streets-v11',
+            tileSize: 512,
+            zoomOffset: -1,
+            accessToken: 'pk.eyJ1IjoiYWx2aXNvOTkiLCJhIjoiY2wydjJmeG8xMDBvZDNqbGYyeTEydWFqOSJ9.3g6OEczhes4JpU2hsA2ngA'
+        }).addTo(map);
+        L.marker([36.00, -115.09]).addTo(map);
+    </script>
 
     <!-- Content -->
     <div id="content">
@@ -315,20 +354,23 @@
             <div class="container">
                 <div class="sm-intro">
                     <h2>Development Activity</h2>
-                    <p>We are starting with "Simple sales contracts" and working to make other types of contracts available to cover an increasing number of your needs and to provide you with better protection. </p>
+                    <p>Working on enhancements to Proof-of-Coverage contracts, Rapberry Pi client, Raspberry Pi initial configuration</p>
                 </div>
                 <ul class="row margin-top-50 margin-bottom-50">
-                    <li class="col"> <i class="flaticon-rotate"></i> <span><span class="counter">4</span> hrs Ago</span>
+                    <li class="col"> <i class="flaticon-rotate"></i> <span><span class="counter">{{lastCommit.number}}</span> {{lastCommit.rest}}</span>
                         <p>Last Update</p>
                     </li>
-                    <li class="col"><i class="flaticon-building"></i> <span><span class="counter">10</span> Days Ago</span>
-                        <p>Last contract type added</p>
+                    <li class="col"><i class="flaticon-building"></i> <span><span class="counter">3</span> Days Ago</span>
+                        <p>Last contract enhancement</p>
                     </li>
-                    <li class="col"><i class="flaticon-money-1"></i> <span><span class="counter">57</span>+</span>
-                        <p>Contracts handled</p>
+                    <li class="col"><i class="flaticon-money-1"></i> <span><span class="counter">{{PoCC}}</span>+</span>
+                        <p>PoW checks</p>
+                    </li>
+                    <li class="col"><i class="flaticon-team"></i> <span  class="counter">8</span>
+                        <p>Team Members</p>
                     </li>
                 </ul>
-                <!--                <a href="#." class="btn">Start on GitHub</a> <a href="#." class="btn btn-inverse">White Paper</a> </div>-->
+                <a href="https://github.com/alviso/PactAgent" class="btn">GitHub</a> <a href="https://alviso.medium.com/" class="btn btn-inverse">Lite Paper</a> </div>
         </section>
 
         <!-- ABOUT -->

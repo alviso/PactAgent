@@ -13,6 +13,8 @@ class pactRadioService {
         this.KP = {}
         this.haveANode = false
         this.wallet = ''
+        this.nodes = []
+        this.gatewayGPSCache = {}
         let KPString = "{}"
         try {
             KPString = fs.readFileSync('./tmpkp.json',{encoding: "utf8"})
@@ -30,6 +32,9 @@ class pactRadioService {
         this.txnColl = this.db.collection("txns0"+this.name)
         this.asKey = this.db.collection("asimkey") //same for all
         this.cyclesColl = this.db.collection("cycles0"+this.name)
+        this.nodesColl = this.db.collection("nodes"+this.name)
+        this.allCyclesColl = this.db.collection("allcycles"+this.name)
+        this.countColl = this.db.collection("count1"+this.name)
         this.price = 0
         this.asKeyManage()
 
@@ -52,7 +57,7 @@ class pactRadioService {
             } )
 
             if (await this.allowedToGo() !== 0) return
-            await this.checkMyNode()
+            if (this.cS) await this.checkMyNode()
 
 
         }, 10 * 1000); //pending transactions, node check, insert
@@ -99,7 +104,8 @@ class pactRadioService {
                 const sel = directableNodes[ind]
                 await this.pactCall('S', 'free.radio02.direct-to-send', sel.address)
             }
-            const checkableNodes = nodes.filter(e => e.send === false && e.sent.length > 0)
+            //this is seconds, let it be 5 min old to not miss receive updates
+            const checkableNodes = nodes.filter(e => e.send === false && e.sent.length > 0 && (moment(e.lastAction.timep).unix() + 300) < moment().unix())
             const asKey = await this.getAsKeyDB()
             for (let i in checkableNodes) {
                 const sendNode = checkableNodes[i]
@@ -127,6 +133,38 @@ class pactRadioService {
 
         }, 5 * 60 * 1000); //Arbitration, award
 
+        setInterval(async ()=>{
+            if (!config.website) return
+            if (await this.goodToGo() === false) return
+            if (await this.allowedToGo() !== 0) return
+            const nodes = await this.pactCall('L', 'free.radio02.get-nodes')
+            if (nodes.length === 0) return
+            for (let i in nodes) {
+                const nodeFromChain = nodes[i]
+                if (nodeFromChain.sent.length === 0) {
+                    nodeFromChain.gps =this.gatewayGPSCache[nodeFromChain.gatewayId] = await this.cS.getGatewayGPS(nodeFromChain.gatewayId)
+                    const nodeStored = this.nodes.find(e => e.address === nodeFromChain.address)
+                    if (nodeStored?.sent.length > 0) {
+                        const validReceives = []
+                        for (let j in nodeFromChain.validReceives) {
+                            const receive = JSON.parse(nodeFromChain.validReceives[j])
+                            receive.gps = this.gatewayGPSCache[receive.id] = await this.cS.getGatewayGPS(receive.id)
+                            validReceives.push(receive)
+                        }
+                        const cycle = {senderGatewayId: nodeFromChain.gatewayId, senderGps: nodeFromChain.gps, validReceives, ts:Date.now()}
+                        console.log('Send-receive closed:', cycle)
+                        await this.allCyclesColl.insert(cycle)
+                        await this.allCyclesColl.remove({'ts': {$exists: false}})
+                        await this.allCyclesColl.remove({'ts': {$lt: Date.now() - 24 * 60 * 60 * 1000}})
+                        let count = await this.getCount('allCycles')
+                        await this.countColl.update({name: 'allCycles'},
+                            {$set: {count: ++count}, $setOnInsert: {count: 500}},
+                            {upsert: true})
+                    }
+                }
+            }
+            this.nodes = nodes
+        }, 60 * 1000); //Statistics for website
     }
 
     async allowedToGo() {
@@ -147,6 +185,34 @@ class pactRadioService {
                 resolve(txns)
             })
         })
+    }
+
+    async getStoredNodes() {
+        return new Promise((resolve, reject)=>{
+            this.nodesColl.find({ }).toArray(async (err, nodes) => {
+                resolve(nodes)
+            })
+        })
+    }
+
+    async getAllCycles() {
+        return new Promise((resolve, reject)=>{
+            this.allCyclesColl.find({ }).toArray(async (err, cycles) => {
+                resolve(cycles)
+            })
+        })
+    }
+
+    async getCount(name) {
+        return new Promise((resolve, reject)=>{
+            this.countColl.find({"name" : name}).toArray(async (err, count) => {
+                resolve(count[0]?.count || 0)
+            })
+        })
+    }
+
+    async getMyCoord() {
+        return await this.cS.getGatewayGPS(config.chirpstack.gatewayId)
     }
 
     async goodToGo() {

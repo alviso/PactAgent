@@ -82,7 +82,7 @@ class chirpstackService {
                     return resolve('')
                 }
                 const gpsObject = res.getGateway().getLocation().toObject()
-                console.log(gpsObject)
+                // console.log(gpsObject)
                 return resolve(gpsObject)
             })
         })

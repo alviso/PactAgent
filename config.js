@@ -1,10 +1,17 @@
-// config.js
-// This file contains private configuration details.
-// Do not add it to your Git repository.
 const fs = require('fs')
 
+let gwConfFile = '{}'
+let apikeyFile = '{}'
+try {
+    gwConfFile = fs.readFileSync('/opt/ttn-gateway/packet_forwarder/lora_pkt_fwd/local_conf.json', 'utf8')
+} catch (e) {}
+const gwConfJson = JSON.parse(gwConfFile)
+try {
+    apikeyFile = fs.readFileSync('./apikey.json', 'utf8')
+} catch (e) {}
+const apikeyJson = JSON.parse(apikeyFile)
+
 module.exports = {
-    //Kadena related
     coinLookup: [
         {coin: 'KDA', module: 'coin'},
         {coin: 'CRKK', module: 'free.crankk01'}
@@ -14,33 +21,24 @@ module.exports = {
         {name: 'main', host: 'mainnet.crankk.io', color: 'success', networkId: 'mainnet01', chainId: '0'} //api.chainweb.com
     ],
     kadena: {
-        // agentModule: 'free.pactAgent18',
-        // exchModule: 'free.crankkx',
         radioModule: 'free.radio02',
         radioBank: 'radio01-bank',
         totSup: 10000000,
         gasPrice: 0.000001,
         gasLimit: 10000,
         ttl: 28800,
-        // exchangeRate: 0.0001
     },
     kucoin: {
         exchangeRateUrl: 'https://m.kucoin.com/_api/trade-front/market/getSymbolTick?symbols=KDA-USDT&lang=en_US',
         historyUrl: 'https://m.kucoin.com/_api/order-book/candles?symbol=KDA-USDT&type=1day'
     },
+    github: {
+        pactAgentUrl: 'https://api.github.com/users/alviso/events/public'
+    },
     chirpstack: {
         apiUrl: 'live-us.alertjack.com:8080',
-        gatewayId: JSON.parse(fs.readFileSync('/opt/ttn-gateway/packet_forwarder/lora_pkt_fwd/local_conf.json', 'utf8')).gateway_conf.gateway_ID.toLowerCase(), //'e45f01fffe1744ab',
-        apiKey: JSON.parse(fs.readFileSync('./apikey.json', 'utf8')).apikey,
+        gatewayId: gwConfJson?.gateway_conf?.gateway_ID.toLowerCase() || '',
+        apiKey: apikeyJson?.apikey || '',
     },
-    // autoUpdate: {
-    //     repository: 'https://github.com/alviso/PactAgent',
-    //     fromReleases: false,
-    //     tempLocation: '../update',
-    //     ignoreFiles: [],
-    //     // executeOnComplete: '',
-    //     exitOnComplete: true
-    // }
-
-
+    website: false
 };

@@ -92,7 +92,7 @@ app.locals.pAS = {}
 app.locals.connS = new connectionService()
 
 setInterval(async ()=>{
-  if (!app.locals.cS && app.locals.connS.isOnline()) { //if no service yet and is online
+  if (!app.locals.cS && app.locals.connS.isOnline() && config.chirpstack.gatewayId.length > 0) { //if no service yet and is online
     app.locals.cS = new chirpstackService()
   }
   // if (app.locals.cS && !app.locals.connS.isOnline()) { //if service and offline, then stop service //this doesn't really work, GC doesn't seem to get rid of it
