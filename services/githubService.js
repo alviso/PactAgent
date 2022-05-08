@@ -8,6 +8,7 @@ class githubService {
         const time = response.data[0].created_at
         const ago = moment(time).fromNow()
         const lastCommit = {number: ago.split(' ')[0], rest: ago.split(' ')[1] + ' ' + ago.split(' ')[2]}
+        if ((lastCommit.number.toLowerCase() === 'few')) lastCommit.number = 0
         return lastCommit
     }
 }
