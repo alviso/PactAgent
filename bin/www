@@ -7,12 +7,15 @@
 var app = require('../app');
 var debug = require('debug')('pactagent:server');
 var http = require('http');
+const config = require('../config')
 
 /**
  * Get port from environment and store in Express.
  */
+let prePort = '3000'
+if (config.website) prePort = '5001'
 
-var port = normalizePort(process.env.PORT || '5001');
+var port = normalizePort(process.env.PORT || prePort);
 app.set('port', port);
 
 /**

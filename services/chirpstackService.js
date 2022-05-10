@@ -6,19 +6,21 @@ const gatewayMessages = require('@crankk.io/chirpstack-api-fork/as/external/api/
 class chirpstackService {
 
     constructor() {
-        this.streamEvents()
-    }
-
-    streamEvents() {
         this.recs = []
         this.startupTs = Date.now()
         this.metadata = new grpc.Metadata();
         this.metadata.set('authorization', config.chirpstack.apiKey);
-
         this.gatewayServiceClient = new gatewayService.GatewayServiceClient(
             config.chirpstack.apiUrl,
             grpc.credentials.createInsecure()
         )
+
+        if (config.chirpstack.gatewayId) {
+            this.streamEvents()
+        }
+    }
+
+    streamEvents() {
 
         const streamFrameLogsRequest = new gatewayMessages.StreamGatewayFrameLogsRequest()
         streamFrameLogsRequest.setGatewayId(config.chirpstack.gatewayId)
