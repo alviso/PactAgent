@@ -19,11 +19,11 @@ router.get('/home', asyncHandler(async (req, res, next) => {
   const service = res.app.locals.pAS[res.app.locals.chain.name]
   const nGw = await service.getNumberOfGateways()
   const dCRKK = await service.getDistributedCRKK()
-  // const allCycles = await service.getAllCycles()
-  const PoCC = await service.getCount('allCycles') - 275
+  const lastCycle = await service.getLastCycle()
+  const PoCC = await service.getCount('allCycles') + 277
   const lastCommit = await github.getLastCommit()
   const prc = service.round(dCRKK / config.kadena.totSup * 100, 3)
-  res.render('home', {naked:true, nGw, dCRKK, prc, lastCommit, PoCC})
+  res.render('home', {naked:true, nGw, dCRKK, prc, lastCommit, PoCC, lastCycle})
 }))
 
 module.exports = router;

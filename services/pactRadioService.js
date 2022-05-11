@@ -203,6 +203,17 @@ class pactRadioService {
         })
     }
 
+    async getLastCycle() {
+        const allCycles = await this.getAllCycles()
+        let lastCycle = {}
+        if (allCycles.length > 0) {
+            lastCycle = allCycles[allCycles.length - 1]
+            lastCycle.ago = moment(lastCycle.ts).fromNow()
+        }
+        return lastCycle
+    }
+
+
     async getCount(name) {
         return new Promise((resolve, reject)=>{
             this.countColl.find({"name" : name}).toArray(async (err, count) => {
