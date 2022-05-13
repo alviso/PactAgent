@@ -140,13 +140,13 @@
                             <p>Crankk Token Distributed</p>
                         </li>
                     </ul>
-                    <a href="#." class="btn">Lite Paper</a> <a href="https://medium.com/@alviso/crankk-io-a-helium-like-crypto-network-on-kadena-25893cf32caa" class="btn btn-inverse">Find an Exchange</a> </div>
+                    <a href="https://medium.com/@alviso/crankk-io-a-helium-like-crypto-network-on-kadena-25893cf32caa" class="btn">Lite Paper</a> <!--a href="" class="btn btn-inverse">Find an Exchange</a--> </div>
             </div>
         </div>
     </section>
 
     <script>
-        var map = L.map('map').setView([41.492, -103.386], 5);
+        var map = L.map('map').setView([30.89, -47.73], 3);
         L.tileLayer('https://api.mapbox.com/styles/v1/alviso99/cl2v4a4vi003b14qejqkv1kcl/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYWx2aXNvOTkiLCJhIjoiY2wydjJmeG8xMDBvZDNqbGYyeTEydWFqOSJ9.3g6OEczhes4JpU2hsA2ngA', {
             attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
             maxZoom: 18,
@@ -155,7 +155,7 @@
             zoomOffset: -1,
             accessToken: 'pk.eyJ1IjoiYWx2aXNvOTkiLCJhIjoiY2wydjJmeG8xMDBvZDNqbGYyeTEydWFqOSJ9.3g6OEczhes4JpU2hsA2ngA'
         }).addTo(map);
-        L.marker([36.00, -115.09]).addTo(map)
+        L.marker([{{lastCycle.senderGps.latitude}}, {{lastCycle.senderGps.longitude}}]).addTo(map)
                 .bindPopup('{{lastCycle.ago}}<br> GW: {{lastCycle.senderGatewayId}} <br> {{lastCycle.validReceives.length}} receivers').openPopup();
     </script>
 

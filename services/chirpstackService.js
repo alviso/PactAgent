@@ -37,7 +37,7 @@ class chirpstackService {
             if (!payload?.macPayload?.bytes) return  //Not our proprietary perhaps
             const buff = new Buffer(payload.macPayload.bytes, 'base64');
             const gatewayId = buff.toString('ascii');
-            const rec = {mic: payload?.mic, gatewayId}
+            const rec = {mic: payload?.mic, gatewayId, ts:Date.now()}
             //Not at startup
             if (Date.now() - this.startupTs > 5000) {
                 this.recs.push(rec)
@@ -91,7 +91,8 @@ class chirpstackService {
     }
 
     getRecs() {
-        return [...new Map(this.recs.map(item => [item['mic'], item])).values()]
+        const recs = this.recs.filter(e => e.ts > Date.now() - 2 * 60 * 1000)
+        return [...new Map(recs.map(item => [item['mic'], item])).values()]
     }
 
     rmRecs() {
