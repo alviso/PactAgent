@@ -34,6 +34,10 @@ app.use(async function (req, res, next) {
   res.locals.status.net = activeChain.name + '/' + activeChain.chainId
   res.locals.status.netcolor = activeChain.color
 
+  if (config.website) {
+    req.url = '/home'
+  }
+
   if (!app.locals.connS.isOnline()) { //if offline
     res.locals.status.color = 'primary'
     res.locals.status.message = 'Offline'

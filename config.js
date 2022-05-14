@@ -40,5 +40,5 @@ module.exports = {
         gatewayId: gwConfJson?.gateway_conf?.gateway_ID.toLowerCase() || '',
         apiKey: apikeyJson?.apikey || '',
     },
-    website: false
+    website: true
 };
