@@ -30,6 +30,13 @@
                         </div>
                     </div>
 
+                    <div id="apikeyForm" class="form-group row" hidden>
+                        <label class="col-lg-2 col-form-label">API key:</label>
+                        <div class="col-lg-10">
+                            <input type="text" id="apikey" value="{{userDetails.apikey}}" class="form-control" readonly>
+                        </div>
+                    </div>
+
                     <div class="form-group row">
                         <label class="col-lg-2 col-form-label">KDA Balance:</label>
                         <div class="col-lg-10">
@@ -92,7 +99,7 @@
             </div>
         </div>
         <div class="text-right" id="buttonForm" hidden>
-            <button id="button" class="btn btn-primary">Save passphrase encrypted private key locally <i class="icon-paperplane ml-2"></i></button>
+            <button id="button" class="btn btn-primary">Send <i class="icon-paperplane ml-2"></i></button>
         </div>
         <!--        </form>-->
     </div>
@@ -101,6 +108,32 @@
 <script>
     $(document).ready(function() {
         const cipher = localStorage.getItem('cipher-pactAgent')
+        if ($('#gatewayId').val() === '') {
+            $('#gatewayId').removeAttr('readonly')
+            $('#gatewayId').addClass('is-invalid')
+            $('#buttonForm').removeAttr('hidden')
+            $('#apikeyForm').removeAttr('hidden')
+            $('#apikey').removeAttr('readonly')
+            $('#apikey').addClass('is-invalid')
+            $( "#button" ).click(function(e) {
+                e.preventDefault()
+                const gatewayId = $('#gatewayId').val()
+                const apikey = $('#apikey').val()
+                const data = {gatewayId, apikey}
+                if (gatewayId.length != 16 || apikey.length < 20) {
+                    alert('You may not have entered Gateway ID and API Key correctly!')
+                    return
+                }
+                $.ajax({
+                    type: 'POST',
+                    url: '/actions/setGwId',
+                    data,
+                });
+                setTimeout(() => {
+                    window.location.href = '/'
+                }, 1000)
+            });
+        }
         if (!cipher) {
             const KP = Pact.crypto.genKeyPair();
             $('#wallet').val(KP.publicKey)
@@ -109,7 +142,6 @@
             $('#pubPrivForm').removeAttr('hidden')
             $('#passPhraseForm').removeAttr('hidden')
             $('#passPhrase2Form').removeAttr('hidden')
-            // }
             $( "#button" ).click(function(e) {
                 e.preventDefault()
                 const passPhrase = $('#passPhrase').val()

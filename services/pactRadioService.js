@@ -35,6 +35,7 @@ class pactRadioService {
         this.nodesColl = this.db.collection("nodes"+this.name)
         this.allCyclesColl = this.db.collection("allcycles"+this.name)
         this.countColl = this.db.collection("count1"+this.name)
+        this.gwIdColl = this.db.collection("gwId"+this.name)
         this.price = 0
         this.asKeyManage()
 
@@ -223,7 +224,7 @@ class pactRadioService {
     }
 
     async getMyCoord() {
-        return await this.cS.getGatewayGPS(config.chirpstack.gatewayId)
+        return await this.cS?.getGatewayGPS(config.chirpstack.gatewayId)
     }
 
     async goodToGo() {
@@ -403,6 +404,18 @@ class pactRadioService {
 
     getGatewayId() {
         return config.chirpstack.gatewayId
+    }
+
+    setGatewayId(gatewayId) {
+        config.chirpstack.gatewayId = gatewayId
+        const gateway_conf = {gateway_ID: gatewayId}
+        const file = JSON.stringify({gateway_conf})
+        fs.writeFileSync("./local_conf.json", file);
+    }
+
+    setApikey(apikey) {
+        config.chirpstack.apiKey = apikey
+        fs.writeFileSync("./apikey.json", JSON.stringify({apikey}));
     }
 
     async addTxn(txn, type) {

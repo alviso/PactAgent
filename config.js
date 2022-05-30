@@ -3,8 +3,14 @@ const fs = require('fs')
 let gwConfFile = '{}'
 let apikeyFile = '{}'
 try {
-    gwConfFile = fs.readFileSync('/opt/ttn-gateway/packet_forwarder/lora_pkt_fwd/local_conf.json', 'utf8')
-} catch (e) {}
+    gwConfFile = fs.readFileSync('/opt/ttn-gateway/packet_forwarder/lora_pkt_fwd/local_conf.json2', 'utf8')
+} catch (e) { //no such file
+    try {
+        gwConfFile = fs.readFileSync('./local_conf.json', 'utf8')
+    } catch (e) {
+        console.log('No GW ID found')
+    }
+}
 const gwConfJson = JSON.parse(gwConfFile)
 try {
     apikeyFile = fs.readFileSync('./apikey.json', 'utf8')
@@ -40,5 +46,5 @@ module.exports = {
         gatewayId: gwConfJson?.gateway_conf?.gateway_ID.toLowerCase() || '',
         apiKey: apikeyJson?.apikey || '',
     },
-    website: true
+    website: false
 };

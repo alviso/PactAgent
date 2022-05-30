@@ -47,6 +47,14 @@ app.use(async function (req, res, next) {
     return next();
   }
 
+  if (!app.locals.cS) { //if no GW
+    res.locals.status.gwcolor = 'danger'
+    res.locals.status.gw = 'No GW'
+  } else {
+    res.locals.status.gwcolor = 'success'
+    res.locals.status.gw = config.chirpstack.gatewayId
+  }
+
   if (app.locals.pAS[activeChain.name]?.hasKey() === true) {
     const wallet = res.app.locals.pAS[activeChain.name].getWallet()
     const balance = await res.app.locals.pAS[activeChain.name].getBalance(wallet, 'coin')
@@ -96,7 +104,7 @@ app.locals.pAS = {}
 app.locals.connS = new connectionService()
 
 setInterval(async ()=>{
-  if (!app.locals.cS && app.locals.connS.isOnline()) { // && config.chirpstack.gatewayId.length > 0) { //if no service yet and is online
+  if (!app.locals.cS && app.locals.connS.isOnline() && config.chirpstack.gatewayId.length > 0) { //if no service yet and is online
     app.locals.cS = new chirpstackService()
   }
   // if (app.locals.cS && !app.locals.connS.isOnline()) { //if service and offline, then stop service //this doesn't really work, GC doesn't seem to get rid of it

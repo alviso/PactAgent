@@ -92,6 +92,14 @@ router.post('/reset', asyncHandler(async (req, res, next) => {
     res.redirect('/')
 }))
 
+router.post('/setGwId', asyncHandler(async (req, res, next) => {
+    const service = res.app.locals.pAS[res.app.locals.chain.name]
+    const {gatewayId, apikey} = req.body
+    service.setGatewayId(gatewayId)
+    service.setApikey(apikey)
+    res.redirect('/')
+}))
+
 router.post('/transfer', asyncHandler(async (req, res, next) => {
     const service = res.app.locals.pAS[res.app.locals.chain.name]
     const {toWallet, amount} = req.body
