@@ -13,12 +13,13 @@ class pactRadioService {
         this.KP = {}
         this.haveANode = false
         this.wallet = ''
+        this.transferPw = ''
         this.nodes = []
         this.gatewayGPSCache = {}
         let KPString = "{}"
         try {
-            KPString = fs.readFileSync('./tmpkp.json',{encoding: "utf8"})
-            fs.unlinkSync('./tmpkp.json')
+            KPString = fs.readFileSync('./data/tmpkp.json',{encoding: "utf8"})
+            fs.unlinkSync('./data/tmpkp.json')
         } catch (e) { }
         this.setKey(JSON.parse(KPString))
         this.chain = chain
@@ -35,7 +36,6 @@ class pactRadioService {
         this.nodesColl = this.db.collection("nodes"+this.name)
         this.allCyclesColl = this.db.collection("allcycles"+this.name)
         this.countColl = this.db.collection("count1"+this.name)
-        this.gwIdColl = this.db.collection("gwId"+this.name)
         this.price = 0
         this.asKeyManage()
 
@@ -224,7 +224,10 @@ class pactRadioService {
     }
 
     async getMyCoord() {
-        return await this.cS?.getGatewayGPS(config.chirpstack.gatewayId)
+        const myCoord = await this.cS?.getGatewayGPS(config.chirpstack.gatewayId) || {}
+        if (myCoord?.latitude) myCoord.valid = true
+        else myCoord.valid = false
+        return myCoord
     }
 
     async goodToGo() {
@@ -245,7 +248,15 @@ class pactRadioService {
     async checkMyNode() {
         const myNode = await this.pactCall('L', 'free.radio02.get-my-node')
         if (!myNode?.address && !this.haveANode) {
-            await this.pactCall('S', 'free.radio02.insert-my-node', config.chirpstack.gatewayId)
+            if (await this.getPreowned()) { //If preowned need pw
+                if (this.transferPw.length > 0) { //only call if have pw
+                    console.log('Transferring: ', config.chirpstack.gatewayId, 'with pw:', this.transferPw)
+                    await this.pactCall('S', 'free.radio02.insert-my-node-with-transfer', config.chirpstack.gatewayId, this.transferPw)
+                    this.transferPw = '' //not needed any longer
+                }
+            } else {
+                await this.pactCall('S', 'free.radio02.insert-my-node', config.chirpstack.gatewayId)
+            }
         } else {
             this.haveANode = true
             if (!myNode.pubkey && (await this.allowedToGo()) === 0) {
@@ -337,6 +348,12 @@ class pactRadioService {
         return gwKeys.length
     }
 
+    async getPreowned() {
+        const gwDetails = await this.pactCall('L', 'free.radio02.get-gateway-details', config.chirpstack.gatewayId)
+        if (gwDetails && gwDetails.address !== 'k:'+this.KP.publicKey) return true
+        else return false
+    }
+
     async getBalances() {
         const kda = this.round(await this.getBalance(this.wallet,this.coinModule('KDA')), 3)
         const crkk = this.round(await this.getBalance(this.wallet,this.coinModule('CRKK')), 3)
@@ -410,12 +427,16 @@ class pactRadioService {
         config.chirpstack.gatewayId = gatewayId
         const gateway_conf = {gateway_ID: gatewayId}
         const file = JSON.stringify({gateway_conf})
-        fs.writeFileSync("./local_conf.json", file);
+        fs.writeFileSync("./data/local_conf.json", file);
+    }
+
+    setTrPw(transferPw) {
+        this.transferPw = transferPw
     }
 
     setApikey(apikey) {
         config.chirpstack.apiKey = apikey
-        fs.writeFileSync("./apikey.json", JSON.stringify({apikey}));
+        fs.writeFileSync("./data/apikey.json", JSON.stringify({apikey}));
     }
 
     async addTxn(txn, type) {
@@ -545,7 +566,7 @@ class pactRadioService {
     }
 
     save() {
-        fs.writeFileSync("./tmpkp.json", JSON.stringify(this.KP));
+        fs.writeFileSync("./data/tmpkp.json", JSON.stringify(this.KP));
     }
 
     coinModule (coin) {

@@ -6,7 +6,7 @@ const moment = require('moment')
 const github = require('../services/githubService')
 
 
-router.get('/', asyncHandler(async (req, res, next) => {
+router.get('/', isLoggedIn, asyncHandler(async (req, res, next) => {
   const service = res.app.locals.pAS[res.app.locals.chain.name]
   const balances = await service.getBalances()
   const cycles = await service.readCycles()
@@ -25,5 +25,20 @@ router.get('/home', asyncHandler(async (req, res, next) => {
   const prc = service.round(dCRKK / config.kadena.totSup * 100, 3)
   res.render('home', {naked:true, nGw, dCRKK, prc, lastCommit, PoCC, lastCycle})
 }))
+
+router.get('/logout', isLoggedIn,(req, res, next) => {
+  req.logout(function(err) {
+    if (err) { return next(err); }
+    return res.redirect('/');
+  });
+})
+
+router.get('/login',(req, res, next) => {
+  res.render('login', {naked:true})
+})
+
+function isLoggedIn(req, res, next) {
+  req.user ? next() : res.redirect('/login') //res.sendStatus(401)
+}
 
 module.exports = router;

@@ -37,6 +37,13 @@
                         </div>
                     </div>
 
+                    <div id="transferPwForm" class="form-group row" hidden>
+                        <label class="col-lg-2 col-form-label">Transfer PW:</label>
+                        <div class="col-lg-10">
+                            <input type="text" id="transferPw" value="{{userDetails.transferPw}}" class="form-control" readonly>
+                        </div>
+                    </div>
+
                     <div class="form-group row">
                         <label class="col-lg-2 col-form-label">KDA Balance:</label>
                         <div class="col-lg-10">
@@ -108,35 +115,9 @@
 <script>
     $(document).ready(function() {
         const cipher = localStorage.getItem('cipher-pactAgent')
-        if ($('#gatewayId').val() === '') {
-            $('#gatewayId').removeAttr('readonly')
-            $('#gatewayId').addClass('is-invalid')
-            $('#buttonForm').removeAttr('hidden')
-            $('#apikeyForm').removeAttr('hidden')
-            $('#apikey').removeAttr('readonly')
-            $('#apikey').addClass('is-invalid')
-            $( "#button" ).click(function(e) {
-                e.preventDefault()
-                const gatewayId = $('#gatewayId').val()
-                const apikey = $('#apikey').val()
-                const data = {gatewayId, apikey}
-                if (gatewayId.length != 16 || apikey.length < 20) {
-                    alert('You may not have entered Gateway ID and API Key correctly!')
-                    return
-                }
-                $.ajax({
-                    type: 'POST',
-                    url: '/actions/setGwId',
-                    data,
-                });
-                setTimeout(() => {
-                    window.location.href = '/'
-                }, 1000)
-            });
-        }
         if (!cipher) {
             const KP = Pact.crypto.genKeyPair();
-            $('#wallet').val(KP.publicKey)
+            $('#wallet').val('k:'+KP.publicKey)
             $('#pubPriv').val(JSON.stringify(KP))
             $('#buttonForm').removeAttr('hidden')
             $('#pubPrivForm').removeAttr('hidden')
@@ -164,6 +145,53 @@
                     window.location.href = '/'
                 }, 1000)
             });
+        } else {
+            if ($('#gatewayId').val() === '') {
+                $('#gatewayId').removeAttr('readonly')
+                $('#gatewayId').addClass('is-invalid')
+                $('#buttonForm').removeAttr('hidden')
+                $('#apikeyForm').removeAttr('hidden')
+                $('#apikey').removeAttr('readonly')
+                $('#apikey').addClass('is-invalid')
+                $( "#button" ).click(function(e) {
+                    e.preventDefault()
+                    const gatewayId = $('#gatewayId').val()
+                    const apikey = $('#apikey').val()
+                    const data = {gatewayId, apikey}
+                    if (gatewayId.length != 16 || apikey.length < 20) {
+                        alert('You may not have entered Gateway ID and API Key correctly!')
+                        return
+                    }
+                    $.ajax({
+                        type: 'POST',
+                        url: '/actions/setGwId',
+                        data,
+                    });
+                    setTimeout(() => {
+                        window.location.href = '/'
+                    }, 1000)
+                });
+            } else {
+                if ($('#gwStatus').text() === 'GW preowned') {
+                    $('#buttonForm').removeAttr('hidden')
+                    $('#transferPwForm').removeAttr('hidden')
+                    $('#transferPw').removeAttr('readonly')
+                    $('#transferPw').addClass('is-invalid')
+                    $( "#button" ).click(function(e) {
+                        e.preventDefault()
+                        const transferPw = $('#transferPw').val()
+                        const data = {transferPw}
+                        $.ajax({
+                            type: 'POST',
+                            url: '/actions/setTrPw',
+                            data,
+                        });
+                        setTimeout(() => {
+                            window.location.href = '/'
+                        }, 1000)
+                    });
+                }
+            }
         }
     });
 </script>

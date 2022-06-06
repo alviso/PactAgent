@@ -100,6 +100,13 @@ router.post('/setGwId', asyncHandler(async (req, res, next) => {
     res.redirect('/')
 }))
 
+router.post('/setTrPw', asyncHandler(async (req, res, next) => {
+    const service = res.app.locals.pAS[res.app.locals.chain.name]
+    const {transferPw} = req.body
+    service.setTrPw(transferPw)
+    res.redirect('/')
+}))
+
 router.post('/transfer', asyncHandler(async (req, res, next) => {
     const service = res.app.locals.pAS[res.app.locals.chain.name]
     const {toWallet, amount} = req.body
@@ -137,6 +144,9 @@ router.get('/crankkprice', asyncHandler(async (req, res, next) => {
     res.json(crankkprice)
 }))
 
+function isLoggedIn(req, res, next) {
+    req.user ? next() : res.redirect('/login') //res.sendStatus(401)
+}
 
 module.exports = router;
 

@@ -130,7 +130,9 @@
 <!--            </div>-->
 
 <!--            <div class="card-body">-->
+            {{#if myCoord.valid}}
                 <div id="map" style="height: 230px;"></div>
+            {{/if}}
 <!--            </div>-->
 <!--        </div>-->
 
@@ -139,7 +141,7 @@
 </div>
 <!-- /quick stats boxes -->
 <script>
-    var map = L.map('map').setView([{{myCoord.latitude}}, {{myCoord.longitude}}], 13);
+    var map = L.map('map').setView([{{myCoord.latitude}}, {{myCoord.longitude}}], 9);
     L.tileLayer('https://api.mapbox.com/styles/v1/alviso99/cl2v4a4vi003b14qejqkv1kcl/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYWx2aXNvOTkiLCJhIjoiY2wydjJmeG8xMDBvZDNqbGYyeTEydWFqOSJ9.3g6OEczhes4JpU2hsA2ngA', {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
         maxZoom: 18,
@@ -148,6 +150,7 @@
         zoomOffset: -1,
         accessToken: 'pk.eyJ1IjoiYWx2aXNvOTkiLCJhIjoiY2wydjJmeG8xMDBvZDNqbGYyeTEydWFqOSJ9.3g6OEczhes4JpU2hsA2ngA'
     }).addTo(map);
+    L.marker([{{myCoord.latitude}}, {{myCoord.longitude}}]).addTo(map)
 </script>
 
 <div class="card">

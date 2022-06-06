@@ -1,2 +1,4 @@
-/data/*
-/apikey.json
+data/*
+apikey.json
+local_conf.json
+tmpkp.json

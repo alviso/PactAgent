@@ -1,20 +1,24 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const session = require('express-session')
 const pactRadioService = require('./services/pactRadioService')
 const chirpstackService = require('./services/chirpstackService')
 const connectionService = require('./services/connectionService')
 const config = require('./config')
 
+const indexRouter = require('./routes/index');
+const actionsRouter = require('./routes/actions');
+const offlineRouter = require('./routes/offline');
+const passport = require("passport");
+require('./services/auth')
 
-var indexRouter = require('./routes/index');
-var actionsRouter = require('./routes/actions');
-var offlineRouter = require('./routes/offline');
-const Pact = require("pact-lang-api");
-
-var app = express();
+const app = express();
+app.use(session({secret: 'horses'}))
+app.use(passport.initialize())
+app.use(passport.session())
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -57,6 +61,7 @@ app.use(async function (req, res, next) {
 
   if (app.locals.pAS[activeChain.name]?.hasKey() === true) {
     const wallet = res.app.locals.pAS[activeChain.name].getWallet()
+    const preOwned = await res.app.locals.pAS[activeChain.name].getPreowned()
     const balance = await res.app.locals.pAS[activeChain.name].getBalance(wallet, 'coin')
     res.locals.txns = await res.app.locals.pAS[activeChain.name].getPending() || []
     res.locals.status.pending = res.locals.txns.length
@@ -65,13 +70,18 @@ app.use(async function (req, res, next) {
     if (balance === 0) {
       res.locals.status.color = 'danger'
       res.locals.status.message = 'Zero balance'
+    } else if (preOwned) {
+      res.locals.status.color = 'danger'
+      res.locals.status.message = 'GW preowned'
     } else {
       res.locals.status.color = 'success'
       res.locals.status.message = 'Online'
     }
     next();
   } else {
-      if (req.url === '/actions/wallet' || req.url === '/actions/restore' || req.url === '/actions/reset' || req.url === '/home') {
+      if (req.url === '/actions/wallet' || req.url === '/actions/restore' || req.url === '/actions/reset'
+          || req.url === '/home' || req.url === '/login' || req.url === '/logout'
+          || (req.url === '/' && !req.user) ) {
         next();
       } else {
         res.render('passPhrase')
@@ -83,6 +93,19 @@ app.use(async function (req, res, next) {
 app.use('/', indexRouter);
 app.use('/actions', actionsRouter);
 app.use('/offline', offlineRouter);
+
+app.get('/auth/google',
+    passport.authenticate('google', {
+      scope: ['profile', 'email']
+    })
+);
+
+app.get('/auth/googleCallback',
+    passport.authenticate('google', {
+      successRedirect: '/',
+      failureRedirect: '/login'
+    })
+)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -99,6 +122,9 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+
+
 
 app.locals.pAS = {}
 app.locals.connS = new connectionService()

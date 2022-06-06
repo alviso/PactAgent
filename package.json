@@ -23,12 +23,15 @@
     "node-wifi": "^2.0.16",
     "os-utils": "0.0.14",
     "pact-lang-api": "^4.2.0",
+    "passport": "^0.6.0",
+    "passport-google-oauth2": "^0.2.0",
     "puppeteer": "^12.0.1",
     "safe-eval": "^0.4.1"
   },
   "devDependencies": {
     "axios": "^0.24.0",
     "crypto-js": "^4.1.1",
+    "express-session": "^1.17.3",
     "node-wifi-scanner": "^1.1.2-np",
     "node-wifi-scanner-fork": "^1.1.2-np",
     "tingodb": "^0.6.1"
