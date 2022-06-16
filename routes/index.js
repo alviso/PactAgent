@@ -21,7 +21,7 @@ router.get('/home', asyncHandler(async (req, res, next) => {
   const dCRKK = await service.getDistributedCRKK()
   const lastCycle = await service.getLastCycle()
   const PoCC = await service.getCount('allCycles') - 223
-  const lastCommit = await github.getLastCommit()
+  // const lastCommit = await github.getLastCommit()
   const prc = service.round(dCRKK / config.kadena.totSup * 100, 3)
   res.render('home', {naked:true, nGw, dCRKK, prc, lastCommit, PoCC, lastCycle})
 }))

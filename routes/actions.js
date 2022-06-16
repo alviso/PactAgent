@@ -4,7 +4,7 @@ const asyncHandler = require('express-async-handler')
 const moment = require('moment')
 const config = require('../config');
 
-router.get('/wallet', asyncHandler(async (req, res, next) => {
+router.get('/wallet', isLoggedIn, asyncHandler(async (req, res, next) => {
     const service = res.app.locals.pAS[res.app.locals.chain.name]
     const userDetails = {}
     if (service.hasKey() === true) {
@@ -17,7 +17,7 @@ router.get('/wallet', asyncHandler(async (req, res, next) => {
     res.render('wallet', { category: 'Wallet', userDetails});
 }))
 
-router.get('/transfer', asyncHandler(async (req, res, next) => {
+router.get('/transfer', isLoggedIn, asyncHandler(async (req, res, next) => {
     const service = res.app.locals.pAS[res.app.locals.chain.name]
     const userDetails = {}
     if (service.hasKey() === true) {
@@ -50,7 +50,7 @@ router.get('/cycles', asyncHandler(async (req, res, next) => {
     res.json(cycles)
 }))
 
-router.post('/wallet', asyncHandler(async (req, res, next) => {
+router.post('/wallet', isLoggedIn, asyncHandler(async (req, res, next) => {
     for (let i in res.app.locals.pAS) {
         res.app.locals.pAS[i].setKey(req.body) //set key for all services
     }
@@ -64,15 +64,15 @@ router.post('/addTxn', asyncHandler(async (req, res, next) => {
     res.json({})
 }))
 
-router.get('/passPhrase', asyncHandler(async (req, res, next) => {
+router.get('/passPhrase', isLoggedIn, asyncHandler(async (req, res, next) => {
     res.render('passPhrase', { category: 'Passphrase'});
 }))
 
-router.get('/restore', asyncHandler(async (req, res, next) => {
+router.get('/restore', isLoggedIn, asyncHandler(async (req, res, next) => {
     res.render('restore', { category: 'Restore wallet'});
 }))
 
-router.get('/switch', asyncHandler(async (req, res, next) => {
+router.get('/switch', isLoggedIn, asyncHandler(async (req, res, next) => {
     for (let i in res.app.locals.pAS) {
         if (i !== res.app.locals.chain.name) {
             res.app.locals.chain = config.chains.find(e => e.name === i)
@@ -82,17 +82,17 @@ router.get('/switch', asyncHandler(async (req, res, next) => {
     res.redirect('/')
 }))
 
-router.get('/reset', asyncHandler(async (req, res, next) => {
+router.get('/reset', isLoggedIn, asyncHandler(async (req, res, next) => {
     res.render('reset', { category: 'Reset keys'});
 }))
 
-router.post('/reset', asyncHandler(async (req, res, next) => {
+router.post('/reset', isLoggedIn, asyncHandler(async (req, res, next) => {
     const service = res.app.locals.pAS[res.app.locals.chain.name]
     service.resetKey()
     res.redirect('/')
 }))
 
-router.post('/setGwId', asyncHandler(async (req, res, next) => {
+router.post('/setGwId', isLoggedIn, asyncHandler(async (req, res, next) => {
     const service = res.app.locals.pAS[res.app.locals.chain.name]
     const {gatewayId, apikey} = req.body
     service.setGatewayId(gatewayId)
@@ -100,21 +100,21 @@ router.post('/setGwId', asyncHandler(async (req, res, next) => {
     res.redirect('/')
 }))
 
-router.post('/setTrPw', asyncHandler(async (req, res, next) => {
+router.post('/setTrPw', isLoggedIn, asyncHandler(async (req, res, next) => {
     const service = res.app.locals.pAS[res.app.locals.chain.name]
     const {transferPw} = req.body
     service.setTrPw(transferPw)
     res.redirect('/')
 }))
 
-router.post('/transfer', asyncHandler(async (req, res, next) => {
+router.post('/transfer', isLoggedIn, asyncHandler(async (req, res, next) => {
     const service = res.app.locals.pAS[res.app.locals.chain.name]
     const {toWallet, amount} = req.body
     await service.transfer(toWallet, amount)
     res.redirect('/')
 }))
 
-router.get('/balances', asyncHandler(async (req, res, next) => {
+router.get('/balances', isLoggedIn, asyncHandler(async (req, res, next) => {
     const service = res.app.locals.pAS[res.app.locals.chain.name]
     let balances = await service.balances(req.query?.coin)
     balances = balances.reverse()
