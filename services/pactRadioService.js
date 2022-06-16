@@ -252,13 +252,14 @@ class pactRadioService {
                 if (this.transferPw.length > 0) { //only call if have pw
                     console.log('Transferring: ', config.chirpstack.gatewayId, 'with pw:', this.transferPw)
                     await this.pactCall('S', 'free.radio02.insert-my-node-with-transfer', config.chirpstack.gatewayId, this.transferPw)
+                    this.haveANode = true
                     this.transferPw = '' //not needed any longer
                 }
             } else {
                 await this.pactCall('S', 'free.radio02.insert-my-node', config.chirpstack.gatewayId)
+                this.haveANode = true
             }
         } else {
-            this.haveANode = true
             if (!myNode.pubkey && (await this.allowedToGo()) === 0) {
                 const asKey = await this.getAsKeyDB()
                 const buff = new Buffer(asKey[0].pub)
@@ -329,7 +330,7 @@ class pactRadioService {
             // console.log(this.chain.name, module, lresp)
             const ncmdObj = this.clone(cmdObj)
             if (lresp?.gas) {
-                ncmdObj.meta.gasLimit = lresp.gas + 200
+                ncmdObj.meta.gasLimit = lresp.gas + 400
                 console.log('Gas corrected!')
             }
             try {
@@ -350,7 +351,7 @@ class pactRadioService {
 
     async getPreowned() {
         const gwDetails = await this.pactCall('L', 'free.radio02.get-gateway-details', config.chirpstack.gatewayId)
-        if (gwDetails && gwDetails.address !== 'k:'+this.KP.publicKey) return true
+        if (gwDetails?.address && gwDetails.address !== 'k:'+this.KP.publicKey) return true
         else return false
     }
 
@@ -432,6 +433,10 @@ class pactRadioService {
 
     setTrPw(transferPw) {
         this.transferPw = transferPw
+    }
+
+    setCs(cs) {
+        this.cS = cs
     }
 
     setApikey(apikey) {

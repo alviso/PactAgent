@@ -142,6 +142,9 @@ setInterval(async ()=>{
     if (!app.locals.pAS[chain.name] && app.locals.connS.isOnline()) { //if no service yet an is online
       app.locals.pAS[chain.name] = new pactRadioService(chain, app.locals.cS)
     }
+    if (app.locals.pAS[chain.name] && app.locals.cS) {
+      app.locals.pAS[chain.name].setCs(app.locals.cS)
+    }
     // if (app.locals.pAS[chain.name] && !app.locals.connS.isOnline()) { ///if service and offline, then stop service //this doesn't really work, GC doesn't seem to get rid of it
     //   delete app.locals.pAS[chain.name]
     // }
