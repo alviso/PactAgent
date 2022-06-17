@@ -78,7 +78,7 @@ app.use(async function (req, res, next) {
       res.locals.status.message = 'Online'
     }
     next();
-  } else {
+  } else if (!req.url.includes('auth')) {
       if (req.url === '/actions/wallet' || req.url === '/actions/restore' || req.url === '/actions/reset'
           || req.url === '/home' || req.url === '/login' || req.url === '/logout'
           || (req.url === '/' && !req.user) ) {
@@ -86,7 +86,10 @@ app.use(async function (req, res, next) {
       } else {
         res.render('passPhrase')
       }
+  } else {
+    next();
   }
+
 
 })
 
