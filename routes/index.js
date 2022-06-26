@@ -38,7 +38,8 @@ router.get('/login',(req, res, next) => {
 })
 
 function isLoggedIn(req, res, next) {
-  req.user ? next() : res.redirect('/login') //res.sendStatus(401)
+  if (config.physical) next()
+  else req.user ? next() : res.redirect('/login') //res.sendStatus(401)
 }
 
 module.exports = router;

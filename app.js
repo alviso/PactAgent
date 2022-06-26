@@ -131,6 +131,7 @@ app.use(function(err, req, res, next) {
 
 app.locals.pAS = {}
 app.locals.connS = new connectionService()
+console.log(config.physical)
 
 setInterval(async ()=>{
   if (!app.locals.cS && app.locals.connS.isOnline() && config.chirpstack.gatewayId.length > 0) { //if no service yet and is online
