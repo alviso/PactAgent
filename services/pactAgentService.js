@@ -272,7 +272,7 @@ class pactAgentService {
             },
             {
                 "args":[this.wallet, toWallet, floatAmount],
-                "name":"coin.TRANSFER"
+                "name":"free.crankk01.TRANSFER"
             }
         ]
         const envData = {
@@ -282,7 +282,7 @@ class pactAgentService {
             }
         }
         const cmdObj = {
-            pactCode: Pact.lang.mkExp(`coin.transfer-create  \"${this.wallet}\" \"${toWallet}\" (read-keyset "keyset") ${floatAmount}`),
+            pactCode: Pact.lang.mkExp(`free.crankk01.transfer-create  \"${this.wallet}\" \"${toWallet}\" (read-keyset "keyset") ${floatAmount}`),
             keyPairs: this.KP,
             meta: this.makeMeta(),
             networkId: this.chain.networkId,

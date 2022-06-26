@@ -385,6 +385,39 @@ class pactRadioService {
         })
     }
 
+    async transfer(toWallet, amount) {
+        const floatAmount = parseFloat(amount)
+        const caps = [
+            {
+                "args":[],
+                "name":"coin.GAS"
+            },
+            {
+                "args":[this.wallet, toWallet, floatAmount],
+                "name":"free.crankk01.TRANSFER"
+            }
+        ]
+        const envData = {
+            keyset: {
+                pred: "keys-all",
+                keys: [toWallet.replace('k:','')]
+            }
+        }
+        const cmdObj = {
+            pactCode: Pact.lang.mkExp(`free.crankk01.transfer-create  \"${this.wallet}\" \"${toWallet}\" (read-keyset "keyset") ${floatAmount}`),
+            keyPairs: this.KP,
+            meta: this.makeMeta(),
+            networkId: this.chain.networkId,
+            envData
+        };
+        cmdObj.keyPairs.clist = caps
+
+        const resp = await Pact.fetch.send(cmdObj, this.API_HOST)
+        console.log(this.chain.name, 'Start transfer: ', resp)
+        if (resp?.requestKeys) await this.addTxn(resp?.requestKeys[0], 'Start transfer')
+        return resp || {}
+    }
+
     makeMeta() {
         return Pact.lang.mkMeta(
             this.wallet,
