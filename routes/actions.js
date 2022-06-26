@@ -21,7 +21,7 @@ router.get('/transfer', isLoggedIn, asyncHandler(async (req, res, next) => {
     const service = res.app.locals.pAS[res.app.locals.chain.name]
     const userDetails = {}
     if (service.hasKey() === true) {
-        userDetails.wallet = await service.getPubKey()
+        userDetails.wallet = await service.getWallet()
         userDetails.balance = await service.getBalance(userDetails.wallet, service.coinModule('KDA'))
         userDetails.crankkBalance = await service.getBalance(userDetails.wallet, service.coinModule('CRKK'))
         userDetails.fiatBalance = await service.getFiatBalance(userDetails.balance)
