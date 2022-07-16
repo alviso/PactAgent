@@ -126,9 +126,6 @@ app.use(function(err, req, res, next) {
   // res.render('error');
 });
 
-
-
-
 app.locals.pAS = {}
 app.locals.connS = new connectionService()
 console.log('Physical device:', config.physical)

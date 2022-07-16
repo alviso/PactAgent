@@ -22,10 +22,14 @@ const singleUser = JSON.parse(singleUserFile)
 const  GOOGLE_CLIENT_ID = googleConf.web.client_id
 const  GOOGLE_CLIENT_SECRET = googleConf.web.client_secret
 
+const tree = __dirname.split('/')
+const instance = tree[tree.length - 1]
+console.log(instance)
+
 passport.use(new GoogleStrategy({
         clientID:     GOOGLE_CLIENT_ID,
         clientSecret: GOOGLE_CLIENT_SECRET,
-        callbackURL: "http://localhost:3000/auth/googleCallback",
+        callbackURL: `https://${instance}.crankk.io/auth/googleCallback`,
         passReqToCallback   : true
     },
     function(request, accessToken, refreshToken, profile, done) {

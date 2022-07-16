@@ -8,11 +8,28 @@ var app = require('../app');
 var debug = require('debug')('pactagent:server');
 var http = require('http');
 const config = require('../config')
+const fs = require("fs");
+
+const tree = __dirname.split('/')
+const instance = tree[tree.length - 2]
+console.log(instance)
+
+let portConfFile = '[]'
+try {
+  portConfFile = fs.readFileSync('../portConf.json', 'utf8')
+} catch (e) {
+  console.log('No port conf found')
+}
+const portConf = JSON.parse(portConfFile)
+
+let prePort = '3000'
+
+const confPort = portConf.find(e => e.instance === instance)
+if (confPort) prePort = confPort.port
 
 /**
  * Get port from environment and store in Express.
  */
-let prePort = '3000'
 if (config.website) prePort = '3000'
 
 var port = normalizePort(process.env.PORT || prePort);
