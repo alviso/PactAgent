@@ -33,7 +33,7 @@ module.exports = {
         radioBank: 'radio01-bank',
         totSup: 10000000,
         gasPrice: 0.000001,
-        gasLimit: 10000,
+        gasLimit: 7000,
         ttl: 28800,
     },
     kucoin: {

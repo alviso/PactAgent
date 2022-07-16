@@ -40,7 +40,7 @@ class pactRadioService {
         this.asKeyManage()
 
         setInterval(async ()=>{
-            if (await this.goodToGo() === false) return
+            if (await this.goodToGo() === false) return  //nothing happens if low KDA balance
             this.txnColl.find({ }).toArray(async (err, txns) => {
                 for (let i in txns) {
                     const txn = txns[i].txn
@@ -236,10 +236,10 @@ class pactRadioService {
             // console.log(this.chain.name, 'Wallet not set!')
             return false
         }
-        //Zero balance
+        //Low balance
         const balance = await this.getBalance(this.wallet, 'coin')
-        if (balance === 0) {
-            console.log(this.chain.name, 'Zero balance!')
+        if (balance < 0.015) {
+            console.log(this.chain.name, 'Low balance!')
             return false
         }
         return true
@@ -331,6 +331,7 @@ class pactRadioService {
             const ncmdObj = this.clone(cmdObj)
             if (lresp?.gas) {
                 ncmdObj.meta.gasLimit = lresp.gas + 400
+                //not willing to pay more than x then put a limit here and return {}
                 console.log('Gas corrected!')
             }
             try {
