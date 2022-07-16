@@ -23,7 +23,7 @@ const  GOOGLE_CLIENT_ID = googleConf.web.client_id
 const  GOOGLE_CLIENT_SECRET = googleConf.web.client_secret
 
 const tree = __dirname.split('/')
-const instance = tree[tree.length - 1]
+const instance = tree[tree.length - 2]
 console.log(instance)
 
 passport.use(new GoogleStrategy({
