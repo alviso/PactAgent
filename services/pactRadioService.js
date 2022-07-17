@@ -25,7 +25,9 @@ class pactRadioService {
         this.chain = chain
         this.consMember = false
         this.cS = cS
-        this.API_HOST = `https://${chain.host}/chainweb/0.0/${chain.networkId}/chain/${chain.chainId}/pact`
+        this.API_HOST1 = `https://${chain.host}/chainweb/0.0/${chain.networkId}/chain/${chain.chainId}/pact`
+        this.API_HOST2 = `https://${chain.host2}/chainweb/0.0/${chain.networkId}/chain/${chain.chainId}/pact`
+        this.API_HOST = this.API_HOST1
         this.db = new Engine.Db('./data', {});
         if (chain.name === 'test') this.name = ''
         else this.name = chain.name
@@ -370,6 +372,11 @@ class pactRadioService {
 
     async getBalance(wallet, coin) {
         const data = await this.pactCall('L', `${coin}.details`, wallet)
+        if (!data?.balance) {
+            console.log('Host toggle...')
+            if (this.API_HOST === this.API_HOST1) this.API_HOST = this.API_HOST2
+            else this.API_HOST = this.API_HOST1
+        }
         return data?.balance || 0
     }
 
