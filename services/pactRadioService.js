@@ -27,7 +27,7 @@ class pactRadioService {
         this.cS = cS
         this.API_HOST1 = `https://${chain.host}/chainweb/0.0/${chain.networkId}/chain/${chain.chainId}/pact`
         this.API_HOST2 = `https://${chain.host2}/chainweb/0.0/${chain.networkId}/chain/${chain.chainId}/pact`
-        this.API_HOST = this.API_HOST1
+        this.API_HOST = this.API_HOST2
         this.db = new Engine.Db('./data', {});
         if (chain.name === 'test') this.name = ''
         else this.name = chain.name
