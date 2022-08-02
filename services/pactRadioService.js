@@ -118,6 +118,7 @@ class pactRadioService {
                 const receives = JSON.parse(resp.replaceAll('} {','},{')) || []
                 for (let j in receives) {
                     receives[j].mic = this.decrypt(asKey[0].priv, receives[j].mic)
+                    receives[j].gatewayId = sendNode.gatewayId
                 }
                 //Analyze and reward here
                 const validReceives = receives.filter(e => e.mic === sent)
@@ -148,11 +149,10 @@ class pactRadioService {
                     nodeFromChain.gps =this.gatewayGPSCache[nodeFromChain.gatewayId] = await this.cS.getGatewayGPS(nodeFromChain.gatewayId)
                     const nodeStored = this.nodes.find(e => e.address === nodeFromChain.address)
                     if (nodeStored?.sent.length > 0) {
-                        const validReceives = []
-                        for (let j in nodeFromChain.validReceives) {
-                            const receive = JSON.parse(nodeFromChain.validReceives[j])
-                            receive.gps = this.gatewayGPSCache[receive.id] = await this.cS.getGatewayGPS(receive.id)
-                            validReceives.push(receive)
+                        const validReceives = nodeFromChain.validReceives
+                        for (let j in validReceives) {
+                            const receive = validReceives[j]
+                            validReceives[j].gps = this.gatewayGPSCache[receive.id] = await this.cS.getGatewayGPS(receive.id)
                         }
                         const cycle = {senderGatewayId: nodeFromChain.gatewayId, senderGps: nodeFromChain.gps, validReceives, ts:Date.now()}
                         console.log('Send-receive closed:', cycle)
