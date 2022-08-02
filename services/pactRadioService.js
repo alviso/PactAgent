@@ -128,7 +128,7 @@ class pactRadioService {
                     if (!node) continue
                     node.gps = await this.cS.getGatewayGPS(node.gatewayId)
                     const distance = this.calcCrow(node.gps.latitude, node.gps.longitude, sendNode.gps.latitude, sendNode.gps.longitude)
-                    gateways.push(JSON.stringify({id:node.gatewayId, distance}))
+                    gateways.push({id:node.gatewayId, distance})
                 }
                 await this.pactCall('S', 'free.radio02.close-send-receive', sendNode.address, unique, gateways)
                 console.log(sent, receives)
@@ -332,7 +332,8 @@ class pactRadioService {
             // console.log(this.chain.name, module, lresp)
             const ncmdObj = this.clone(cmdObj)
             if (lresp?.gas) {
-                ncmdObj.meta.gasLimit = lresp.gas + 400
+                if (cmdObj.pactCode.includes('close-send-receive')) ncmdObj.meta.gasLimit = lresp.gas + 1000
+                else if (cmdObj.pactCode.includes('add-received')) ncmdObj.meta.gasLimit = lresp.gas + 400
                 //not willing to pay more than x then put a limit here and return {}
                 console.log('Gas corrected!')
             }
