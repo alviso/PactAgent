@@ -332,7 +332,7 @@ class pactRadioService {
             // console.log(this.chain.name, module, lresp)
             const ncmdObj = this.clone(cmdObj)
             if (lresp?.gas) {
-                if (cmdObj.pactCode.includes('close-send-receive')) ncmdObj.meta.gasLimit = lresp.gas + 1400
+                if (cmdObj.pactCode.includes('close-send-receive')) ncmdObj.meta.gasLimit = lresp.gas + 1800
                 else if (cmdObj.pactCode.includes('add-received')) ncmdObj.meta.gasLimit = lresp.gas + 400
                 //not willing to pay more than x then put a limit here and return {}
                 console.log('Gas corrected!')
