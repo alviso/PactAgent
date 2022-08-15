@@ -525,6 +525,38 @@ class pactRadioService {
         if (!asKey || asKey.length === 0) await this.setAsKeyDB()
     }
 
+    async getTxns() {
+        const url = `${config.reporter.url}/txnStats?wallet=${this.wallet}`
+        const resp = await axios.get(url)
+        const data = resp?.data || []
+        const txns = this.decorateTxns(data)
+        return txns
+    }
+
+    decorateTxns(data) {
+        const txns = []
+        for (let i in data) {
+            const line = data[i]
+            const txn = {}
+            txn.ts = line.ts
+            txn.fromNow = moment(txn.ts*1000).fromNow()
+            txn.event = line.detail['txn-type']
+            if (txn.event === 'R') txn.event = 'Receive'
+            else txn.event = 'Send'
+            txn.gatewayId = line.detail.sender
+            txn.award = line.detail.award
+            txn.jsonValRec = ''
+            for (let j in line.detail.witnesses) {
+                const witness = line.detail.witnesses[j]
+                const distance = witness.distance.decimal || witness.distance
+                const distm = this.round(distance * 1000, 1)
+                txn.jsonValRec += `GW: ${witness.id}, distance: ${distm} meters\n`
+            }
+            txns.push(txn)
+        }
+        return txns
+    }
+
     async readCycles() {
         return new Promise((resolve, reject)=>{
             const dayAgo = Date.now() - 24 * 60 * 60 * 1000

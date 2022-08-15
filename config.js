@@ -49,5 +49,8 @@ module.exports = {
         apiKey: apikeyJson?.apikey || '',
     },
     website: false,
+    reporter: {
+        url: 'https://reporter.crankk.io'
+    },
     physical
 };

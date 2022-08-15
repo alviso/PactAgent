@@ -9,7 +9,7 @@ const github = require('../services/githubService')
 router.get('/', isLoggedIn, asyncHandler(async (req, res, next) => {
   const service = res.app.locals.pAS[res.app.locals.chain.name]
   const balances = await service.getBalances()
-  const cycles = await service.readCycles()
+  const cycles = await service.getTxns()
   const myCoord = await service.getMyCoord()
   const dates = {monthago: moment().subtract(14, 'days').format('MMM Do'), today:moment().format('MMM Do')}
   res.render('agentDash', {category: 'Pact Agent', balances, dates, cycles, myCoord})
