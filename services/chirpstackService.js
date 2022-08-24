@@ -24,8 +24,8 @@ class chirpstackService {
 
         const streamFrameLogsRequest = new gatewayMessages.StreamGatewayFrameLogsRequest()
         streamFrameLogsRequest.setGatewayId(config.chirpstack.gatewayId)
-
         const clientReadableStream = this.gatewayServiceClient.streamFrameLogs(streamFrameLogsRequest, this.metadata)
+        this.startupTs = Date.now() //In case of disconnect, don't react to messages already in the queue
 
         clientReadableStream.on('data', (response) => {
             console.log('Data received')
@@ -45,6 +45,7 @@ class chirpstackService {
             }
         });
         clientReadableStream.on('error', (response)=>{
+            console.log(response)
             console.log('Disconnected (error)!!!')
         });
         clientReadableStream.on('end', async (response)=>{

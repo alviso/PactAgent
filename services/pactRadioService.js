@@ -281,6 +281,10 @@ class pactRadioService {
             const recs = this.cS.getRecs()
             recs.forEach(rec => {
                 console.log(rec)
+                if (Math.random() > 0.2) {
+                    console.log('ignored...')
+                    return
+                }
                 const result = this.encrypt(myNode.pubkeyd, rec.mic) //encrypt rec.mic with director's public key
                 this.pactCall('S', 'free.radio02.add-received', rec.gatewayId, result)
                 this.cyclesColl.insert({event:'receive', gatewayId:rec.gatewayId, mic:rec.mic, ts:Date.now()})
