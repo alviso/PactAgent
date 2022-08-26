@@ -63,7 +63,7 @@ class pactRadioService {
             if (this.cS) await this.checkMyNode()
 
 
-        }, 10 * 1000); //pending transactions, node check, insert
+        }, 30 * 1000); //pending transactions, node check, insert
 
         setInterval(async ()=>{
             if (await this.goodToGo() === false) return
@@ -336,7 +336,7 @@ class pactRadioService {
             // console.log(this.chain.name, module, lresp)
             const ncmdObj = this.clone(cmdObj)
             if (lresp?.gas) {
-                if (cmdObj.pactCode.includes('close-send-receive')) ncmdObj.meta.gasLimit = lresp.gas + 2400
+                if (cmdObj.pactCode.includes('close-send-receive')) ncmdObj.meta.gasLimit = lresp.gas + 3400
                 else if (cmdObj.pactCode.includes('add-received')) ncmdObj.meta.gasLimit = lresp.gas + 400
                 //not willing to pay more than x then put a limit here and return {}
                 console.log('Gas corrected!')
