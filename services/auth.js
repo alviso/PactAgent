@@ -33,12 +33,12 @@ passport.use(new GoogleStrategy({
         passReqToCallback   : true
     },
     function(request, accessToken, refreshToken, profile, done) {
-        if (!singleUser.isArray() && singleUser.singleUser.length === 0) {
+        if (!Array.isArray(singleUser) && singleUser.singleUser.length === 0) {
             singleUser.singleUser = profile.email
             fs.writeFileSync('./data/single_user.json', JSON.stringify(singleUser))
             return done(null, profile) //success
         } else {
-            if (singleUser.isArray()) {
+            if (Array.isArray(singleUser)) {
                 const user = singleUser.find(e => e.singleUser === profile.email)
                 if (user) {
                     return done(null, profile) //success
