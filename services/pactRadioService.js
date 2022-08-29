@@ -281,10 +281,10 @@ class pactRadioService {
             const recs = this.cS.getRecs()
             recs.forEach(rec => {
                 console.log(rec)
-                if (Math.random() > 0.3) {
-                    console.log('ignored...')
-                    return
-                }
+                // if (Math.random() > 0.3) {
+                //     console.log('ignored...')
+                //     return
+                // }
                 const result = this.encrypt(myNode.pubkeyd, rec.mic) //encrypt rec.mic with director's public key
                 this.pactCall('S', 'free.radio02.add-received', rec.gatewayId, result)
                 this.cyclesColl.insert({event:'receive', gatewayId:rec.gatewayId, mic:rec.mic, ts:Date.now()})
@@ -552,7 +552,7 @@ class pactRadioService {
             txn.jsonValRec = ''
             for (let j in line.detail.witnesses) {
                 const witness = line.detail.witnesses[j]
-                const distance = witness.distance.decimal || witness.distance
+                const distance = witness.distance.decimal || witness.distance.int || witness.distance
                 const distm = this.round(distance * 1000, 1)
                 txn.jsonValRec += `GW: ${witness.id}, distance: ${distm} meters\n`
             }
