@@ -28,7 +28,7 @@ class chirpstackService {
         this.startupTs = Date.now() //In case of disconnect, don't react to messages already in the queue
 
         clientReadableStream.on('data', (response) => {
-            console.log('Data received')
+            // console.log('Data received')
             const obj = response.toObject()
             const payloadJson = obj.uplinkFrame?.phyPayloadJson
             if (!payloadJson) return
@@ -40,6 +40,7 @@ class chirpstackService {
             const rec = {mic: payload?.mic, gatewayId, ts:Date.now()}
             //Not at startup
             if (Date.now() - this.startupTs > 10000) {
+                console.log('Ping received')
                 this.recs = [] //keep the last one
                 this.recs.push(rec)
             }
