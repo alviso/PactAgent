@@ -291,7 +291,7 @@ class pactRadioService {
             const recs = this.cS.getRecs()
             recs.forEach(rec => {
                 console.log(rec)
-                if (Math.random() > rate) {
+                if (Math.random() > this.rate) {
                     console.log('ignored...')
                     return
                 }
