@@ -39,6 +39,16 @@ class pactRadioService {
         this.allCyclesColl = this.db.collection("allcycles"+this.name)
         this.countColl = this.db.collection("count1"+this.name)
         this.price = 0
+        this.rate = 0
+        this.tree = __dirname.split('/')
+        this.instance = this.tree[this.tree.length - 3]
+        console.log(this.instance)
+        if (this.instance.includes('CA'))
+            this.rate = 0.5
+        else if (this.instance.includes('EU'))
+            this.rate = 1
+        else this.rate = 0.2
+
         this.asKeyManage()
 
         setInterval(async ()=>{
@@ -281,10 +291,10 @@ class pactRadioService {
             const recs = this.cS.getRecs()
             recs.forEach(rec => {
                 console.log(rec)
-                // if (Math.random() > 0.3) {
-                //     console.log('ignored...')
-                //     return
-                // }
+                if (Math.random() > rate) {
+                    console.log('ignored...')
+                    return
+                }
                 const result = this.encrypt(myNode.pubkeyd, rec.mic) //encrypt rec.mic with director's public key
                 this.pactCall('S', 'free.radio02.add-received', rec.gatewayId, result)
                 this.cyclesColl.insert({event:'receive', gatewayId:rec.gatewayId, mic:rec.mic, ts:Date.now()})
