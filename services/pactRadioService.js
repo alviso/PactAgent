@@ -132,12 +132,12 @@ class pactRadioService {
                 }
                 //Analyze and reward here
                 const validReceives = receives.filter(e => e.mic === sent)
-                const unique = [...new Map(validReceives.map(item => [item['address'], item])).values()]
+                let unique = [...new Map(validReceives.map(item => [item['address'], item])).values()]
+                unique = unique.filter(e => e.address !== sendNode.address) //exclude the sender from being a receiver as well
                 const gateways = []
                 for (let j in unique) {
                     const node = nodes.find(e => e.address === unique[j].address)
                     if (!node) continue
-                    if (node.address === sendNode.address) continue //exclude the sender from being a receiver as well
                     node.gps = await this.cS.getGatewayGPS(node.gatewayId)
                     const distance = this.calcCrow(node.gps.latitude, node.gps.longitude, sendNode.gps.latitude, sendNode.gps.longitude)
                     gateways.push({id:node.gatewayId, distance})
