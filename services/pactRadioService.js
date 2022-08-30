@@ -131,7 +131,7 @@ class pactRadioService {
                     receives[j].gatewayId = sendNode.gatewayId
                 }
                 //Analyze and reward here
-                const validReceives = receives.filter(e => e.mic === sent)
+                const validReceives = receives.filter(e => e.mic === sent && e.address !== sendNode.address)
                 const unique = [...new Map(validReceives.map(item => [item['address'], item])).values()]
                 const gateways = []
                 for (let j in unique) {
