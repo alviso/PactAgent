@@ -926,7 +926,7 @@ var Dashboard = function () {
     };
 
     // Monthly sales area chart
-    var _MonthlySalesAreaChart = function(element, height, color) {
+    var _MonthlySalesAreaChart = function(element, height, color, url) {
         if (typeof d3 == 'undefined') {
             console.warn('Warning - d3.min.js is not loaded.');
             return;
@@ -1003,7 +1003,7 @@ var Dashboard = function () {
             // Load data
             // ------------------------------
 
-            d3.json('/actions/balances?coin=free.crankk01', function (error, data) {
+            d3.json(url, function (error, data) {
 
                 // Show what's wrong if error
                 if (error) return console.error(error);
@@ -3812,7 +3812,9 @@ var Dashboard = function () {
 
             _DailyRevenueLineChart('#crkk-price', 215, '/actions/crankkprice');
 
-            _MonthlySalesAreaChart('#balances', 100, '#4DB6AC');
+            const url = 'https://reporter.crankk.io/balances?coin=free.crankk01&address='+$(".address").attr('value')
+
+            _MonthlySalesAreaChart('#balances', 100, '#4DB6AC', url);
 
             _chartSparkline('#server-load', 'area', 30, 115, 'basis', 750, 2000, 'rgba(255,255,255,0.5)');
         }

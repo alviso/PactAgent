@@ -378,7 +378,8 @@ class pactRadioService {
         const kda = this.round(await this.getBalance(this.wallet,this.coinModule('KDA')), 3)
         const crkk = this.round(await this.getBalance(this.wallet,this.coinModule('CRKK')), 3)
         const usd = await this.getFiatBalance(kda)
-        return {kda, crkk, usd}
+        const address = this.wallet
+        return {kda, crkk, usd, address}
     }
 
     async getDistributedCRKK() {
@@ -401,13 +402,13 @@ class pactRadioService {
         return Math.round(balance * parseFloat(response.data.data[0].lastTradedPrice) * 100) / 100
     }
 
-    async balances(coin) {
-        return new Promise((resolve, reject)=>{
-            this.balanceColl.find({ coin: coin}).toArray(async (err, balances) => {
-                resolve(balances)
-            })
-        })
-    }
+    // async balances(coin) {
+    //     return new Promise((resolve, reject)=>{
+    //         this.balanceColl.find({ coin: coin}).toArray(async (err, balances) => {
+    //             resolve(balances)
+    //         })
+    //     })
+    // }
 
     async transfer(toWallet, amount) {
         const floatAmount = parseFloat(amount)
