@@ -17,6 +17,7 @@ router.get('/balances',(req, res, next) => {
   const service = res.app.locals.pAS[res.app.locals.chain.name]
   const {coin} = req.query
   const resp = service.getBalHist(coin)
+  console.log(resp)
   res.json(resp)
 })
 
