@@ -374,6 +374,10 @@ class pactRadioService {
         else return false
     }
 
+    async getBalHist(coin) {
+        const url = `/balances?coin=${coin}&address=${this.wallet}`
+        return axios.get(url)
+    }
     async getBalances() {
         const kda = this.round(await this.getBalance(this.wallet,this.coinModule('KDA')), 3)
         const crkk = this.round(await this.getBalance(this.wallet,this.coinModule('CRKK')), 3)
