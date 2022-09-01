@@ -3812,7 +3812,7 @@ var Dashboard = function () {
 
             _DailyRevenueLineChart('#crkk-price', 215, '/actions/crankkprice');
 
-            const url = 'https://reporter.crankk.io/balances?coin=free.crankk01&address='+$(".address").attr('value')
+            const url = 'https://reporter.crankk.io/balances?coin=free.crankk01&address='+$("#address").attr('value')
 
             _MonthlySalesAreaChart('#balances', 100, '#4DB6AC', url);
 
