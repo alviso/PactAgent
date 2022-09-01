@@ -375,7 +375,7 @@ class pactRadioService {
     }
 
     async getBalHist(coin) {
-        const url = `/balances?coin=${coin}&address=${this.wallet}`
+        const url = `https://reporter.crankk.io/balances?coin=${coin}&address=${this.wallet}`
         return axios.get(url)
     }
     async getBalances() {
