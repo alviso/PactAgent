@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "axios": "^0.24.0",
+    "cors": "^2.8.5",
     "crypto-js": "^4.1.1",
     "express-session": "^1.17.3",
     "node-wifi-scanner": "^1.1.2-np",

@@ -8,7 +8,7 @@ const pactRadioService = require('./services/pactRadioService')
 const chirpstackService = require('./services/chirpstackService')
 const connectionService = require('./services/connectionService')
 const config = require('./config')
-
+const cors = require('cors');
 const indexRouter = require('./routes/index');
 const actionsRouter = require('./routes/actions');
 const offlineRouter = require('./routes/offline');
@@ -23,6 +23,9 @@ app.use(passport.session())
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
+app.use(cors({
+  origin: '*'
+}));
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
