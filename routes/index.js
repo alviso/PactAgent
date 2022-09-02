@@ -17,7 +17,7 @@ router.get('/balances',asyncHandler(async (req, res, next) => {
   const service = res.app.locals.pAS[res.app.locals.chain.name]
   const {coin} = req.query
   const resp = await service.getBalHist(coin)
-  console.log(resp)
+  // console.log(resp)
   res.json(resp)
 }))
 
