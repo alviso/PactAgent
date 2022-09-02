@@ -13,13 +13,13 @@ router.get('/', isLoggedIn, asyncHandler(async (req, res, next) => {
   res.render('agentDash', {category: 'Pact Agent', balances, dates, cycles, myCoord})
 }))
 
-router.get('/balances',(req, res, next) => {
+router.get('/balances',asyncHandler(async (req, res, next) => {
   const service = res.app.locals.pAS[res.app.locals.chain.name]
   const {coin} = req.query
-  const resp = service.getBalHist(coin)
+  const resp = await service.getBalHist(coin)
   console.log(resp)
   res.json(resp)
-})
+}))
 
 router.get('/logout', isLoggedIn,(req, res, next) => {
   req.logout(function(err) {
