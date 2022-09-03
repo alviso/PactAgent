@@ -119,6 +119,7 @@ class pactRadioService {
             if (await this.allowedToGo() !== 0) return
             if (this.consMember === false) return
             const nodes = await this.pactCall('L', 'free.radio02.get-nodes')
+            console.log("Number of nodes:", nodes.length)
             const directableNodes = nodes.filter(e =>
                 e.address !== this.wallet && //don't direct myself
                 e.send === false && e.sent.length === 0 && moment(e.net.timep).unix() < moment().unix())
