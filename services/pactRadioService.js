@@ -15,7 +15,7 @@ class pactRadioService {
         this.wallet = ''
         this.transferPw = ''
         this.nodes = []
-        this.closeFee = 3000
+        this.closeFee = 4000
         this.gatewayGPSCache = {}
         let KPString = "{}"
         try {
@@ -65,11 +65,10 @@ class pactRadioService {
                         continue
                     }
                     console.log(this.chain.name, resp[txn].result, elapsedSec)
-                    console.log(txns[i], resp[txn].result?.error?.message)
+                    // console.log(txns[i], resp[txn].result?.error?.message)
                     if (txns[i].type === 'free.radio02.close-send-receive' && resp[txn].result?.error?.message.includes('exceeded')) {
                         const split = resp[txn].result.error.message.split('exceeded:')
                         const fee = parseInt(split[1])
-                        console.log(fee)
                         if (fee > this.closeFee ) {
                             this.closeFee = fee
                             console.log('New close fee:',this.closeFee)
