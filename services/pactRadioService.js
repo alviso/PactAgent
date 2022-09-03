@@ -132,18 +132,20 @@ class pactRadioService {
             }
             //this is seconds, let it be 5 min old to not miss receive updates
             const checkableNodes = nodes.filter(e =>
-                e.director === this.wallet && //I am the director
+                // e.director === this.wallet && //I am the director
                 e.send === false && e.sent.length > 0 && (moment(e.lastAction.timep).unix() + 300) < moment().unix())
             console.log("Number of checkable nodes:", checkableNodes.length)
             const asKey = await this.getAsKeyDB()
             for (let i in checkableNodes) {
                 const sendNode = checkableNodes[i]
                 sendNode.gps = await this.cS.getGatewayGPS(sendNode.gatewayId)
-                const sent = this.decrypt(asKey[0].priv, sendNode.sent)
+                // const sent = this.decrypt(asKey[0].priv, sendNode.sent)
+                const sent = '111111'
                 const resp = await this.pactCall('L', 'free.radio02.get-gateway', sendNode.gatewayId)
                 const receives = JSON.parse(resp.replaceAll('} {','},{')) || []
                 for (let j in receives) {
-                    receives[j].mic = this.decrypt(asKey[0].priv, receives[j].mic)
+                    // receives[j].mic = this.decrypt(asKey[0].priv, receives[j].mic)
+                    receives[j].mic = sent
                     receives[j].gatewayId = sendNode.gatewayId
                 }
                 //Analyze and reward here
