@@ -534,6 +534,7 @@ class pactRadioService {
             txn.fromNow = moment(txn.ts*1000).fromNow()
             txn.event = line.detail['txn-type']
             if (txn.event === 'R') txn.event = 'Receive'
+            else if (txn.event === 'C') txn.event = 'Consensus'
             else txn.event = 'Send'
             txn.gatewayId = line.detail.sender
             txn.award = line.detail.award
