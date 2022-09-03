@@ -123,6 +123,7 @@ class pactRadioService {
                 e.address !== this.wallet && //don't direct myself
                 e.send === false && e.sent.length === 0 && moment(e.net.timep).unix() < moment().unix())
             const len = directableNodes.length
+            console.log("Number of directable nodes:", len)
             if (len > 0) {
                 const ind = Math.floor(Math.random() * len)
                 const sel = directableNodes[ind]
@@ -132,6 +133,7 @@ class pactRadioService {
             const checkableNodes = nodes.filter(e =>
                 // e.director === this.wallet && //I am the director
                 e.send === false && e.sent.length > 0 && (moment(e.lastAction.timep).unix() + 300) < moment().unix())
+            console.log("Number of checkable nodes:", checkableNodes.length)
             const asKey = await this.getAsKeyDB()
             for (let i in checkableNodes) {
                 const sendNode = checkableNodes[i]
