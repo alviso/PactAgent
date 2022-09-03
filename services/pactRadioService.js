@@ -15,7 +15,7 @@ class pactRadioService {
         this.wallet = ''
         this.transferPw = ''
         this.nodes = []
-        this.closeFee = 15000
+        this.closeFee = 10000
         this.gatewayGPSCache = {}
         let KPString = "{}"
         try {
