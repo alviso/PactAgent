@@ -65,11 +65,14 @@ class pactRadioService {
                         continue
                     }
                     console.log(this.chain.name, resp[txn].result, elapsedSec)
-                    console.log(txn, resp[txn].result?.error?.message)
+                    console.log(txns[i], resp[txn].result?.error?.message)
                     if (txns[i].module === 'free.radio02.close-send-receive' && resp[txn].result?.error?.message.includes('exceeded')) {
                         const split = resp[txn].result.error.message.split('exceeded:')
-                        this.closeFee = split[1].toInt()
-                        console.log('New close fee:',this.closeFee)
+                        console.log(split[1].toInt())
+                        if (split[1].toInt() > this.closeFee ) {
+                            this.closeFee = split[1].toInt()
+                            console.log('New close fee:',this.closeFee)
+                        }
                     }
                     this.txnColl.remove({"txn": txn})
                 }
@@ -152,7 +155,7 @@ class pactRadioService {
                 console.log(sent, receives)
             }
 
-        }, 5 * 60 * 1000); //Arbitration, award
+        }, 1 * 60 * 1000); //Arbitration, award
 
     }
 
