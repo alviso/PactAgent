@@ -65,7 +65,7 @@ class pactRadioService {
                         continue
                     }
                     console.log(this.chain.name, resp[txn].result, elapsedSec)
-                    console.log(txn.module, resp[txn].result?.error?.message)
+                    console.log(txn, resp[txn].result?.error?.message)
                     if (txn.module === 'free.radio02.close-send-receive' && resp[txn].result?.error?.message.includes('exceeded')) {
                         const split = resp[txn].result.error.message.split('exceeded:')
                         this.closeFee = split[1].toInt()
