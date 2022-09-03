@@ -15,6 +15,7 @@ class pactRadioService {
         this.wallet = ''
         this.transferPw = ''
         this.nodes = []
+        this.closeFee = 3000
         this.gatewayGPSCache = {}
         let KPString = "{}"
         try {
@@ -36,7 +37,6 @@ class pactRadioService {
         this.asKey = this.db.collection("asimkey") //same for all
         this.cyclesColl = this.db.collection("cycles0"+this.name)
         this.nodesColl = this.db.collection("nodes"+this.name)
-        this.allCyclesColl = this.db.collection("allcycles"+this.name)
         this.countColl = this.db.collection("count1"+this.name)
         this.price = 0
         this.rate = 0
@@ -44,7 +44,7 @@ class pactRadioService {
         this.instance = this.tree[this.tree.length - 3]
         console.log(this.instance)
         if (this.instance.includes('CA'))
-            this.rate = 0.5
+            this.rate = 0.3
         else if (this.instance.includes('EU'))
             this.rate = 1
         else this.rate = 0.2
@@ -65,6 +65,11 @@ class pactRadioService {
                         continue
                     }
                     console.log(this.chain.name, resp[txn].result, elapsedSec)
+                    if (txn.module === 'free.radio02.close-send-receive' && resp[txn].result?.error?.message.includes('exceeded')) {
+                        const split = resp[txn].result.error.message.split('exceeded:')
+                        this.closeFee = split[1].toInt()
+                        console.log('New close fee:',this.closeFee)
+                    }
                     this.txnColl.remove({"txn": txn})
                 }
             } )
@@ -148,37 +153,6 @@ class pactRadioService {
 
         }, 5 * 60 * 1000); //Arbitration, award
 
-        setInterval(async ()=>{
-            if (!config.website) return
-            if (await this.goodToGo() === false) return
-            if (await this.allowedToGo() !== 0) return
-            const nodes = await this.pactCall('L', 'free.radio02.get-nodes')
-            if (nodes.length === 0) return
-            for (let i in nodes) {
-                const nodeFromChain = nodes[i]
-                if (nodeFromChain.sent.length === 0) {
-                    nodeFromChain.gps =this.gatewayGPSCache[nodeFromChain.gatewayId] = await this.cS.getGatewayGPS(nodeFromChain.gatewayId)
-                    const nodeStored = this.nodes.find(e => e.address === nodeFromChain.address)
-                    if (nodeStored?.sent.length > 0) {
-                        const validReceives = nodeFromChain.validReceives
-                        for (let j in validReceives) {
-                            const receive = validReceives[j]
-                            validReceives[j].gps = this.gatewayGPSCache[receive.id] = await this.cS.getGatewayGPS(receive.id)
-                        }
-                        const cycle = {senderGatewayId: nodeFromChain.gatewayId, senderGps: nodeFromChain.gps, validReceives, ts:Date.now()}
-                        console.log('Send-receive closed:', cycle)
-                        await this.allCyclesColl.insert(cycle)
-                        await this.allCyclesColl.remove({'ts': {$exists: false}})
-                        await this.allCyclesColl.remove({'ts': {$lt: Date.now() - 24 * 60 * 60 * 1000}})
-                        let count = await this.getCount('allCycles')
-                        await this.countColl.update({name: 'allCycles'},
-                            {$set: {count: ++count}, $setOnInsert: {count: 500}},
-                            {upsert: true})
-                    }
-                }
-            }
-            this.nodes = nodes
-        }, 60 * 1000); //Statistics for website
     }
 
     async allowedToGo() {
@@ -217,24 +191,13 @@ class pactRadioService {
         })
     }
 
-    async getLastCycle() {
-        const allCycles = await this.getAllCycles()
-        let lastCycle = {}
-        if (allCycles.length > 0) {
-            lastCycle = allCycles[allCycles.length - 1]
-            lastCycle.ago = moment(lastCycle.ts).fromNow()
-        }
-        return lastCycle
-    }
-
-
-    async getCount(name) {
-        return new Promise((resolve, reject)=>{
-            this.countColl.find({"name" : name}).toArray(async (err, count) => {
-                resolve(count[0]?.count || 0)
-            })
-        })
-    }
+    // async getCount(name) {
+    //     return new Promise((resolve, reject)=>{
+    //         this.countColl.find({"name" : name}).toArray(async (err, count) => {
+    //             resolve(count[0]?.count || 0)
+    //         })
+    //     })
+    // }
 
     async getMyCoord() {
         const myCoord = await this.cS?.getGatewayGPS(config.chirpstack.gatewayId) || {}
@@ -347,7 +310,7 @@ class pactRadioService {
             // console.log(this.chain.name, module, lresp)
             const ncmdObj = this.clone(cmdObj)
             if (lresp?.gas) {
-                if (cmdObj.pactCode.includes('close-send-receive')) ncmdObj.meta.gasLimit = lresp.gas + 3400
+                if (cmdObj.pactCode.includes('close-send-receive')) ncmdObj.meta.gasLimit = this.closeFee //lresp.gas + 3400
                 else if (cmdObj.pactCode.includes('add-received')) ncmdObj.meta.gasLimit = lresp.gas + 400
                 //not willing to pay more than x then put a limit here and return {}
                 console.log('Gas corrected!')
@@ -387,10 +350,10 @@ class pactRadioService {
         return {kda, crkk, usd, address}
     }
 
-    async getDistributedCRKK() {
-        const radioBankBalance = this.round(await this.getBalance(config.kadena.radioBank, this.coinModule('CRKK')), 2)
-        return Math.round((10000 - radioBankBalance) * 100) / 100
-    }
+    // async getDistributedCRKK() {
+    //     const radioBankBalance = this.round(await this.getBalance(config.kadena.radioBank, this.coinModule('CRKK')), 2)
+    //     return Math.round((10000 - radioBankBalance) * 100) / 100
+    // }
 
     async getBalance(wallet, coin) {
         const data = await this.pactCall('L', `${coin}.details`, wallet)
