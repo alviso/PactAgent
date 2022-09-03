@@ -68,9 +68,10 @@ class pactRadioService {
                     console.log(txns[i], resp[txn].result?.error?.message)
                     if (txns[i].type === 'free.radio02.close-send-receive' && resp[txn].result?.error?.message.includes('exceeded')) {
                         const split = resp[txn].result.error.message.split('exceeded:')
-                        console.log(split[1].toInt())
-                        if (split[1].toInt() > this.closeFee ) {
-                            this.closeFee = split[1].toInt()
+                        const fee = parseInt(split[1])
+                        console.log(fee)
+                        if (fee > this.closeFee ) {
+                            this.closeFee = fee
                             console.log('New close fee:',this.closeFee)
                         }
                     }
