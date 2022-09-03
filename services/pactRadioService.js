@@ -155,7 +155,7 @@ class pactRadioService {
                 console.log(sent, receives)
             }
 
-        }, 1 * 60 * 1000); //Arbitration, award
+        }, 3 * 60 * 1000); //Arbitration, award
 
     }
 
