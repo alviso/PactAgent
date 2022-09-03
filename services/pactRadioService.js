@@ -147,6 +147,7 @@ class pactRadioService {
                 const validReceives = receives.filter(e => e.mic === sent)
                 let unique = [...new Map(validReceives.map(item => [item['address'], item])).values()]
                 unique = unique.filter(e => e.address !== sendNode.address) //exclude the sender from being a receiver as well
+                unique = unique.filter(e => e.address !== this.wallet) //don't let the director be a receiver as well
                 const gateways = []
                 for (let j in unique) {
                     const node = nodes.find(e => e.address === unique[j].address)
