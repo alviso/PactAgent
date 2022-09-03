@@ -119,7 +119,9 @@ class pactRadioService {
             if (await this.allowedToGo() !== 0) return
             if (this.consMember === false) return
             const nodes = await this.pactCall('L', 'free.radio02.get-nodes')
-            const directableNodes = nodes.filter(e => e.send === false && e.sent.length === 0 && moment(e.net.timep).unix() < moment().unix())
+            const directableNodes = nodes.filter(e =>
+                e.address !== this.wallet && //don't direct myself
+                e.send === false && e.sent.length === 0 && moment(e.net.timep).unix() < moment().unix())
             const len = directableNodes.length
             if (len > 0) {
                 const ind = Math.floor(Math.random() * len)
@@ -127,7 +129,9 @@ class pactRadioService {
                 await this.pactCall('S', 'free.radio02.direct-to-send', sel.address)
             }
             //this is seconds, let it be 5 min old to not miss receive updates
-            const checkableNodes = nodes.filter(e => e.send === false && e.sent.length > 0 && (moment(e.lastAction.timep).unix() + 300) < moment().unix())
+            const checkableNodes = nodes.filter(e =>
+                e.pubkeyd === this.asKey.pub && //I am the director
+                e.send === false && e.sent.length > 0 && (moment(e.lastAction.timep).unix() + 300) < moment().unix())
             const asKey = await this.getAsKeyDB()
             for (let i in checkableNodes) {
                 const sendNode = checkableNodes[i]
