@@ -130,7 +130,7 @@ class pactRadioService {
             }
             //this is seconds, let it be 5 min old to not miss receive updates
             const checkableNodes = nodes.filter(e =>
-                // e.pubkeyd === this.asKey.pub && //I am the director
+                e.director === this.wallet && //I am the director
                 e.send === false && e.sent.length > 0 && (moment(e.lastAction.timep).unix() + 300) < moment().unix())
             const asKey = await this.getAsKeyDB()
             for (let i in checkableNodes) {
