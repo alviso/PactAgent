@@ -15,7 +15,7 @@ class pactRadioService {
         this.wallet = ''
         this.transferPw = ''
         this.nodes = []
-        this.closeFee = 10000
+        this.closeFee = 15000
         this.gatewayGPSCache = {}
         let KPString = "{}"
         try {
@@ -60,11 +60,11 @@ class pactRadioService {
                     const elapsedSec = (tsf - txns[i]?.tsc) / 1000
                     const resp = await Pact.fetch.poll({requestKeys: [txn]}, this.API_HOST)
                     if (!resp[txn]) {
-                        console.log(this.chain.name, 'Pending txn:', txn)
+                        console.log('Pending txn:', txn)
                         if (elapsedSec > 300) this.txnColl.remove({"txn": txn})
                         continue
                     }
-                    console.log(this.chain.name, resp[txn].result, elapsedSec)
+                    console.log(resp[txn], elapsedSec)
                     // console.log(txns[i], resp[txn].result?.error?.message)
                     if (txns[i].type === 'free.radio02.close-send-receive' && resp[txn].result?.error?.message.includes('exceeded')) {
                         const split = resp[txn].result.error.message.split('exceeded:')
@@ -213,13 +213,13 @@ class pactRadioService {
     async goodToGo() {
         //Not initialized
         if (!this.KP.publicKey) {
-            // console.log(this.chain.name, 'Wallet not set!')
+            // console.log('Wallet not set!')
             return false
         }
         //Low balance
         const balance = await this.getBalance(this.wallet, 'coin')
         if (balance < 0.015) {
-            console.log(this.chain.name, 'Low balance!')
+            console.log('Low balance!')
             return false
         }
         return true
@@ -311,7 +311,6 @@ class pactRadioService {
             }
         } else {
             const lresp = await Pact.fetch.local(cmdObj, this.API_HOST)
-            // console.log(this.chain.name, module, lresp)
             const ncmdObj = this.clone(cmdObj)
             if (lresp?.gas) {
                 if (cmdObj.pactCode.includes('close-send-receive')) ncmdObj.meta.gasLimit = this.closeFee //lresp.gas + 3400
@@ -321,7 +320,7 @@ class pactRadioService {
             }
             try {
                 const resp = await Pact.fetch.send(ncmdObj, this.API_HOST)
-                console.log(this.chain.name, moment().format(), module, resp)
+                console.log(moment().format(), module, resp)
                 if (resp?.requestKeys) await this.addTxn(resp?.requestKeys[0], module, ncmdObj)
                 return resp || {}
             } catch (e) {
@@ -410,7 +409,7 @@ class pactRadioService {
         cmdObj.keyPairs.clist = caps
 
         const resp = await Pact.fetch.send(cmdObj, this.API_HOST)
-        console.log(this.chain.name, 'Start transfer: ', resp)
+        console.log('Start transfer: ', resp)
         if (resp?.requestKeys) await this.addTxn(resp?.requestKeys[0], 'Start transfer')
         return resp || {}
     }
