@@ -32,12 +32,10 @@ class pactRadioService {
         this.db = new Engine.Db('./data', {});
         if (chain.name === 'test') this.name = ''
         else this.name = chain.name
-        this.balanceColl = this.db.collection("balance"+this.name)
         this.txnColl = this.db.collection("txns0"+this.name)
         this.asKey = this.db.collection("asimkey") //same for all
-        this.cyclesColl = this.db.collection("cycles0"+this.name)
-        this.nodesColl = this.db.collection("nodes"+this.name)
-        this.countColl = this.db.collection("count1"+this.name)
+        // this.cyclesColl = this.db.collection("cycles0"+this.name)
+        // this.nodesColl = this.db.collection("nodes"+this.name)
         this.price = 0
         this.rate = 0
         this.tree = __dirname.split('/')
@@ -83,36 +81,6 @@ class pactRadioService {
 
 
         }, 30 * 1000); //pending transactions, node check, insert
-
-        setInterval(async ()=>{
-            if (await this.goodToGo() === false) return
-            const now = Date.now()
-            this.balanceColl.find({}).toArray(async (err, balances) => {
-                if (err) return
-                for (let i in config.coinLookup) {
-                    const coin = config.coinLookup[i].module
-                    const coinBalances = balances.filter(e => e.coin === coin)
-                    const oldBalance = coinBalances[coinBalances.length - 1]?.balance || 0
-                    const balance = this.round(await this.getBalance(this.wallet, coin), 3)
-                    if (balance !== oldBalance) {
-                        if (coin.includes('crankk')) {
-                            const cycles = await this.readCycles()
-                            let lastCycle = cycles[1]
-                            if (!lastCycle || lastCycle.award) { //if this is not a good candidate
-                                lastCycle = cycles[0]
-                            }
-                            if (lastCycle && !lastCycle.award) {
-                                lastCycle.award = balance - oldBalance
-                                this.cyclesColl.update({"ts" : lastCycle.ts},
-                                    {$set: { "award" : lastCycle.award}})
-                            }
-                        }
-                        this.balanceColl.insert({coin, ts:now, balance})
-                        this.balanceColl.remove({'ts': {$lt: now - 21 * 24 * 60 * 60 * 1000}})
-                    }
-                }
-            } )
-        }, 60 * 1000); //balance update, received award update,
 
         setInterval(async ()=>{
             if (await this.goodToGo() === false) return
@@ -189,30 +157,6 @@ class pactRadioService {
         })
     }
 
-    async getStoredNodes() {
-        return new Promise((resolve, reject)=>{
-            this.nodesColl.find({ }).toArray(async (err, nodes) => {
-                resolve(nodes)
-            })
-        })
-    }
-
-    async getAllCycles() {
-        return new Promise((resolve, reject)=>{
-            this.allCyclesColl.find({ }).toArray(async (err, cycles) => {
-                resolve(cycles)
-            })
-        })
-    }
-
-    // async getCount(name) {
-    //     return new Promise((resolve, reject)=>{
-    //         this.countColl.find({"name" : name}).toArray(async (err, count) => {
-    //             resolve(count[0]?.count || 0)
-    //         })
-    //     })
-    // }
-
     async getMyCoord() {
         const myCoord = await this.cS?.getGatewayGPS(config.chirpstack.gatewayId) || {}
         if (myCoord?.latitude) myCoord.valid = true
@@ -263,7 +207,7 @@ class pactRadioService {
                 if (MIC.length > 0) {
                     const result = this.encrypt(myNode.pubkeyd, MIC) //encrypt mic with director's public key
                     await this.pactCall('S', 'free.radio02.update-sent', result)
-                    this.cyclesColl.insert({event:'send', mic:MIC, ts:Date.now()})
+                    // this.cyclesColl.insert({event:'send', mic:MIC, ts:Date.now()})
                 }
             }
             const recs = this.cS.getRecs()
@@ -275,16 +219,16 @@ class pactRadioService {
                 }
                 const result = this.encrypt(myNode.pubkeyd, rec.mic) //encrypt rec.mic with director's public key
                 this.pactCall('S', 'free.radio02.add-received', rec.gatewayId, result)
-                this.cyclesColl.insert({event:'receive', gatewayId:rec.gatewayId, mic:rec.mic, ts:Date.now()})
+                // this.cyclesColl.insert({event:'receive', gatewayId:rec.gatewayId, mic:rec.mic, ts:Date.now()})
             })
             this.cS.rmRecs()
 
-            const cycles = await this.readSendCycles()
-            const lastCycle = cycles[0] || {}
-            if (lastCycle.event === 'send' && (!lastCycle.validReceives || lastCycle.validReceives.length === 0)) {
-                this.cyclesColl.update({"ts" : lastCycle.ts},
-                    {$set: { "validReceives" : myNode.validReceives}})
-            }
+            // const cycles = await this.readSendCycles()
+            // const lastCycle = cycles[0] || {}
+            // if (lastCycle.event === 'send' && (!lastCycle.validReceives || lastCycle.validReceives.length === 0)) {
+            //     this.cyclesColl.update({"ts" : lastCycle.ts},
+            //         {$set: { "validReceives" : myNode.validReceives}})
+            // }
         }
     }
 
@@ -340,11 +284,6 @@ class pactRadioService {
         }
     }
 
-    async getNumberOfGateways() {
-        const gwKeys = await this.pactCall('L', 'free.radio02.get-gateways-keys')
-        return gwKeys.length
-    }
-
     async getPreowned() {
         const gwDetails = await this.pactCall('L', 'free.radio02.get-gateway-details', config.chirpstack.gatewayId)
         if (gwDetails?.address && gwDetails.address !== 'k:'+this.KP.publicKey) return true
@@ -356,6 +295,7 @@ class pactRadioService {
         const resp = await axios.get(url)
         return resp?.data || []
     }
+
     async getBalances() {
         const kda = this.round(await this.getBalance(this.wallet,this.coinModule('KDA')), 3)
         const crkk = this.round(await this.getBalance(this.wallet,this.coinModule('CRKK')), 3)
@@ -363,11 +303,6 @@ class pactRadioService {
         const address = this.wallet
         return {kda, crkk, usd, address}
     }
-
-    // async getDistributedCRKK() {
-    //     const radioBankBalance = this.round(await this.getBalance(config.kadena.radioBank, this.coinModule('CRKK')), 2)
-    //     return Math.round((10000 - radioBankBalance) * 100) / 100
-    // }
 
     async getBalance(wallet, coin) {
         const data = await this.pactCall('L', `${coin}.details`, wallet)
@@ -383,14 +318,6 @@ class pactRadioService {
         const response = await axios.get(config.kucoin.exchangeRateUrl)
         return Math.round(balance * parseFloat(response.data.data[0].lastTradedPrice) * 100) / 100
     }
-
-    // async balances(coin) {
-    //     return new Promise((resolve, reject)=>{
-    //         this.balanceColl.find({ coin: coin}).toArray(async (err, balances) => {
-    //             resolve(balances)
-    //         })
-    //     })
-    // }
 
     async transfer(toWallet, amount) {
         const floatAmount = parseFloat(amount)
@@ -556,27 +483,27 @@ class pactRadioService {
         return txns
     }
 
-    async readCycles() {
-        return new Promise((resolve, reject)=>{
-            const dayAgo = Date.now() - 24 * 60 * 60 * 1000
-            this.cyclesColl.find({ts: {$gt: dayAgo}}).toArray(async (err, key) => {
-                if (err) return resolve([])
-                for (let i in key) {
-                    key[i].fromNow = moment(key[i].ts).fromNow()
-                    key[i].award = this.round(key[i].award, 3)
-                    key[i].jsonValRec = JSON.stringify(key[i].validReceives)
-                }
-                key = key.sort((a,b) => b.ts - a.ts)
-                key = key.slice(0,10)
-                resolve(key)
-            })
-        })
-    }
+    // async readCycles() {
+    //     return new Promise((resolve, reject)=>{
+    //         const dayAgo = Date.now() - 24 * 60 * 60 * 1000
+    //         this.cyclesColl.find({ts: {$gt: dayAgo}}).toArray(async (err, key) => {
+    //             if (err) return resolve([])
+    //             for (let i in key) {
+    //                 key[i].fromNow = moment(key[i].ts).fromNow()
+    //                 key[i].award = this.round(key[i].award, 3)
+    //                 key[i].jsonValRec = JSON.stringify(key[i].validReceives)
+    //             }
+    //             key = key.sort((a,b) => b.ts - a.ts)
+    //             key = key.slice(0,10)
+    //             resolve(key)
+    //         })
+    //     })
+    // }
 
-    async readSendCycles() {
-        const cycles = await this.readCycles()
-        return cycles.filter(e => e.event === 'send')
-    }
+    // async readSendCycles() {
+    //     const cycles = await this.readCycles()
+    //     return cycles.filter(e => e.event === 'send')
+    // }
 
 
     async setAsKeyDB() {
