@@ -258,7 +258,7 @@ class pactRadioService {
             if (lresp?.gas) {
                 if (cmdObj.pactCode.includes('close-send-receive')) ncmdObj.meta.gasLimit = this.closeFee //lresp.gas + 3400
                 else if (cmdObj.pactCode.includes('direct-to-send')) ncmdObj.meta.gasLimit = 1000
-                else if (cmdObj.pactCode.includes('add-received')) ncmdObj.meta.gasLimit = lresp.gas + 400
+                else if (cmdObj.pactCode.includes('add-received')) ncmdObj.meta.gasLimit = 700
                 //not willing to pay more than x then put a limit here and return {}
                 console.log('Gas corrected!')
             }
