@@ -6,6 +6,12 @@ const gatewayMessages = require('@crankk.io/chirpstack-api-fork/as/external/api/
 class chirpstackService {
 
     constructor() {
+        this.tree = __dirname.split('/')
+        this.instance = this.tree[this.tree.length - 3]
+        if (this.instance.includes('CONS'))
+            this.consNode = true
+        else this.consNode = false
+
         this.recs = []
         this.startupTs = Date.now()
         this.metadata = new grpc.Metadata();
@@ -15,7 +21,7 @@ class chirpstackService {
             grpc.credentials.createInsecure()
         )
 
-        if (config.chirpstack.gatewayId) {
+        if (config.chirpstack.gatewayId && !this.consNode) {
             this.streamEvents()
         }
     }
@@ -59,6 +65,7 @@ class chirpstackService {
 
     sendPing() {
         return new Promise((resolve, reject)=>{
+            if (this.consNode) return resolve('')
             const sendPingRequest = new gatewayMessages.SendPingRequest()
             sendPingRequest.setGatewayId(config.chirpstack.gatewayId)
             this.gatewayServiceClient.sendPing(sendPingRequest, this.metadata, function (err, res) {
