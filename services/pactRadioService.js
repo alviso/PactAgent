@@ -156,7 +156,7 @@ class pactRadioService {
     }
 
     async getMyCoord() {
-        const myCoord = await this.cS?.getGatewayGPS(config.chirpstack.gatewayId) || {}
+        const myCoord = await this.cS?.getGatewayGPS(config.chirpstack.gatewayId) || {latitude:45.5251384, longitude: -122.8898411}
         if (myCoord?.latitude) myCoord.valid = true
         else myCoord.valid = false
         return myCoord
