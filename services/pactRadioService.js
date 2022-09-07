@@ -86,12 +86,16 @@ class pactRadioService {
             if (this.consMember === false) return
             const nodes = await this.pactCall('L', 'free.radio02.get-nodes')
             console.log("Number of nodes:", nodes.length)
+            const consNodes = nodes.filter(e => e.consMember === true)
+            console.log("Number of consensus nodes:", consNodes.length)
             const directableNodes = nodes.filter(e =>
                 e.address !== this.wallet && //don't direct myself
                 e.send === false && e.sent.length === 0 && moment(e.net.timep).unix() < moment().unix())
             const len = directableNodes.length
             console.log("Number of directable nodes:", len)
-            if (len > 0) {
+            const ratio = directableNodes.length / consNodes.length //if I'm a consesus node then there is at least one
+            const rand = Math.random()
+            if (len > 0 && rand < ratio) { //try to minimize missed directing
                 const ind = Math.floor(Math.random() * len)
                 const sel = directableNodes[ind]
                 await this.pactCall('S', 'free.radio02.direct-to-send', sel.address)
