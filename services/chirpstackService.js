@@ -91,7 +91,7 @@ class chirpstackService {
             this.gatewayServiceClient.get(request, this.metadata, function (err, res) {
                 if (err) {
                     console.log(err)
-                    return resolve('')
+                    return resolve({latitude:45.5251384, longitude:-122.8898411})
                 }
                 const gpsObject = res.getGateway().getLocation().toObject()
                 // console.log(gpsObject)
