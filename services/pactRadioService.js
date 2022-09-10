@@ -90,7 +90,7 @@ class pactRadioService {
             console.log("Number of consensus nodes:", consNodes.length)
             const directableNodes = nodes.filter(e =>
                 e.address !== this.wallet && //don't direct myself
-                e.send === false && e.sent.length === 0 && moment(e.net.timep).unix() < moment().unix())
+                e.send === false && e.sent.length === 0 && moment(e.net.timep || e.net.time).unix() < moment().unix())
             const len = directableNodes.length
             console.log("Number of directable nodes:", len)
             const ratio = directableNodes.length / consNodes.length //if I'm a consesus node then there is at least one
