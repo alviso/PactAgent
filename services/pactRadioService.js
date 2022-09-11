@@ -125,13 +125,19 @@ class pactRadioService {
                 let unique = [...new Map(validReceives.map(item => [item['address'], item])).values()]
                 unique = unique.filter(e => e.address !== sendNode.address) //exclude the sender from being a receiver as well
                 unique = unique.filter(e => e.address !== this.wallet) //don't let the director be a receiver as well
-                const gateways = []
+                let gateways = []
                 for (let j in unique) {
                     const node = nodes.find(e => e.address === unique[j].address)
                     if (!node) continue
                     node.gps = await this.cS.getGatewayGPS(node.gatewayId)
                     const distance = this.calcCrow(node.gps.latitude, node.gps.longitude, sendNode.gps.latitude, sendNode.gps.longitude)
                     gateways.push({id:node.gatewayId, distance})
+                }
+                if (unique.length === 0) {
+                    const sample = this.getSample(sendNode.address)
+                    unique = sample.unique
+                    gateways = sample.gateways
+                    console.log('Sample........................', unique, gateways)
                 }
                 await this.pactCall('S', 'free.radio02.close-send-receive', sendNode.address, unique, gateways)
                 console.log(sent, receives)
@@ -287,6 +293,12 @@ class pactRadioService {
 
     async getBalHist(coin) {
         const url = `https://reporter.crankk.io/balances?coin=${coin}&address=${this.wallet}`
+        const resp = await axios.get(url)
+        return resp?.data || []
+    }
+
+    async getSample(address) {
+        const url = `https://reporter.crankk.io/sample?wallet=${address}`
         const resp = await axios.get(url)
         return resp?.data || []
     }
