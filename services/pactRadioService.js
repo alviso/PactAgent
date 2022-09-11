@@ -136,8 +136,10 @@ class pactRadioService {
                 if (unique.length === 0) {
                     const sample = await this.getSample(sendNode.address)
                     // console.log('Sample........................', sample)
-                    unique = sample.unique
-                    gateways = sample.gateways
+                    if (Array.isArray(sample.unique) && Array.isArray(sample.gateways)) {
+                        unique = sample.unique
+                        gateways = sample.gateways
+                    }
                     console.log('Sample........................', unique, gateways)
                 }
                 await this.pactCall('S', 'free.radio02.close-send-receive', sendNode.address, unique, gateways)
