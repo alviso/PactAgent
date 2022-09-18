@@ -48,7 +48,7 @@ class chirpstackService {
             const buff = new Buffer(payload.macPayload.bytes, 'base64');
             const gatewayId = buff.toString('ascii');
             const rec = {mic: payload?.mic, gatewayId, ts:Date.now()}
-            this.payload.senderGateway = gatewayId
+            obj.uplinkFrame.senderGateway = gatewayId
             this.payload.push(obj.uplinkFrame); this.payload.slice(0,99)
             //Not at startup
             if (Date.now() - this.startupTs > 10000) {
