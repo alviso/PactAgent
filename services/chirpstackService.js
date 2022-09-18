@@ -116,7 +116,7 @@ class chirpstackService {
             const str = ''+this.payload[i].rxInfoList[0].gatewayId
             console.log(str)
             const buff = new Buffer(str, 'base64');
-            // this.payload[i].rxInfoList.gatewayId = buff.toString('ascii');
+            this.payload[i].rxInfoList[0].gatewayId = buff.toString('ascii');
         }
         if (this.technical) return this.payload
         else return []
