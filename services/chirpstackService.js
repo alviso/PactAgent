@@ -11,8 +11,12 @@ class chirpstackService {
         if (this.instance.includes('CONS'))
             this.consNode = true
         else this.consNode = false
+        // if (this.instance.includes('EU'))
+            this.technical = true
+        // else this.technical = false
 
         this.recs = []
+        this.payload = []
         this.startupTs = Date.now()
         this.metadata = new grpc.Metadata();
         this.metadata.set('authorization', config.chirpstack.apiKey);
@@ -39,8 +43,9 @@ class chirpstackService {
             const payloadJson = obj.uplinkFrame?.phyPayloadJson
             if (!payloadJson) return
             const payload = JSON.parse(payloadJson)
-            if (payload?.mhdr?.mType !== 'Proprietary') return
+            if (payload?.mhdr?.mType !== 'Proprietary') return //Proprietary
             if (!payload?.macPayload?.bytes) return  //Not our proprietary perhaps
+            this.payload.push(payload); this.payload.slice(0,99)
             const buff = new Buffer(payload.macPayload.bytes, 'base64');
             const gatewayId = buff.toString('ascii');
             const rec = {mic: payload?.mic, gatewayId, ts:Date.now()}
@@ -103,6 +108,11 @@ class chirpstackService {
     getRecs() {
         const recs = this.recs.filter(e => e.ts > Date.now() - 2 * 60 * 1000)
         return [...new Map(recs.map(item => [item['mic'], item])).values()]
+    }
+
+    getPayload() {
+        if (this.technical) return this.payload
+        else return []
     }
 
     rmRecs() {

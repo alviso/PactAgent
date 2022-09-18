@@ -20,6 +20,12 @@ router.get('/balances',asyncHandler(async (req, res, next) => {
   res.json(resp)
 }))
 
+router.get('/technical', isLoggedIn, asyncHandler(async (req, res, next) => {
+  const service = res.app.locals.pAS[res.app.locals.chain.name]
+  const resp = await service.getPayload()
+  res.json(resp)
+}))
+
 router.get('/logout', isLoggedIn,(req, res, next) => {
   req.logout(function(err) {
     if (err) { return next(err); }
