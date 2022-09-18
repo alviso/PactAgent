@@ -113,8 +113,9 @@ class chirpstackService {
     getPayload() {
         this.payload = this.payload.sort((a,b) => (b.publishedAt.seconds - b.publishedAt.seconds))
         for (let i in this.payload) {
-            console.log(this.payload[i].rxInfoList)
-            // const buff = new Buffer(this.payload[i].rxInfoList.gatewayId, 'base64');
+            const str = ''+this.payload[i].rxInfoList.gatewayId
+            console.log(str)
+            const buff = new Buffer(str, 'base64');
             // this.payload[i].rxInfoList.gatewayId = buff.toString('ascii');
         }
         if (this.technical) return this.payload
