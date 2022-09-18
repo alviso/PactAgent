@@ -331,6 +331,10 @@ class pactRadioService {
         return Math.round(balance * parseFloat(response.data.data[0].lastTradedPrice) * 100) / 100
     }
 
+    getPayload() {
+        return this.cS.getPayload()
+    }
+
     async transfer(toWallet, amount) {
         const floatAmount = parseFloat(amount)
         const caps = [
