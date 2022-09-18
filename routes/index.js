@@ -23,7 +23,8 @@ router.get('/balances',asyncHandler(async (req, res, next) => {
 router.get('/technical', isLoggedIn, asyncHandler(async (req, res, next) => {
   const service = res.app.locals.pAS[res.app.locals.chain.name]
   const resp = await service.getPayload()
-  res.json(resp)
+  const pretty = JSON.stringify(resp, null, 4)
+  res.send(pretty)
 }))
 
 router.get('/logout', isLoggedIn,(req, res, next) => {
