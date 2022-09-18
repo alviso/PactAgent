@@ -45,7 +45,7 @@ class chirpstackService {
             const payload = JSON.parse(payloadJson)
             if (payload?.mhdr?.mType !== 'Proprietary') return //Proprietary
             if (!payload?.macPayload?.bytes) return  //Not our proprietary perhaps
-            this.payload.push(payload); this.payload.slice(0,99)
+            this.payload.push(obj.uplinkFrame); this.payload.slice(0,99)
             const buff = new Buffer(payload.macPayload.bytes, 'base64');
             const gatewayId = buff.toString('ascii');
             const rec = {mic: payload?.mic, gatewayId, ts:Date.now()}
