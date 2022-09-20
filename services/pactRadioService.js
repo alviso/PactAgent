@@ -47,6 +47,8 @@ class pactRadioService {
             this.rate = 1
         else if (this.instance.includes('CN'))
             this.rate = 1
+        else if (this.instance.includes('KAN'))
+            this.rate = 1
         else this.rate = 0.2
 
         this.asKeyManage()
