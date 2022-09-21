@@ -101,7 +101,7 @@ class pactRadioService {
             console.log("Number of directable nodes:", len)
             const ratio = directableNodes.length / consNodes.length //if I'm a consesus node then there is at least one
             const rand = Math.random()
-            if (len > 0 && rand < ratio) { //try to minimize missed directing
+            if (len > 0 && rand < ratio && (await this.goodToDirect() === true)) { //try to minimize missed directing
                 const ind = Math.floor(Math.random() * len)
                 const sel = directableNodes[ind]
                 await this.pactCall('S', 'free.radio02.direct-to-send', sel.address)
@@ -139,7 +139,6 @@ class pactRadioService {
                 }
                 if (unique.length === 0) {
                     const sample = await this.getSample(sendNode.address)
-                    // console.log('Sample........................', sample)
                     if (Array.isArray(sample.unique) && Array.isArray(sample.gateways)) {
                         unique = sample.unique
                         gateways = sample.gateways
@@ -191,6 +190,15 @@ class pactRadioService {
         const balance = await this.getBalance(this.wallet, 'coin')
         if (balance < 0.015) {
             console.log('Low balance!')
+            return false
+        }
+        return true
+    }
+
+    async goodToDirect() {
+        const balance = await this.getBalance(this.wallet, 'coin')
+        if (balance < 0.1) {
+            console.log('Not enough balance to direct!')
             return false
         }
         return true
