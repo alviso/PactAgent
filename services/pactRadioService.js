@@ -219,7 +219,7 @@ class pactRadioService {
                     this.transferPw = '' //not needed any longer
                 }
             } else {
-                await this.pactCall('S', 'free.radio02.insert-my-node', config.chirpstack.gatewayId)
+                await this.pactCall('S', 'free.radio02.insert-my-node', config.chirpstack.gatewayId, "")
                 this.haveANode = true
             }
         } else {
