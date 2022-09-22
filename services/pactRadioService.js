@@ -47,6 +47,8 @@ class pactRadioService {
             this.rate = 1
         else if (this.instance.includes('OR'))
             this.rate = 1
+        else if (this.instance.includes('FL'))
+            this.rate = 1
         else if (this.instance.includes('CN'))
             this.rate = 1
         else if (this.instance.includes('KAN'))
