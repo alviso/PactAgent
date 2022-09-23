@@ -74,9 +74,6 @@ app.use(async function (req, res, next) {
     } else if (!pw && !owned) {
       res.locals.status.color = 'danger'
       res.locals.status.message = 'Need password'
-    } else if (!owned) {
-      res.locals.status.color = 'danger'
-      res.locals.status.message = 'Ownership pending'
     } else {
       res.locals.status.color = 'success'
       res.locals.status.message = 'Online'
