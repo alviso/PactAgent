@@ -216,13 +216,13 @@ class pactRadioService {
                     console.log('Transferring: ', config.chirpstack.gatewayId, 'with pw:', this.transferPw)
                     await this.pactCall('S', 'free.radio02.insert-my-node-with-transfer', config.chirpstack.gatewayId, this.transferPw)
                     this.haveANode = true
-                    this.transferPw = '' //not needed any longer
+                    // this.transferPw = '' //not needed any longer
                 }
             } else {
                 if (this.transferPw.length > 0) { //only call if have pw
                     await this.pactCall('S', 'free.radio02.insert-my-node', config.chirpstack.gatewayId, this.transferPw)
                     this.haveANode = true
-                    this.transferPw = '' //not needed any longer
+                    // this.transferPw = '' //not needed any longer
                 }
             }
         } else {

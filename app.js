@@ -71,7 +71,7 @@ app.use(async function (req, res, next) {
     if (balance === 0) {
       res.locals.status.color = 'danger'
       res.locals.status.message = 'Zero balance'
-    } else if (!pw || !owned) {
+    } else if (!pw && !owned) {
       res.locals.status.color = 'danger'
       res.locals.status.message = 'Need password'
     } else {
