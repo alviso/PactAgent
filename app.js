@@ -61,7 +61,7 @@ app.use(async function (req, res, next) {
 
   if (app.locals.pAS[activeChain.name]?.hasKey() === true) {
     const wallet = res.app.locals.pAS[activeChain.name].getWallet()
-    const noPw = await res.app.locals.pAS[activeChain.name].hasPw()
+    const pw = res.app.locals.pAS[activeChain.name].hasPw()
     const balance = await res.app.locals.pAS[activeChain.name].getBalance(wallet, 'coin')
     res.locals.txns = await res.app.locals.pAS[activeChain.name].getPending() || []
     res.locals.status.pending = res.locals.txns.length
@@ -70,7 +70,7 @@ app.use(async function (req, res, next) {
     if (balance === 0) {
       res.locals.status.color = 'danger'
       res.locals.status.message = 'Zero balance'
-    } else if (noPw) {
+    } else if (!pw) {
       res.locals.status.color = 'danger'
       res.locals.status.message = 'Need password'
     } else {
