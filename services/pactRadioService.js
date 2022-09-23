@@ -313,6 +313,12 @@ class pactRadioService {
         else return false
     }
 
+    async getOwned() {
+        const gwDetails = await this.pactCall('L', 'free.radio02.get-gateway-details', config.chirpstack.gatewayId)
+        if (gwDetails?.address && gwDetails.address === 'k:'+this.KP.publicKey) return true
+        else return false
+    }
+
     async getBalHist(coin) {
         const url = `https://reporter.crankk.io/balances?coin=${coin}&address=${this.wallet}`
         const resp = await axios.get(url)

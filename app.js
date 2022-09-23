@@ -62,6 +62,7 @@ app.use(async function (req, res, next) {
   if (app.locals.pAS[activeChain.name]?.hasKey() === true) {
     const wallet = res.app.locals.pAS[activeChain.name].getWallet()
     const pw = res.app.locals.pAS[activeChain.name].hasPw()
+    const owned = res.app.locals.pAS[activeChain.name].getOwned()
     const balance = await res.app.locals.pAS[activeChain.name].getBalance(wallet, 'coin')
     res.locals.txns = await res.app.locals.pAS[activeChain.name].getPending() || []
     res.locals.status.pending = res.locals.txns.length
@@ -73,6 +74,9 @@ app.use(async function (req, res, next) {
     } else if (!pw) {
       res.locals.status.color = 'danger'
       res.locals.status.message = 'Need password'
+    } else if (!owned) {
+      res.locals.status.color = 'danger'
+      res.locals.status.message = 'Ownership pending'
     } else {
       res.locals.status.color = 'success'
       res.locals.status.message = 'Online'
