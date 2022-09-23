@@ -219,8 +219,11 @@ class pactRadioService {
                     this.transferPw = '' //not needed any longer
                 }
             } else {
-                await this.pactCall('S', 'free.radio02.insert-my-node', config.chirpstack.gatewayId, "")
-                this.haveANode = true
+                if (this.transferPw.length > 0) { //only call if have pw
+                    await this.pactCall('S', 'free.radio02.insert-my-node', config.chirpstack.gatewayId, this.transferPw)
+                    this.haveANode = true
+                    this.transferPw = '' //not needed any longer
+                }
             }
         } else {
             if (!myNode.pubkey && (await this.allowedToGo()) === 0) {
@@ -430,6 +433,11 @@ class pactRadioService {
 
     setTrPw(transferPw) {
         this.transferPw = transferPw
+    }
+
+    hasPw() {
+        if (this.transferPw.length > 0) return true
+        else return false
     }
 
     setCs(cs) {
