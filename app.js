@@ -67,7 +67,7 @@ app.use(async function (req, res, next) {
     res.locals.txns = await res.app.locals.pAS[activeChain.name].getPending() || []
     res.locals.status.pending = res.locals.txns.length
     if (res.locals.status.pending === 0) res.locals.status.pending = ''
-    // console.log(pw, owned)
+    console.log(pw, owned)
     if (balance === 0) {
       res.locals.status.color = 'danger'
       res.locals.status.message = 'Zero balance'

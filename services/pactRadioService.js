@@ -315,7 +315,7 @@ class pactRadioService {
 
     async getOwned() {
         const gwDetails = await this.pactCall('L', 'free.radio02.get-gateway-details', config.chirpstack.gatewayId)
-        // console.log(gwDetails)
+        console.log(gwDetails)
         if (gwDetails?.address && gwDetails.address === 'k:'+this.KP.publicKey) return true
         else return false
     }
