@@ -35,25 +35,12 @@ class pactRadioService {
         this.txnColl = this.db.collection("txns0"+this.name)
         this.asKey = this.db.collection("asimkey") //same for all
         this.price = 0
-        this.rate = 0
+        this.rate = 1
         this.tree = __dirname.split('/')
         this.instance = this.tree[this.tree.length - 3]
         console.log(this.instance)
-        if (this.instance.includes('CA'))
-            this.rate = 0.3
-        else if (this.instance.includes('EU'))
-            this.rate = 1
-        else if (this.instance.includes('NE'))
-            this.rate = 1
-        else if (this.instance.includes('OR'))
-            this.rate = 1
-        else if (this.instance.includes('FL'))
-            this.rate = 1
-        else if (this.instance.includes('CN'))
-            this.rate = 1
-        else if (this.instance.includes('KAN'))
-            this.rate = 1
-        else this.rate = 0.2
+        if (this.instance === 'PactAgents' || this.instance.startsWith('PactAgentsCA'))
+            this.rate = 0.2
 
         this.asKeyManage()
 
