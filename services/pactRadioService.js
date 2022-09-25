@@ -41,6 +41,7 @@ class pactRadioService {
         console.log(this.instance)
         if (this.instance === 'PactAgents' || this.instance.startsWith('PactAgentsCA'))
             this.rate = 0.2
+        console.log(this.rate)
 
         this.asKeyManage()
 
