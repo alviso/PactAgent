@@ -497,7 +497,7 @@ class pactRadioService {
             const line = data[i]
             const txn = {}
             txn.ts = line.ts
-            txn.gas = line.gas
+            txn.gas = line.detail.gas
             txn.fromNow = moment(txn.ts*1000).fromNow()
             txn.event = line.detail['txn-type']
             if (txn.event === 'R') txn.event = 'Receive'
