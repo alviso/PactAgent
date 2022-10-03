@@ -28,7 +28,7 @@ router.get('/transfer', isLoggedIn, asyncHandler(async (req, res, next) => {
     res.render('transfer', { category: 'Transfer', userDetails});
 }))
 
-router.get('/exchange', asyncHandler(async (req, res, next) => {
+router.get('/exchange', isLoggedIn, asyncHandler(async (req, res, next) => {
     const service = res.app.locals.pAS[res.app.locals.chain.name]
     const userDetails = {}
     if (service.hasKey() === true) {
