@@ -539,6 +539,74 @@ class pactRadioService {
         })
     }
 
+    async getOtherOpenOffers() {
+        const resp = await this.pactCall('L', 'free.crankkx.get-other-open-offers')
+        const offers = resp.result?.data || []
+        this.decorateOffers(offers)
+        return offers
+    }
+
+    async getMyOpenOffers(otherOpenOffers) {
+        const resp = await this.pactCall('L', 'free.crankkx.get-other-open-offers')
+        const offers = resp.result?.data || []
+        this.decorateOffers(offers)
+        for (let i in offers) {
+            const matches = otherOpenOffers.filter(e => (1 / e.rate) >= offers[i].rate && e.token0 === offers[i].token1 && e.token1 === offers[i].token0)
+            const sum = matches.reduce((p,e) => p + e.amount1, 0)
+            offers[i].matches = matches
+            if (offers[i].matches.length > 0) {
+                offers[i].key1 = offers[i].matches[0].key
+                if (sum >= offers[i].amount0) {
+                    offers[i].color = 'success'
+                    offers[i].status = 'Fully tradable'
+                } else {
+                    offers[i].color = 'primary'
+                    offers[i].status = 'Partially tradable'
+                }
+            }
+            else {
+                offers[i].color = 'danger'
+                offers[i].status = 'No match'
+            }
+
+        }
+        return offers
+    }
+
+    decorateOffers(offers) {
+        for (let i in offers) {
+            offers[i].amount0 = offers[i].ramount
+            offers[i].amount1 = this.round(offers[i].ramount * offers[i].rate, 3)
+            offers[i].token0 = this.getFullName(offers[i].token0).name
+            offers[i].display0 = this.coinLookup(offers[i].token0, offers[i].amount0)
+            offers[i].token1 = this.getFullName(offers[i].token1).name
+            offers[i].display1 = this.coinLookup(offers[i].token1, offers[i].amount1)
+            offers[i].display2 = this.usdLookup(offers[i])
+            const unix = moment(offers[i].createdAt.timep).unix()
+            const validitySeconds = offers[i].validityMinutes.int * 60
+            const ts = (unix + validitySeconds) * 1000
+            offers[i].validUntil = moment(ts).fromNow()
+            offers[i].key = offers[i].offeror + '/' + offers[i].token0 + '/' + offers[i].token1 + '/' + offers[i].createdAt.timep.split('.')[0]
+        }
+    }
+
+    coinLookup (module, amount) {
+        const coin = config.coinLookup.find(e => e.module === module).coin
+        return '' + amount + ' ' + coin
+    }
+
+    usdLookup (offer) {
+        if (offer.token0 === 'coin') return '' + this.round(offer.amount0 * this.price, 3) + ' USD'
+        else if (offer.token1 === 'coin') return '' + this.round(offer.amount1 * this.price,3) + ' USD'
+        else return '0 USD'
+    }
+
+    getFullName (token) {
+        if (token.refName.namespace) token.name =token.refName.namespace + '.' + token.refName.name
+        else token.name = token.refName.name
+        return token
+    }
+
     encrypt(pubkey, payload) {
         let buff = new Buffer(pubkey, 'base64');
         const publicKeyStr = buff.toString('ascii');

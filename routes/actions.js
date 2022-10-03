@@ -28,6 +28,21 @@ router.get('/transfer', isLoggedIn, asyncHandler(async (req, res, next) => {
     res.render('transfer', { category: 'Transfer', userDetails});
 }))
 
+router.get('/exchange', asyncHandler(async (req, res, next) => {
+    const service = res.app.locals.pAS[res.app.locals.chain.name]
+    const userDetails = {}
+    if (service.hasKey() === true) {
+        userDetails.wallet = await service.getPubKey()
+        userDetails.balance = await service.getBalance(userDetails.wallet, service.coinModule('KDA'))
+        userDetails.crankkBalance = await service.getBalance(userDetails.wallet, service.coinModule('CRKK'))
+        userDetails.fiatBalance = await service.getFiatBalance(userDetails.balance)
+    }
+    const otherOffers = await service.getOtherOpenOffers()
+    const offers = await service.getMyOpenOffers(otherOffers)
+    const lastPrice = await service.getLastPrice('coin/free.crankk01')
+    res.render('exchange',  {category: 'Exchange', userDetails, offers, otherOffers, lastPrice})
+}))
+
 router.post('/wallet', isLoggedIn, asyncHandler(async (req, res, next) => {
     for (let i in res.app.locals.pAS) {
         res.app.locals.pAS[i].setKey(req.body) //set key for all services
