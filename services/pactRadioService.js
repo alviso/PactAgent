@@ -648,6 +648,10 @@ class pactRadioService {
         return ret
     }
 
+    async addTxn(txn, type) {
+        this.txnColl.insert({txn, type, tsc:Date.now()})
+    }
+
     decrypt(privkey, result) {
         if (!result.includes(';;;;;')) {
             return result

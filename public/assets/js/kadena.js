@@ -1,11 +1,9 @@
-const bank = 'ztrust-bank20'
-const module = 'free.simplesales20'
 const excModule = 'free.crankkx'
 const excBank = 'crankkx-bank'
-const networkId =  'testnet04'
-const chainId = '1'
-const apiServer = `https://testnet.crankk.io/chainweb/0.0/${networkId}/chain/${chainId}/pact`
-const gasPrice = 0.00000001
+const networkId =  'mainnet01'
+const chainId = '0'
+const apiServer = `https://mainnet.crankk.io/chainweb/0.0/${networkId}/chain/${chainId}/pact`
+const gasPrice = 0.000001
 const gasLimit = 10000
 const ttl = 28800
 

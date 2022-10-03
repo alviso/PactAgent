@@ -44,6 +44,13 @@ router.get('/exchange', asyncHandler(async (req, res, next) => {
     res.render('exchange',  {category: 'Exchange', userDetails, offers, otherOffers, lastPrice})
 }))
 
+router.post('/addTxn', asyncHandler(async (req, res, next) => {
+    const service = res.app.locals.pAS[res.app.locals.chain.name]
+    const {txn, type} = req.body
+    await service.addTxn(txn, type)
+    res.json({})
+}))
+
 router.post('/wallet', isLoggedIn, asyncHandler(async (req, res, next) => {
     for (let i in res.app.locals.pAS) {
         res.app.locals.pAS[i].setKey(req.body) //set key for all services
