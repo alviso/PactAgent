@@ -347,7 +347,35 @@ class pactRadioService {
         return this.cS.getPayload()
     }
 
+    async createOffer(token0, token1, amount, rate, validityMinutes) {
+        if (!amount.includes('.')) amount += '.0'
+        if (!rate.includes('.')) rate += '.0'
+        const caps = [
+            {
+                "args":[],
+                "name":"coin.GAS"
+            },
+            {
+                "args":[this.wallet, 'crankkx-bank', amount],
+                "name":`${token0}.TRANSFER`
+            }
+        ]
+        const cmdObj = {
+            pactCode: Pact.lang.mkExp(`free.crankkx.create-offer \"${this.wallet}\" \"crankkx-bank\" ${amount} ${rate} ${validityMinutes}`),
+            keyPairs: this.KP,
+            meta: this.makeMeta(),
+            networkId: this.chain.networkId
+        };
+        cmdObj.keyPairs.clist = caps
+
+        const resp = await Pact.fetch.send(cmdObj, this.API_HOST)
+        console.log('Create offer: ', resp)
+        if (resp?.requestKeys) await this.addTxn(resp?.requestKeys[0], 'Create offer')
+        return resp || {}
+    }
+
     async transfer(toWallet, amount) {
+        if (!amount.includes('.')) amount += '.0'
         const floatAmount = parseFloat(amount)
         const caps = [
             {

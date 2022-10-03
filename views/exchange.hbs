@@ -273,7 +273,6 @@
         })
         $('#toBlockchain').click(async function(event){
             event.preventDefault()
-            const wallet = $('#wallet').val()
             const tokenpair = $('#tokenpair').val()
             const token0 = tokenpair.split('/')[0]
             const token1 = tokenpair.split('/')[1]
@@ -289,10 +288,7 @@
             if (!parseFloat(rate)>0) {
                 alert('Rate must be greater than zero'); return
             }
-            const cmdObj = prepareExchange(wallet, token0, token1, amount, rate, validityMinutes)
-            const resp = await Pact.fetch.send(cmdObj, apiServer)
-            console.log(resp)
-            $.post( "/actions/addTxn", { txn: resp?.requestKeys[0], type:'Add trade' } );
+            $.post( "/actions/createOffer", { token0, token1, amount, rate, validityMinutes } );
             setTimeout(() => { window.location.href = '/actions/exchange' }, 1000);
         });
         $(document).on('click', '.cancelTrade', async function(event){
