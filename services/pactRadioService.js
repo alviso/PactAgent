@@ -608,8 +608,7 @@ class pactRadioService {
     }
 
     async getLastPrice(pair) {
-        const cmdObj = this.makeExcObj('get-ledger')
-        const resp = await Pact.fetch.local(cmdObj, this.API_HOST)
+        const resp = await this.pactCall('L', 'free.crankkx.get-ledger')
         const ledger = resp.result?.data || []
         const lastPrice = this.lastPrice(ledger, pair)
         return lastPrice
