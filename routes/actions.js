@@ -100,8 +100,8 @@ router.post('/transfer', isLoggedIn, asyncHandler(async (req, res, next) => {
 
 router.post('/createOffer', isLoggedIn, asyncHandler(async (req, res, next) => {
     const service = res.app.locals.pAS[res.app.locals.chain.name]
-    const {token0, token1, amount, validityMinutes} = req.body
-    await service.createOffer(token0, token1, amount, validityMinutes)
+    const {token0, token1, amount, rate, validityMinutes} = req.body
+    await service.createOffer(token0, token1, amount, rate, validityMinutes)
     res.redirect('/actions/exchange')
 }))
 
