@@ -607,6 +607,26 @@ class pactRadioService {
         return token
     }
 
+    async getLastPrice(pair) {
+        const cmdObj = this.makeExcObj('get-ledger')
+        const resp = await Pact.fetch.local(cmdObj, this.API_HOST)
+        const ledger = resp.result?.data || []
+        const lastPrice = this.lastPrice(ledger, pair)
+        return lastPrice
+    }
+
+    lastPrice(ledger, pair) {
+        const token0 = pair.split('/')[0]
+        const token1 = pair.split('/')[1]
+        ledger = ledger.sort((a,b) => (moment(b.eventAt.timep) - moment(a.eventAt.timep)))
+        const last = ledger[0]
+        if (this.getFullName(last.tokenA) === token0)
+            return this.round(last.effrate, 3)
+        else
+            return this.round(1 / last.effrate, 3)
+    }
+
+
     encrypt(pubkey, payload) {
         let buff = new Buffer(pubkey, 'base64');
         const publicKeyStr = buff.toString('ascii');
