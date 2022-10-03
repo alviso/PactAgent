@@ -11,7 +11,8 @@ const ttl = 28800
 function prepareExchange(wallet, token0, token1, amount, rate, validityMinutes) {
     const keyPairs = {}
     const floatAmount = parseFloat(amount)
-    keyPairs.publicKey = wallet
+    const pubKey = (wallet.split(':'))[1]
+    keyPairs.publicKey = pubKey
     keyPairs.secretKey = sessionStorage.getItem('prKey-pactAgent')
     if (!amount.includes('.')) amount += '.0'
     if (!rate.includes('.')) rate += '.0'
@@ -29,7 +30,7 @@ function prepareExchange(wallet, token0, token1, amount, rate, validityMinutes) 
     const envData = {
         keyset: {
             pred: "keys-all",
-            keys: [wallet]
+            keys: [pubkey]
         }
     }
     const cmdObj = {
