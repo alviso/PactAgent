@@ -30,7 +30,7 @@ function prepareExchange(wallet, token0, token1, amount, rate, validityMinutes) 
     const envData = {
         keyset: {
             pred: "keys-all",
-            keys: [pubkey]
+            keys: [pubKey]
         }
     }
     const cmdObj = {
