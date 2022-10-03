@@ -32,7 +32,8 @@ router.get('/exchange', asyncHandler(async (req, res, next) => {
     const service = res.app.locals.pAS[res.app.locals.chain.name]
     const userDetails = {}
     if (service.hasKey() === true) {
-        userDetails.wallet = await service.getPubKey()
+        userDetails.wallet = service.getWallet()
+        if (userDetails.wallet !== 'k:54057e541f3652e86530af9c46a04cf1ab216ea9866f5f31357f01d9a7d4d09d') return res.sendStatus(404);
         userDetails.balance = await service.getBalance(userDetails.wallet, service.coinModule('KDA'))
         userDetails.crankkBalance = await service.getBalance(userDetails.wallet, service.coinModule('CRKK'))
         userDetails.fiatBalance = await service.getFiatBalance(userDetails.balance)
