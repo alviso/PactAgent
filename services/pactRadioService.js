@@ -361,7 +361,7 @@ class pactRadioService {
             }
         ]
         const cmdObj = {
-            pactCode: Pact.lang.mkExp(`free.crankkx.create-offer \"${this.wallet}\" \"crankkx-bank\" ${amount} ${rate} ${validityMinutes}`),
+            pactCode: Pact.lang.mkExp(`free.crankkx.create-offer ${token0} ${token1} ${amount} ${rate} ${validityMinutes}`),
             keyPairs: this.KP,
             meta: this.makeMeta(),
             networkId: this.chain.networkId
