@@ -619,6 +619,7 @@ class pactRadioService {
         const token1 = pair.split('/')[1]
         ledger = ledger.sort((a,b) => (moment(b.eventAt.timep) - moment(a.eventAt.timep)))
         const last = ledger[0]
+        if (!last) return 0
         if (this.getFullName(last.tokenA) === token0)
             return this.round(last.effrate, 3)
         else
