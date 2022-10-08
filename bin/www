@@ -29,7 +29,7 @@ const maxPort = portConf[portConf.length -1]
 
 if (confPort) prePort = confPort.port  //portConf exists
 else { //add my port to portConf
-  const myPortConf = {instance, port: '' + (Number(maxPort) + 1)}
+  const myPortConf = {instance, port: '' + (Number(maxPort.port) + 1)}
   portConf.push(myPortConf)
   fs.writeFileSync('../portConf.json', JSON.stringify(portConf))
 }
