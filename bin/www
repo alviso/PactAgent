@@ -16,7 +16,7 @@ console.log(instance)
 
 let portConfFile = '[]'
 try {
-  portConfFile = fs.readFileSync('../portConf.json', 'utf8')
+  portConfFile = fs.readFileSync('../portConf.json', 'utf8') //Dir level
 } catch (e) {
   console.log('No port conf found')
 }
@@ -25,7 +25,14 @@ const portConf = JSON.parse(portConfFile)
 let prePort = '3000'
 
 const confPort = portConf.find(e => e.instance === instance)
-if (confPort) prePort = confPort.port
+const maxPort = portConf[portConf.length -1]
+
+if (confPort) prePort = confPort.port  //portConf exists
+else { //add my port to portConf
+  const myPortConf = {instance, port: ''+maxPort + 1}
+  portConf.push(myPortConf)
+  fs.writeFileSync('../portConf.json', JSON.stringify(portConf))
+}
 
 /**
  * Get port from environment and store in Express.
