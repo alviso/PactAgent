@@ -33,7 +33,11 @@ const portConf = JSON.parse(portConfFile)
 const confPort = portConf.find(e => e.instance === instance)
 
 let topDom = 'io'
-if (confPort && confPort.port >= 19062) topDom = 'co'
+if (confPort &&
+    (confPort.port >= 19062) ||
+    (confPort.port >= 19034 && confPort.port <= 19043) ||
+    (confPort.port >= 19058 && confPort.port <= 19059)
+    ) topDom = 'co'
 
 const  GOOGLE_CLIENT_ID = googleConf.web.client_id
 const  GOOGLE_CLIENT_SECRET = googleConf.web.client_secret
