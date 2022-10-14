@@ -19,6 +19,20 @@ try {
 const singleUser = JSON.parse(singleUserFile)
 
 
+const tree = __dirname.split('/')
+const instance = tree[tree.length - 2]
+let portConfFile = '[]'
+try {
+    portConfFile = fs.readFileSync('../portConf.json', 'utf8') //Dir level
+} catch (e) {
+    console.log('No port conf found')
+}
+const portConf = JSON.parse(portConfFile)
+const confPort = portConf.find(e => e.instance === instance)
+
+let topDom = 'io'
+if (confPort && confPort.port >= 19062) topDom = 'co'
+
 const  GOOGLE_CLIENT_ID = googleConf.web.client_id
 const  GOOGLE_CLIENT_SECRET = googleConf.web.client_secret
 
@@ -29,7 +43,7 @@ console.log(instance)
 passport.use(new GoogleStrategy({
         clientID:     GOOGLE_CLIENT_ID,
         clientSecret: GOOGLE_CLIENT_SECRET,
-        callbackURL: `https://${instance}.crankk.io/auth/googleCallback`,
+        callbackURL: `https://${instance}.crankk.${topDom}/auth/googleCallback`,
         passReqToCallback   : true
     },
     function(request, accessToken, refreshToken, profile, done) {
