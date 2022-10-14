@@ -21,6 +21,8 @@ const singleUser = JSON.parse(singleUserFile)
 
 const tree = __dirname.split('/')
 const instance = tree[tree.length - 2]
+console.log(instance)
+
 let portConfFile = '[]'
 try {
     portConfFile = fs.readFileSync('../portConf.json', 'utf8') //Dir level
@@ -35,10 +37,6 @@ if (confPort && confPort.port >= 19062) topDom = 'co'
 
 const  GOOGLE_CLIENT_ID = googleConf.web.client_id
 const  GOOGLE_CLIENT_SECRET = googleConf.web.client_secret
-
-const tree = __dirname.split('/')
-const instance = tree[tree.length - 2]
-console.log(instance)
 
 passport.use(new GoogleStrategy({
         clientID:     GOOGLE_CLIENT_ID,
