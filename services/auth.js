@@ -18,10 +18,6 @@ try {
 }
 const singleUser = JSON.parse(singleUserFile)
 
-for (let i=0; i++; i < 10000000000) {
-
-}
-
 const tree = __dirname.split('/')
 const instance = tree[tree.length - 2]
 console.log(instance)
@@ -33,7 +29,11 @@ try {
     console.log('No port conf found')
 }
 const portConf = JSON.parse(portConfFile)
-const confPort = portConf.find(e => e.instance === instance)
+let confPort = portConf.find(e => e.instance === instance)
+if (!confPort) {
+    confPort = portConf[portConf.length -1]
+    confPort.port += 1
+}
 
 let topDom = 'io'
 if (confPort && (
