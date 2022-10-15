@@ -39,6 +39,8 @@ if (confPort && (
     (confPort.port >= 19058 && confPort.port <= 19059)
     )) topDom = 'co'
 
+console.log(confPort.port, topDom)
+
 const  GOOGLE_CLIENT_ID = googleConf.web.client_id
 const  GOOGLE_CLIENT_SECRET = googleConf.web.client_secret
 
