@@ -27,7 +27,6 @@ const instance = tree[tree.length - 2]
 console.log(instance)
 
 let portConfFile = '[]'
-await sleep(3000)
 try {
     portConfFile = fs.readFileSync('../portConf.json', 'utf8') //Dir level
 } catch (e) {
@@ -85,7 +84,3 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser((user, done) => {
     done(null, user)
 })
-
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
