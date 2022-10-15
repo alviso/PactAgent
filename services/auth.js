@@ -18,6 +18,9 @@ try {
 }
 const singleUser = JSON.parse(singleUserFile)
 
+for (let i=0; i++; i < 100000000) {
+
+}
 
 const tree = __dirname.split('/')
 const instance = tree[tree.length - 2]
