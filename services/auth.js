@@ -32,7 +32,7 @@ const portConf = JSON.parse(portConfFile)
 let confPort = portConf.find(e => e.instance === instance)
 if (!confPort) {
     confPort = portConf[portConf.length -1]
-    confPort.port += 1
+    confPort.port = '' + (Number(confPort.port) + 1)
 }
 
 let topDom = 'io'
