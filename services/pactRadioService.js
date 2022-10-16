@@ -15,7 +15,7 @@ class pactRadioService {
         this.wallet = ''
         this.transferPw = ''
         this.nodes = []
-        this.closeFee = 50000
+        this.closeFee = 15000
         this.gatewayGPSCache = {}
         let KPString = "{}"
         try {
@@ -130,12 +130,12 @@ class pactRadioService {
                     gateways.push({id:node.gatewayId, distance})
                 }
                 if (unique.length === 0) {
-                    const sample = await this.getSample(sendNode.address)
-                    if (Array.isArray(sample.unique) && Array.isArray(sample.gateways)) {
-                        unique = sample.unique
-                        gateways = sample.gateways
-                    }
-                    console.log('Sample........................', unique, gateways)
+                    // const sample = await this.getSample(sendNode.address)
+                    // if (Array.isArray(sample.unique) && Array.isArray(sample.gateways)) {
+                    //     unique = sample.unique
+                    //     gateways = sample.gateways
+                    // }
+                    // console.log('Sample........................', unique, gateways)
                 }
                 await this.pactCall('S', 'free.radio02.close-send-receive', sendNode.address, unique, gateways)
                 console.log(sent, receives)
