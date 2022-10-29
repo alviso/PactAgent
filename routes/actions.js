@@ -13,6 +13,7 @@ router.get('/wallet', isLoggedIn, asyncHandler(async (req, res, next) => {
         userDetails.crankkBalance = await service.getBalance(userDetails.wallet, service.coinModule('CRKK'))
         userDetails.fiatBalance = await service.getFiatBalance(userDetails.balance)
     }
+    userDetails.hasKey = service.hasKey()
     res.render('wallet', { category: 'Wallet', userDetails});
 }))
 
