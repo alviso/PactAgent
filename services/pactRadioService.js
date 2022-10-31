@@ -102,6 +102,7 @@ class pactRadioService {
             }
             if (this.consMember === true || this.consMemberCleanUp === true) {
                 //this is seconds, let it be 5 min old to not miss receive updates
+                const nodes = await this.pactCall('L', 'free.radio02.get-nodes')
                 const checkableNodes = nodes.filter(e =>
                     e.director === this.wallet && //I am the director
                     e.send === false && e.sent.length > 0 && (moment(e.lastAction.timep || e.lastAction.time).unix() + 300) < moment().unix())
