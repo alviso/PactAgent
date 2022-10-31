@@ -25,6 +25,7 @@ class pactRadioService {
         this.setKey(JSON.parse(KPString))
         this.chain = chain
         this.consMember = false
+        this.consMemberCleanUp = false
         this.cS = cS
         this.API_HOST1 = `https://${chain.host}/chainweb/0.0/${chain.networkId}/chain/${chain.chainId}/pact`
         this.API_HOST2 = `https://${chain.host2}/chainweb/0.0/${chain.networkId}/chain/${chain.chainId}/pact`
@@ -81,66 +82,71 @@ class pactRadioService {
         setInterval(async ()=>{
             if (await this.goodToGo() === false) return
             if (await this.allowedToGo() !== 0) return
-            if (this.consMember === false) return
-            const nodes = await this.pactCall('L', 'free.radio02.get-nodes')
-            console.log("Number of nodes:", nodes.length)
-            const consNodes = nodes.filter(e => e.consMember === true)
-            console.log("Number of consensus nodes:", consNodes.length)
-            const directableNodes = nodes.filter(e =>
-                e.address !== this.wallet && //don't direct myself
-                e.send === false && e.sent.length === 0 && moment(e.net.timep || e.net.time).unix() < moment().unix())
-            const len = directableNodes.length
-            console.log("Number of directable nodes:", len)
-            const ratio = directableNodes.length / consNodes.length //if I'm a consesus node then there is at least one
-            const rand = Math.random()
-            if (len > 0 && rand < ratio && (await this.goodToDirect() === true)) { //try to minimize missed directing
-                const ind = Math.floor(Math.random() * len)
-                const sel = directableNodes[ind]
-                await this.pactCall('S', 'free.radio02.direct-to-send', sel.address)
+            if (this.consMember === true) {
+                const nodes = await this.pactCall('L', 'free.radio02.get-nodes')
+                console.log("Number of nodes:", nodes.length)
+                const consNodes = nodes.filter(e => e.consMember === true)
+                console.log("Number of consensus nodes:", consNodes.length)
+                const directableNodes = nodes.filter(e =>
+                    e.address !== this.wallet && //don't direct myself
+                    e.send === false && e.sent.length === 0 && moment(e.net.timep || e.net.time).unix() < moment().unix())
+                const len = directableNodes.length
+                console.log("Number of directable nodes:", len)
+                const ratio = directableNodes.length / consNodes.length //if I'm a consesus node then there is at least one
+                const rand = Math.random()
+                if (len > 0 && rand < ratio && (await this.goodToDirect() === true)) { //try to minimize missed directing
+                    const ind = Math.floor(Math.random() * len)
+                    const sel = directableNodes[ind]
+                    await this.pactCall('S', 'free.radio02.direct-to-send', sel.address)
+                }
             }
-            //this is seconds, let it be 5 min old to not miss receive updates
-            const checkableNodes = nodes.filter(e =>
-                e.director === this.wallet && //I am the director
-                e.send === false && e.sent.length > 0 && (moment(e.lastAction.timep || e.lastAction.time).unix() + 300) < moment().unix())
-            console.log("Number of checkable nodes:", checkableNodes.length)
-            const asKey = await this.getAsKeyDB()
-            for (let i in checkableNodes) {
-                const sendNode = checkableNodes[i]
-                sendNode.gps = await this.cS.getGatewayGPS(sendNode.gatewayId)
-                // const sent = this.decrypt(asKey[0].priv, sendNode.sent)
-                const sent = '111111'
-                const resp = await this.pactCall('L', 'free.radio02.get-gateway', sendNode.gatewayId)
-                const receives = JSON.parse(resp.replaceAll('} {','},{')) || []
-                for (let j in receives) {
-                    // receives[j].mic = this.decrypt(asKey[0].priv, receives[j].mic)
-                    receives[j].mic = sent
-                    receives[j].gatewayId = sendNode.gatewayId
+            if (this.consMember === true || this.consMemberCleanUp === true) {
+                //this is seconds, let it be 5 min old to not miss receive updates
+                const checkableNodes = nodes.filter(e =>
+                    e.director === this.wallet && //I am the director
+                    e.send === false && e.sent.length > 0 && (moment(e.lastAction.timep || e.lastAction.time).unix() + 300) < moment().unix())
+                console.log("Number of checkable nodes:", checkableNodes.length)
+                if (checkableNodes.length === 0) { //no more to close
+                    this.consMemberCleanUp = false //no more to clean up
                 }
-                //Analyze and reward here
-                const validReceives = receives.filter(e => e.mic === sent)
-                let unique = [...new Map(validReceives.map(item => [item['address'], item])).values()]
-                unique = unique.filter(e => e.address !== sendNode.address) //exclude the sender from being a receiver as well
-                unique = unique.filter(e => e.address !== this.wallet) //don't let the director be a receiver as well
-                let gateways = []
-                for (let j in unique) {
-                    const node = nodes.find(e => e.address === unique[j].address)
-                    if (!node) continue
-                    node.gps = await this.cS.getGatewayGPS(node.gatewayId)
-                    const distance = this.calcCrow(node.gps.latitude, node.gps.longitude, sendNode.gps.latitude, sendNode.gps.longitude)
-                    gateways.push({id:node.gatewayId, distance})
-                }
-                if (unique.length === 0) {
-                    const sample = await this.getSample(sendNode.address)
-                    if (Array.isArray(sample.unique) && Array.isArray(sample.gateways)) {
-                        unique = sample.unique
-                        gateways = sample.gateways
+                const asKey = await this.getAsKeyDB()
+                for (let i in checkableNodes) {
+                    const sendNode = checkableNodes[i]
+                    sendNode.gps = await this.cS.getGatewayGPS(sendNode.gatewayId)
+                    // const sent = this.decrypt(asKey[0].priv, sendNode.sent)
+                    const sent = '111111'
+                    const resp = await this.pactCall('L', 'free.radio02.get-gateway', sendNode.gatewayId)
+                    const receives = JSON.parse(resp.replaceAll('} {','},{')) || []
+                    for (let j in receives) {
+                        // receives[j].mic = this.decrypt(asKey[0].priv, receives[j].mic)
+                        receives[j].mic = sent
+                        receives[j].gatewayId = sendNode.gatewayId
                     }
-                    console.log('Sample........................', unique, gateways)
+                    //Analyze and reward here
+                    const validReceives = receives.filter(e => e.mic === sent)
+                    let unique = [...new Map(validReceives.map(item => [item['address'], item])).values()]
+                    unique = unique.filter(e => e.address !== sendNode.address) //exclude the sender from being a receiver as well
+                    unique = unique.filter(e => e.address !== this.wallet) //don't let the director be a receiver as well
+                    let gateways = []
+                    for (let j in unique) {
+                        const node = nodes.find(e => e.address === unique[j].address)
+                        if (!node) continue
+                        node.gps = await this.cS.getGatewayGPS(node.gatewayId)
+                        const distance = this.calcCrow(node.gps.latitude, node.gps.longitude, sendNode.gps.latitude, sendNode.gps.longitude)
+                        gateways.push({id:node.gatewayId, distance})
+                    }
+                    if (unique.length === 0) {
+                        const sample = await this.getSample(sendNode.address)
+                        if (Array.isArray(sample.unique) && Array.isArray(sample.gateways)) {
+                            unique = sample.unique
+                            gateways = sample.gateways
+                        }
+                        console.log('Sample........................', unique, gateways)
+                    }
+                    await this.pactCall('S', 'free.radio02.close-send-receive', sendNode.address, unique, gateways)
+                    console.log(sent, receives)
                 }
-                await this.pactCall('S', 'free.radio02.close-send-receive', sendNode.address, unique, gateways)
-                console.log(sent, receives)
             }
-
         }, 3 * 60 * 1000); //Arbitration, award
 
     }
@@ -219,6 +225,9 @@ class pactRadioService {
                 const buff = new Buffer(asKey[0].pub)
                 const base64data = buff.toString('base64')
                 await this.pactCall('S', 'free.radio02.set-my-pubkey', base64data)
+            }
+            if (this.consMember && !myNode.consMember) { //being turned off
+                this.consMemberCleanUp = true //needs cleanup
             }
             this.consMember = myNode.consMember
             if (myNode.send === true) {
