@@ -82,7 +82,7 @@ class pactRadioService {
 
         setInterval(async ()=>{
             const gatewayExtras = await this.pactCall('L', 'free.radio02.get-my-gatewayExtras')
-            console.log(gatewayExtras)
+            // console.log(gatewayExtras)
             this.gwOnline = gatewayExtras.online || false
         }, 60 * 1000)
 
@@ -99,7 +99,7 @@ class pactRadioService {
                     e.send === false && e.sent.length === 0 && moment(e.net.timep || e.net.time).unix() < moment().unix())
                 const len = directableNodes.length
                 console.log("Number of directable nodes:", len)
-                const ratio = directableNodes.length / consNodes.length //if I'm a consesus node then there is at least one
+                const ratio = directableNodes.length / consNodes.length //if I'm a consensus node then there is at least one
                 const rand = Math.random()
                 if (len > 0 && rand < ratio && (await this.goodToDirect() === true)) { //try to minimize missed directing
                     const ind = Math.floor(Math.random() * len)
