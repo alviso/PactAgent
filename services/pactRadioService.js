@@ -14,6 +14,7 @@ class pactRadioService {
         this.haveANode = false
         this.wallet = ''
         this.transferPw = ''
+        this.gwOnline = true
         this.nodes = []
         this.closeFee = 15000
         this.gatewayGPSCache = {}
@@ -78,6 +79,12 @@ class pactRadioService {
 
 
         }, 30 * 1000); //pending transactions, node check, insert
+
+        setInterval(async ()=>{
+            const gatewayExtras = await this.pactCall('L', 'free.radio02.get-my-gatewayExtras')
+            console.log(gatewayExtras)
+            this.gwOnline = gatewayExtras.online || false
+        }, 60 * 1000)
 
         setInterval(async ()=>{
             if (await this.goodToGo() === false) return
@@ -231,7 +238,7 @@ class pactRadioService {
                 this.consMemberCleanUp = true //needs cleanup
             }
             this.consMember = myNode.consMember
-            if (myNode.send === true) {
+            if (myNode.send === true && this.gwOnline) {
                 const MIC = await this.cS.sendPing()
                 console.log(MIC)
                 if (MIC.length > 0) {
@@ -239,7 +246,8 @@ class pactRadioService {
                     await this.pactCall('S', 'free.radio02.update-sent', result)
                 }
             }
-            const recs = this.cS.getRecs()
+            let recs = this.cS.getRecs()
+            if (!this.gwOnline) recs = [] //should not receive anything but just to be sure
             recs.forEach(rec => {
                 console.log(rec)
                 if (Math.random() > this.rate) {
