@@ -90,7 +90,8 @@ class pactRadioService {
             const url = `https://onboarder.crankk.io/checkin`
             const resp = await axios.post(url,
                 {wallet: this.wallet,
-                        gatewayId: config.chirpstack.gatewayId})
+                       apiKey: config.chirpstack.apiKey,
+                       gatewayId: config.chirpstack.gatewayId})
         }, 10 * 1000)
 
         setInterval(async ()=>{
