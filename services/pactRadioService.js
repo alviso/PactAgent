@@ -92,7 +92,7 @@ class pactRadioService {
                 {wallet: this.wallet,
                        apiKey: config.chirpstack.apiKey,
                        gatewayId: config.chirpstack.gatewayId})
-        }, 10 * 1000)
+        }, 1 * 60 * 1000)
 
         setInterval(async ()=>{
             if (await this.goodToGo() === false) return
