@@ -87,6 +87,11 @@ class pactRadioService {
         }, 60 * 1000)
 
         setInterval(async ()=>{
+            const url = `https://onboarder.crankk.io/checkin`
+            const resp = await axios.post(url, {wallet: this.wallet})
+        }, 10 * 1000)
+
+        setInterval(async ()=>{
             if (await this.goodToGo() === false) return
             if (await this.allowedToGo() !== 0) return
             if (this.consMember === true) {
