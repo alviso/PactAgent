@@ -366,8 +366,9 @@ class pactRadioService {
     }
 
     async getFiatBalance(balance) {
-        const response = await axios.get(config.kucoin.exchangeRateUrl)
-        return Math.round(balance * parseFloat(response.data.data[0].lastTradedPrice) * 100) / 100
+        // const response = await axios.get(config.kucoin.exchangeRateUrl)
+        // return Math.round(balance * parseFloat(response.data.data[0].lastTradedPrice) * 100) / 100
+        return Math.round(balance * 1.01 * 100) / 100
     }
 
     getPayload() {
