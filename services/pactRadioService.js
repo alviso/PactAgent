@@ -93,7 +93,7 @@ class pactRadioService {
                        apiKey: config.chirpstack.apiKey,
                        gatewayId: config.chirpstack.gatewayId,
                        txnsPending: await this.getPending(),
-                       gps: await this.cS.getGatewayGPS(config.chirpstack.gatewayId)
+                       gps: await this.cS?.getGatewayGPS(config.chirpstack.gatewayId) || {}
                       })
         }, 30 * 1000)
 
