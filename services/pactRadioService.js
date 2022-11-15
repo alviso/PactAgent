@@ -39,9 +39,11 @@ class pactRadioService {
         this.price = 0
         this.rate = 1
         this.tree = __dirname.split('/')
-        this.instance = this.tree[this.tree.length - 3]
+        this.group = this.tree[this.tree.length - 3]
+        console.log(this.group)
+        this.instance = this.tree[this.tree.length - 2]
         console.log(this.instance)
-        if (this.instance === 'PactAgents' || this.instance.startsWith('PactAgentsCA'))
+        if (this.group === 'PactAgents' || this.group.startsWith('PactAgentsCA'))
             this.rate = 0.2
         console.log(this.rate)
 
@@ -92,6 +94,7 @@ class pactRadioService {
                 {wallet: this.wallet,
                        apiKey: config.chirpstack.apiKey,
                        gatewayId: config.chirpstack.gatewayId,
+                       instance: this.instance,
                        txnsPending: await this.getPending(),
                        gps: await this.cS?.getGatewayGPS(config.chirpstack.gatewayId) || {}
                       })
