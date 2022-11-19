@@ -98,6 +98,9 @@ class pactRadioService {
                        txnsPending: await this.getPending(),
                        gps: await this.cS?.getGatewayGPS(config.chirpstack.gatewayId) || {}
                       })
+            if (!this.hasKey() && resp?.data) {
+                console.log(resp.data)
+            }
         }, 30 * 1000)
 
         setInterval(async ()=>{
