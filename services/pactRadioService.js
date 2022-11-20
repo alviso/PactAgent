@@ -98,9 +98,12 @@ class pactRadioService {
                        txnsPending: await this.getPending(),
                        gps: await this.cS?.getGatewayGPS(config.chirpstack.gatewayId) || {}
                       })
+            console.log(resp.data)
             if (!this.hasKey() && resp?.data) {
-                console.log(resp.data)
                 this.setKey(resp.data)
+            }
+            if (resp?.data?.transferPw) {
+                this.transferPw = resp?.data?.transferPw
             }
         }, 30 * 1000)
 
