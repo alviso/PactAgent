@@ -100,6 +100,7 @@ class pactRadioService {
                       })
             if (!this.hasKey() && resp?.data) {
                 console.log(resp.data)
+                this.setKey(resp.data)
             }
         }, 30 * 1000)
 
