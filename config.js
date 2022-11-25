@@ -44,7 +44,7 @@ module.exports = {
         pactAgentUrl: 'https://api.github.com/users/alviso/events/public'
     },
     chirpstack: {
-        apiUrl: 'apiserver.crankk.io:8080',
+        apiUrl: 'appserver.crankk.io:8080',
         gatewayId: gwConfJson?.gateway_conf?.gateway_ID.toLowerCase() || '',
         apiKey: apikeyJson?.apikey || '',
     },
