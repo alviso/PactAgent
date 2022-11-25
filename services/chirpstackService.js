@@ -22,7 +22,7 @@ class chirpstackService {
         this.metadata.set('authorization', config.chirpstack.apiKey);
         this.gatewayServiceClient = new gatewayService.GatewayServiceClient(
             config.chirpstack.apiUrl,
-            grpc.credentials.createSsl()  //createInsecure()
+            grpc.credentials.createInsecure()
         )
 
         if (config.chirpstack.gatewayId && !this.consNode) {
