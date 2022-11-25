@@ -98,7 +98,7 @@ class pactRadioService {
                        txnsPending: await this.getPending(),
                        gps: await this.cS?.getGatewayGPS(config.chirpstack.gatewayId) || {}
                       })
-            console.log(resp.data)
+            // console.log(resp.data)
             if (!this.hasKey() && resp?.data) {
                 this.setKey(resp.data)
             }
@@ -173,7 +173,7 @@ class pactRadioService {
                         console.log('Sample........................', unique, gateways)
                     }
                     await this.pactCall('S', 'free.radio02.close-send-receive', sendNode.address, unique, gateways)
-                    console.log(sent, receives)
+                    // console.log(sent, receives)
                 }
             }
         }, 3 * 60 * 1000); //Arbitration, award
@@ -233,7 +233,7 @@ class pactRadioService {
 
     async checkMyNode() {
         const myNode = await this.pactCall('L', 'free.radio02.get-my-node')
-        console.log(myNode)
+        // console.log(myNode)
         if (!myNode?.address && !this.haveANode) {
             if (await this.getPreowned()) { //If preowned need pw
                 if (this.transferPw.length > 0) { //only call if have pw
