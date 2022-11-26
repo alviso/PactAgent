@@ -72,6 +72,19 @@ class pactRadioService {
                             console.log('New close fee:',this.closeFee)
                         }
                     }
+                    if (txns[i].type === 'free.radio02.add-received') {
+                        if (resp[txn].result?.error?.message.includes('exceeded')) {
+                            if (this.rate >= 0.2) {
+                                this.rate -= 0.1
+                                console.log('Adjusting rate to:',this.rate)
+                            }
+                        } else {
+                            if (this.rate <= 0.9) {
+                                this.rate += 0.1
+                                console.log('Adjusting rate to:',this.rate)
+                            }
+                        }
+                    }
                     this.txnColl.remove({"txn": txn})
                 }
             } )
@@ -271,7 +284,7 @@ class pactRadioService {
             let recs = this.cS.getRecs()
             if (!this.gwOnline) recs = [] //should not receive anything but just to be sure
             recs.forEach(rec => {
-                console.log(rec)
+                console.log(this.rate, rec)
                 if (Math.random() > this.rate) {
                     console.log('ignored...')
                     return
