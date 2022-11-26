@@ -31,8 +31,8 @@ try {
 const portConf = JSON.parse(portConfFile)
 let confPort = portConf.find(e => e.instance === instance)
 if (!confPort) {
-    confPort = portConf[portConf.length -1]
-    confPort.port = '' + (Number(confPort?.port || "2999" ) + 1)
+    confPort = portConf[portConf.length -1] || {port: "2999"}
+    confPort.port = '' + (Number(confPort.port ) + 1)
 }
 
 let topDom = 'io'
