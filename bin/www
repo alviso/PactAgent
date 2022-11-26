@@ -25,7 +25,7 @@ const portConf = JSON.parse(portConfFile)
 let prePort = '3000'
 
 const confPort = portConf.find(e => e.instance === instance)
-const maxPort = portConf[portConf.length -1]
+const maxPort = portConf[portConf.length -1] || {port: "2999"}
 
 if (confPort) prePort = confPort.port  //portConf exists
 else { //add my port to portConf
