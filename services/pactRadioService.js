@@ -73,7 +73,7 @@ class pactRadioService {
                         }
                     }
                     if (txns[i].type === 'free.radio02.add-received') {
-                        if (resp[txn].result?.error?.message.includes('exceeded')) {
+                        if (resp[txn].result?.status.includes('failure')) { //error?.message.includes('exceeded')) {
                             if (this.rate >= 0.2) {
                                 this.rate -= 0.1
                                 console.log('Adjusting rate to:',this.rate)
