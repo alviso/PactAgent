@@ -257,7 +257,7 @@ class pactRadioService {
                 }
             } else {
                 if (this.transferPw.length > 0) { //only call if have pw
-                    await this.pactCall('S', 'free.radio02.insert-my-node', config.chirpstack.gatewayId, this.transferPw)
+                    await this.pactCall('L', 'free.radio02.insert-my-node', config.chirpstack.gatewayId, this.transferPw)
                     this.haveANode = true
                     // this.transferPw = '' //not needed any longer
                 }
@@ -323,6 +323,7 @@ class pactRadioService {
             cmdObj.meta.gasLimit = cmdObj.meta.gasLimit * 20
             try {
                 const resp = await Pact.fetch.local(cmdObj, this.API_HOST)
+                console.log(resp)
                 return resp.result?.data || {}
             } catch (e) {
                 return {}
