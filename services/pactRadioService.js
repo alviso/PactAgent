@@ -250,7 +250,7 @@ class pactRadioService {
         if (!myNode?.address && !this.haveANode) {
             if (await this.getPreowned()) { //If preowned need pw
                 if (this.transferPw.length > 0) { //only call if have pw
-                    console.log('Transferring: ', config.chirpstack.gatewayId, 'with pw:', this.transferPw)
+                    console.log('Transferring from another owner: ', config.chirpstack.gatewayId, 'with pw:', this.transferPw)
                     await this.pactCall('S', 'free.radio02.insert-my-node-with-transfer', config.chirpstack.gatewayId, this.transferPw)
                     this.haveANode = true
                     // this.transferPw = '' //not needed any longer
@@ -258,7 +258,7 @@ class pactRadioService {
             } else {
                 if (this.transferPw.length > 0) { //only call if have pw
                     console.log('Transferring: ', config.chirpstack.gatewayId, 'with pw:', this.transferPw)
-                    await this.pactCall('L', 'free.radio02.insert-my-node', config.chirpstack.gatewayId, this.transferPw)
+                    await this.pactCall('S', 'free.radio02.insert-my-node', config.chirpstack.gatewayId, this.transferPw)
                     this.haveANode = true
                     // this.transferPw = '' //not needed any longer
                 }
@@ -324,7 +324,6 @@ class pactRadioService {
             cmdObj.meta.gasLimit = cmdObj.meta.gasLimit * 20
             try {
                 const resp = await Pact.fetch.local(cmdObj, this.API_HOST)
-                console.log(resp)
                 return resp.result?.data || {}
             } catch (e) {
                 return {}
