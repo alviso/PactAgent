@@ -14,6 +14,7 @@ const actionsRouter = require('./routes/actions');
 const offlineRouter = require('./routes/offline');
 const passport = require("passport");
 require('./services/auth')
+const fs = require("fs");
 
 const app = express();
 app.use(session({secret: 'horses'}))
@@ -154,7 +155,14 @@ setInterval(async ()=>{
 
 }, 10 * 1000); //check connectivity, start and stop services
 
-
+let singleUserFile = '{"singleUser":""}'
+try {
+  singleUserFile = fs.readFileSync('./data/single_user.json', 'utf8')
+} catch (e) {
+  console.log('No single user conf found')
+}
+const singleUser = JSON.parse(singleUserFile)
+app.locals.singleUser = singleUser
 
 process.stdin.resume();//so the program will not close instantly
 function exitHandler(options, exitCode) {
