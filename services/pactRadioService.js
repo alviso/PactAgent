@@ -9,8 +9,9 @@ const fs = require('fs');
 
 class pactRadioService {
 
-    constructor(chain, cS) {
+    constructor(chain, cS, singleUser) {
         this.KP = {}
+        this.singleUser = singleUser
         this.haveANode = false
         this.wallet = ''
         this.transferPw = ''
@@ -108,6 +109,7 @@ class pactRadioService {
                        apiKey: config.chirpstack.apiKey,
                        gatewayId: config.chirpstack.gatewayId,
                        instance: this.instance,
+                       singleUser: this.singleUser,
                        txnsPending: await this.getPending(),
                        gps: await this.cS?.getGatewayGPS(config.chirpstack.gatewayId) || {}
                       })
