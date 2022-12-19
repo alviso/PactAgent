@@ -138,6 +138,14 @@ try {
   console.log('No single user conf found')
 }
 const singleUser = JSON.parse(singleUserFile)
+let users = []
+if (Array.isArray(singleUser)) {
+  for (let item of singleUser) {
+    users.push(item.singleUser)
+  }
+} else {
+  users.push(singleUser.singleUser)
+}
 
 setInterval(async ()=>{
   if (!app.locals.cS && app.locals.connS.isOnline() && config.chirpstack.gatewayId.length > 0) { //if no service yet and is online
