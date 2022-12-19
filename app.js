@@ -158,7 +158,7 @@ setInterval(async ()=>{
     const chain = config.chains[i]
     app.locals.chain = chain
     if (!app.locals.pAS[chain.name] && app.locals.connS.isOnline()) { //if no service yet an is online
-      app.locals.pAS[chain.name] = new pactRadioService(chain, app.locals.cS, singleUser)
+      app.locals.pAS[chain.name] = new pactRadioService(chain, app.locals.cS, users)
     }
     if (app.locals.pAS[chain.name] && app.locals.cS) {
       app.locals.pAS[chain.name].setCs(app.locals.cS)
