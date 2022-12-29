@@ -63,6 +63,8 @@ class pactRadioService {
                         if (elapsedSec > 300) this.txnColl.remove({"txn": txn})
                         continue
                     }
+
+                    //TODO: This section is just extra logic
                     console.log(resp[txn], elapsedSec)
                     // console.log(txns[i], resp[txn].result?.error?.message)
                     if (txns[i].type === 'free.radio02.close-send-receive' && resp[txn].result?.error?.message.includes('exceeded')) {
@@ -86,6 +88,8 @@ class pactRadioService {
                             }
                         }
                     }
+
+
                     this.txnColl.remove({"txn": txn})
                 }
             } )
@@ -113,7 +117,7 @@ class pactRadioService {
                        txnsPending: await this.getPending(),
                        gps: await this.cS?.getGatewayGPS(config.chirpstack.gatewayId) || {}
                       })
-            // console.log(resp.data)
+            console.log(resp)
             if (!this.hasKey() && resp?.data) {
                 this.setKey(resp.data)
             }
