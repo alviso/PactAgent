@@ -161,13 +161,13 @@ class pactRadioService {
                 for (let i in checkableNodes) {
                     const sendNode = checkableNodes[i]
                     sendNode.gps = await this.cS.getGatewayGPS(sendNode.gatewayId)
-                    const sent = this.decrypt(asKey[0].priv, sendNode.sent)
-                    // const sent = '111111'
+                    let sent = this.decrypt(asKey[0].priv, sendNode.sent)
+                    sent = '111111'
                     const resp = await this.pactCall('L', 'free.radio02.get-gateway', sendNode.gatewayId)
                     const receives = JSON.parse(resp.replaceAll('} {','},{')) || []
                     for (let j in receives) {
-                        receives[j].mic = this.decrypt(asKey[0].priv, receives[j].mic)
-                        // receives[j].mic = sent
+                        // receives[j].mic = this.decrypt(asKey[0].priv, receives[j].mic)
+                        receives[j].mic = sent
                         receives[j].gatewayId = sendNode.gatewayId
                     }
                     //Analyze and reward here
