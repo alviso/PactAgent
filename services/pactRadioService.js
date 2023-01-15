@@ -290,15 +290,17 @@ class pactRadioService {
             }
             let recs = this.cS.getRecs()
             if (!this.gwOnline) recs = [] //should not receive anything but just to be sure
-            recs.forEach(rec => {
+            for (const rec of recs) {
                 console.log(this.rate, rec)
                 if (Math.random() > this.rate) {
                     console.log('ignored...')
                     return
                 }
-                const result = this.encrypt(myNode.pubkeyd, rec.mic) //encrypt rec.mic with director's public key
-                this.pactCall('S', 'free.radio02.add-received', rec.gatewayId, result)
-            })
+                const sender = await this.pactCall('L', 'free.radio02.get-sender-details', rec.gatewayId)
+                console.log('Sender', sender)
+                const result = this.encrypt(sender.pubkeyd, rec.mic) //encrypt rec.mic with director's public key
+                await this.pactCall('S', 'free.radio02.add-received', rec.gatewayId, result)
+            }
             this.cS.rmRecs()
         }
     }
