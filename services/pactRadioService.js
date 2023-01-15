@@ -747,17 +747,24 @@ class pactRadioService {
             const encryptedData = result.split(';;;;;')[0]
             const encryptedSymKey64 = result.split(';;;;;')[1]
             const encryptedSymKey = Buffer.from(encryptedSymKey64, "base64");
-            const symKeyHex = crypto.privateDecrypt(
-                {
-                    key: privkey,
-                    padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
-                    oaepHash: "sha256",
-                },
-                encryptedSymKey
-            );
-            const symKey = symKeyHex.toString()
-            const decryptedData = CryptoJS.AES.decrypt(encryptedData, symKey).toString(CryptoJS.enc.Utf8)
-            return decryptedData
+            console.log('Privkey', privkey)
+            console.log('EncryptedSymKey', encryptedSymKey)
+            try {
+                const symKeyHex = crypto.privateDecrypt(
+                    {
+                        key: privkey,
+                        padding: crypto.constants.RSA_PKCS1_OAEP_PADDING,
+                        oaepHash: "sha256",
+                    },
+                    encryptedSymKey
+                );
+                const symKey = symKeyHex.toString()
+                const decryptedData = CryptoJS.AES.decrypt(encryptedData, symKey).toString(CryptoJS.enc.Utf8)
+                return decryptedData
+            } catch (e) {
+                console.log(e)
+                return '111111'
+            }
         }
     }
 
