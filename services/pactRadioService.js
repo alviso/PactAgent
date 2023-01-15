@@ -759,10 +759,12 @@ class pactRadioService {
                     encryptedSymKey
                 );
                 const symKey = symKeyHex.toString()
+                console.log('SymKey', symKey)
                 const decryptedData = CryptoJS.AES.decrypt(encryptedData, symKey).toString(CryptoJS.enc.Utf8)
+                console.log('DecryptedData', decryptedData)
                 return decryptedData
             } catch (e) {
-                console.log(e)
+                console.log('Decoding error:.....', e)
                 return '111111'
             }
         }
