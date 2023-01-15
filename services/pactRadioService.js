@@ -748,7 +748,7 @@ class pactRadioService {
             const encryptedSymKey64 = result.split(';;;;;')[1]
             const encryptedSymKey = Buffer.from(encryptedSymKey64, "base64");
             console.log('Privkey', privkey)
-            console.log('EncryptedSymKey', encryptedSymKey)
+            console.log('EncryptedSymKey', encryptedSymKey.toString())
             try {
                 const symKeyHex = crypto.privateDecrypt(
                     {
