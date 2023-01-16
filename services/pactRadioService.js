@@ -133,6 +133,9 @@ class pactRadioService {
                 const nodes = await this.pactCall('L', 'free.radio02.get-nodes')
                 console.log("Number of nodes:", nodes.length)
                 const consNodes = nodes.filter(e => e.consMember === true)
+                for (const consNode of consNodes) {
+                    console.log(consNode.gatewayId)
+                }
                 console.log("Number of consensus nodes:", consNodes.length)
                 const directableNodes = nodes.filter(e =>
                     e.address !== this.wallet && //don't direct myself
@@ -162,12 +165,12 @@ class pactRadioService {
                     const sendNode = checkableNodes[i]
                     sendNode.gps = await this.cS.getGatewayGPS(sendNode.gatewayId)
                     let sent = this.decrypt(asKey[0].priv, sendNode.sent)
-                    // sent = '111111'
+                    sent = '111111'
                     const resp = await this.pactCall('L', 'free.radio02.get-gateway', sendNode.gatewayId)
                     const receives = JSON.parse(resp.replaceAll('} {','},{')) || []
                     for (let j in receives) {
                         receives[j].mic = this.decrypt(asKey[0].priv, receives[j].mic)
-                        // receives[j].mic = sent
+                        receives[j].mic = sent
                         receives[j].gatewayId = sendNode.gatewayId
                     }
                     //Analyze and reward here
