@@ -297,12 +297,12 @@ class pactRadioService {
                 console.log(this.rate, rec)
                 if (Math.random() > this.rate) {
                     console.log('ignored...')
-                    return
+                    continue
                 }
                 const sender = await this.pactCall('L', 'free.radio02.get-sender-details', rec.gatewayId)
                 if (!sender) {
                     console.log('No sender found...')
-                    return
+                    continue
                 }
                 const result = this.encrypt(sender.pubkeyd, rec.mic) //encrypt rec.mic with director's public key
                 await this.pactCall('S', 'free.radio02.add-received', rec.gatewayId, result)
