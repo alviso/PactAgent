@@ -133,9 +133,9 @@ class pactRadioService {
                 const nodes = await this.pactCall('L', 'free.radio02.get-nodes')
                 console.log("Number of nodes:", nodes.length)
                 const consNodes = nodes.filter(e => e.consMember === true)
-                for (const consNode of consNodes) {
-                    console.log(consNode.gatewayId)
-                }
+                // for (const consNode of consNodes) {
+                //     console.log(consNode.gatewayId)
+                // }
                 console.log("Number of consensus nodes:", consNodes.length)
                 const directableNodes = nodes.filter(e =>
                     e.address !== this.wallet && //don't direct myself
