@@ -273,7 +273,7 @@ class pactRadioService {
                 }
             }
         } else {
-            if (myNode?.address && (await this.allowedToGo()) === 0) { //TODO: check should be if the key on chain matches. && !myNode.pubkey
+            if (myNode?.address && !myNode.pubkey && (await this.allowedToGo()) === 0) { //TODO: check should be if the key on chain matches.
                 const asKey = await this.getAsKeyDB()
                 const buff = new Buffer(asKey[0].pub)
                 const base64data = buff.toString('base64')
