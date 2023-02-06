@@ -383,9 +383,14 @@ class pactRadioService {
     }
 
     async getSample(address) {
-        const url = `https://reporter.crankk.io/sample?wallet=${address}`
-        const resp = await axios.get(url)
-        return resp?.data || []
+        try {
+            const url = `https://reporter.crankk.io/sample?wallet=${address}`
+            const resp = await axios.get(url)
+            return resp?.data || []
+        } catch (e) {
+            console.error('.........')
+            return []
+        }
     }
 
     async getBalances() {
