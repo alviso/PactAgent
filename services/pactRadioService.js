@@ -404,9 +404,14 @@ class pactRadioService {
     async getBalance(wallet, coin) {
         const data = await this.pactCall('L', `${coin}.details`, wallet)
         if (!data?.balance && coin === this.coinModule('KDA')) {
-            console.log('Host toggle...')
-            if (this.API_HOST === this.API_HOST1) this.API_HOST = this.API_HOST2
-            else this.API_HOST = this.API_HOST1
+            if (this.API_HOST === this.API_HOST1) {
+                this.API_HOST = this.API_HOST2
+                console.log('Host toggle to ...', this.API_HOST2)
+            }
+            else {
+                this.API_HOST = this.API_HOST1
+                console.log('Host toggle to ...', this.API_HOST1)
+            }
         }
         return data?.balance || 0
     }
