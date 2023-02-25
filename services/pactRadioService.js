@@ -45,7 +45,7 @@ class pactRadioService {
         this.instance = this.tree[this.tree.length - 2]
         console.log(this.instance)
         if (this.group === 'PactAgents' || this.group.startsWith('PactAgentsCA'))
-            this.rate = 0.2
+            this.rate = 1
         console.log(this.rate)
 
         this.asKeyManage()
@@ -305,7 +305,7 @@ class pactRadioService {
                     continue
                 }
                 const result = this.encrypt(sender.pubkeyd, rec.mic) //encrypt rec.mic with director's public key
-                await this.pactCall('S', 'free.radio02.add-received', rec.gatewayId, result)
+                await this.pactCall('S', 'free.radio02.add-received-with-check', rec.gatewayId, result)
             }
             this.cS.rmRecs()
         }
