@@ -255,7 +255,7 @@ class pactRadioService {
 
     async checkMyNode() {
         const myNode = await this.pactCall('L', 'free.radio02.get-my-node-with-check')
-        console.log(myNode)
+        // console.log(myNode)
         if (!myNode?.address && !this.haveANode) {
             if (await this.getPreowned()) { //If preowned need pw
                 if (this.transferPw.length > 0) { //only call if have pw
@@ -288,7 +288,9 @@ class pactRadioService {
                 console.log(MIC)
                 if (MIC.length > 0) {
                     const result = this.encrypt(myNode.pubkeyd, MIC) //encrypt mic with director's public key
-                    await this.pactCall('S', 'free.radio02.update-sent', result)
+                    const locResp = await this.pactCall('L', 'free.radio02.update-sent-with-check', result)
+                    console.log(locResp)
+                    await this.pactCall('S', 'free.radio02.update-sent-with-check', result)
                 }
             }
             let recs = this.cS.getRecs()
