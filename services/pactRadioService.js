@@ -288,9 +288,7 @@ class pactRadioService {
                 console.log(MIC)
                 if (MIC.length > 0) {
                     const result = this.encrypt(myNode.pubkeyd, MIC) //encrypt mic with director's public key
-                    const locResp = await this.pactCall('L', 'free.radio02.update-sent-with-check', result)
-                    console.log(locResp)
-                    await this.pactCall('S', 'free.radio02.update-sent-with-check', result)
+                    await this.pactCall('S', 'free.radio02.update-sent', result)
                 }
             }
             let recs = this.cS.getRecs()
