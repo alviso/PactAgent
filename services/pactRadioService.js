@@ -254,7 +254,7 @@ class pactRadioService {
     }
 
     async checkMyNode() {
-        const myNode = await this.pactCall('L', 'free.radio02.get-my-node-with-check')
+        const myNode = await this.pactCall('L', 'free.radio02.get-my-node')
         // console.log(myNode)
         if (!myNode?.address && !this.haveANode) {
             if (await this.getPreowned()) { //If preowned need pw
