@@ -103,7 +103,7 @@ class pactRadioService {
         setInterval(async ()=>{
             const gatewayExtras = await this.pactCall('L', 'free.radio02.get-my-gatewayExtras')
             console.log(gatewayExtras)
-            this.gwOnline = gatewayExtras.online || false
+            this.gwOnline = gatewayExtras.online || true
         }, 60 * 1000)
 
         setInterval(async ()=>{
