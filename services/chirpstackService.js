@@ -49,7 +49,8 @@ class chirpstackService {
             const gatewayId = buff.toString('ascii');
             // console.log('gateway id middle part', gatewayId.substr(6,3))
             if (gatewayId.substr(6,3) !== 'fff'
-                && gatewayId.substr(6,3) !== '01f') return //Not our proprietary perhaps
+                && gatewayId.substr(6,3) !== '01f'
+                && gatewayId.substr(12,4) !== '4150') return //Not our proprietary perhaps
             const rec = {mic: payload?.mic, gatewayId, ts:Date.now()}
             obj.uplinkFrame.senderGateway = gatewayId
             this.payload.push(obj.uplinkFrame); this.payload.slice(0,99)
