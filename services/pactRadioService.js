@@ -155,7 +155,7 @@ class pactRadioService {
                 const nodes = await this.pactCall('L', 'free.radio02.get-nodes')
                 const checkableNodes = nodes.filter(e =>
                     e.director === this.wallet && //I am the director
-                    e.send === false && e.sent.length > 0 && (moment(e.lastAction.timep || e.lastAction.time).unix() + 300) < moment().unix())
+                    e.send === false && e.sent.length > 0 && (moment(e.lastAction.timep || e.lastAction.time).unix() + 3000) < moment().unix())
                 console.log("Number of checkable nodes:", checkableNodes.length)
                 if (checkableNodes.length === 0) { //no more to close
                     this.consMemberCleanUp = false //no more to clean up
@@ -164,13 +164,13 @@ class pactRadioService {
                 for (let i in checkableNodes) {
                     const sendNode = checkableNodes[i]
                     sendNode.gps = await this.cS.getGatewayGPS(sendNode.gatewayId)
-                    let sent = this.decrypt(asKey[0].priv, sendNode.sent)
-                    // sent = '111111'
+                    // let sent = this.decrypt(asKey[0].priv, sendNode.sent)
+                    let sent = '111111'
                     const resp = await this.pactCall('L', 'free.radio02.get-gateway', sendNode.gatewayId)
                     const receives = JSON.parse(resp.replaceAll('} {','},{')) || []
                     for (let j in receives) {
-                        receives[j].mic = this.decrypt(asKey[0].priv, receives[j].mic)
-                        // receives[j].mic = sent
+                        // receives[j].mic = this.decrypt(asKey[0].priv, receives[j].mic)
+                        receives[j].mic = sent
                         receives[j].gatewayId = sendNode.gatewayId
                     }
                     //Analyze and reward here
