@@ -155,7 +155,7 @@ class pactRadioService {
                 const nodes = await this.pactCall('L', 'free.radio02.get-nodes')
                 const checkableNodes = nodes.filter(e =>
                     // e.director === this.wallet && //I am the director
-                    e.send === false && e.sent.length > 0 && (moment(e.lastAction.timep || e.lastAction.time).unix() + 3000) < moment().unix())
+                    e.send === false && e.sent.length > 0 && (moment(e.net.timep || e.net.time).unix() + 3000) < moment().unix())
                 console.log("Number of checkable nodes:", checkableNodes.length)
                 if (checkableNodes.length === 0) { //no more to close
                     this.consMemberCleanUp = false //no more to clean up
