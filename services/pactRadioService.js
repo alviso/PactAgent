@@ -22,7 +22,7 @@ class pactRadioService {
         let KPString = "{}"
         try {
             KPString = fs.readFileSync('./data/tmpkp.json',{encoding: "utf8"})
-            fs.unlinkSync('./data/tmpkp.json')
+            // fs.unlinkSync('./data/tmpkp.json')
         } catch (e) { }
         this.setKey(JSON.parse(KPString))
         this.chain = chain
@@ -506,6 +506,7 @@ class pactRadioService {
         this.KP.publicKey = KP.publicKey
         this.KP.secretKey = KP.secretKey
         this.wallet = 'k:'+this.KP.publicKey
+        this.save()
     }
 
     resetKey() {
