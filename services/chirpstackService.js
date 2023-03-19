@@ -15,6 +15,7 @@ class chirpstackService {
         let apiUrl = config.chirpstack.apiUrl
 
         this.dir = this.tree[this.tree.length - 4]
+        console.log(this.dir)
         if (this.dir.includes('PactAgentsCB')) {
             console.log('Directory:', this.dir)
             apiUrl = config.chirpstack.apiUrl2
