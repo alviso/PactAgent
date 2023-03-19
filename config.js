@@ -45,6 +45,7 @@ module.exports = {
     },
     chirpstack: {
         apiUrl: 'api.crankk.io:8080',
+        apiUrl2: 'csap.crankk.io:8080',
         gatewayId: gwConfJson?.gateway_conf?.gateway_ID.toLowerCase() || '',
         apiKey: apikeyJson?.apikey || '',
     },

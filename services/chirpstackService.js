@@ -11,9 +11,13 @@ class chirpstackService {
         if (this.instance.includes('CONS'))
             this.consNode = true
         else this.consNode = false
-        // if (this.instance.includes('EU'))
-            this.technical = true
-        // else this.technical = false
+        this.technical = true
+
+        this.dir = this.tree[this.tree.length - 4]
+        if (this.dir.includes('PactAgentsCB')) {
+            console.log(this.dir)
+            config.chirpstack.apiUrl = config.chirpstack.apiUrl2
+        }
 
         this.recs = []
         this.payload = []
