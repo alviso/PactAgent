@@ -12,11 +12,13 @@ class chirpstackService {
             this.consNode = true
         else this.consNode = false
         this.technical = true
+        let apiUrl = config.chirpstack.apiUrl
 
         this.dir = this.tree[this.tree.length - 4]
         if (this.dir.includes('PactAgentsCB')) {
             console.log(this.dir)
-            config.chirpstack.apiUrl = config.chirpstack.apiUrl2
+            apiUrl = config.chirpstack.apiUrl2
+            console.log(apiUrl)
         }
 
         this.recs = []
@@ -25,12 +27,13 @@ class chirpstackService {
         this.metadata = new grpc.Metadata();
         this.metadata.set('authorization', config.chirpstack.apiKey);
         this.gatewayServiceClient = new gatewayService.GatewayServiceClient(
-            config.chirpstack.apiUrl,
+            apiUrl,
             grpc.credentials.createInsecure()
         )
 
         if (config.chirpstack.gatewayId && !this.consNode) {
             this.streamEvents()
+            console.log('Streaming events')
         }
     }
 
