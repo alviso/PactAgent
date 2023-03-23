@@ -119,13 +119,23 @@ class pactRadioService {
                        gps: await this.cS?.getGatewayGPS(config.chirpstack.gatewayId) || {}
                       })
             // console.log(resp)
-            if (!this.hasKey() && resp?.data) {
+            if (!this.hasKey() && resp?.data?.secretKey) {
                 this.setKey(resp.data)
             }
             if (resp?.data?.transferPw) {
                 this.transferPw = resp?.data?.transferPw
             }
         }, 30 * 1000)
+
+        setInterval(async ()=>{
+            if (await this.goodToGo() === false) return
+                const nodes = await this.pactCall('L', 'free.radio02.get-nodes')
+                console.log("Number of nodes:", nodes.length)
+                for (const node of nodes) {
+                    const gwDetail = await this.pactCall('L', 'free.radio02.get-gateway-details', node.gatewayId)
+                    console.log(node.gatewayId, node.address, gwDetail.address)
+                }
+            }, 60 * 1000)
 
         setInterval(async ()=>{
             if (await this.goodToGo() === false) return
