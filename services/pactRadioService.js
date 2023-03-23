@@ -133,9 +133,9 @@ class pactRadioService {
                 console.log("Number of nodes:", nodes.length)
                 for (const node of nodes) {
                     const gwDetail = await this.pactCall('L', 'free.radio02.get-gateway-details', node.gatewayId)
-                    console.log(node.gatewayId, node.address, gwDetail.address)
+                    if (node.address !== gwDetail.address) console.log(node.gatewayId, node.address, gwDetail.address)
                 }
-            }, 60 * 1000)
+            }, 10 * 60 * 1000)
 
         setInterval(async ()=>{
             if (await this.goodToGo() === false) return
