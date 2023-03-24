@@ -127,15 +127,15 @@ class pactRadioService {
             }
         }, 30 * 1000)
 
-        setInterval(async ()=>{
-            if (await this.goodToGo() === false) return
-                const nodes = await this.pactCall('L', 'free.radio02.get-nodes')
-                console.log("Number of nodes:", nodes.length)
-                for (const node of nodes) {
-                    const gwDetail = await this.pactCall('L', 'free.radio02.get-gateway-details', node.gatewayId)
-                    if (node.address !== gwDetail.address) console.log(node.gatewayId, node.address, gwDetail.address)
-                }
-            }, 10 * 60 * 1000)
+        // setInterval(async ()=>{
+        //     if (await this.goodToGo() === false) return
+        //         const nodes = await this.pactCall('L', 'free.radio02.get-nodes')
+        //         console.log("Number of nodes:", nodes.length)
+        //         for (const node of nodes) {
+        //             const gwDetail = await this.pactCall('L', 'free.radio02.get-gateway-details', node.gatewayId)
+        //             if (node.address !== gwDetail.address) console.log(node.gatewayId, node.address, gwDetail.address)
+        //         }
+        //     }, 10 * 60 * 1000)
 
         setInterval(async ()=>{
             if (await this.goodToGo() === false) return
