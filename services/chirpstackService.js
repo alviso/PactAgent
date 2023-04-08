@@ -12,12 +12,12 @@ class chirpstackService {
             this.consNode = true
         else this.consNode = false
         this.technical = true
-        let apiUrl = config.chirpstack.apiUrl
+        this.apiUrl = config.chirpstack.apiUrl
 
         if (this.instance.includes('PactAgentsCB')) {
             console.log('Directory:', this.instance)
-            apiUrl = config.chirpstack.apiUrl2
-            console.log(apiUrl)
+            this.apiUrl = config.chirpstack.apiUrl2
+            console.log(this.apiUrl)
         }
 
         this.recs = []
@@ -26,7 +26,7 @@ class chirpstackService {
         this.metadata = new grpc.Metadata();
         this.metadata.set('authorization', config.chirpstack.apiKey);
         this.gatewayServiceClient = new gatewayService.GatewayServiceClient(
-            apiUrl,
+            this.apiUrl,
             grpc.credentials.createInsecure()
         )
 
@@ -75,7 +75,19 @@ class chirpstackService {
             console.log('Disconnected (end)!!!')
             console.log('Reconnecting!!! (10s sleep)')
             await this.sleep(10 * 1000)
+            if (response.includes('authorized')) {
+                if (this.apiUrl === config.chirpstack.apiUrl) {
+                    this.apiUrl = config.chirpstack.apiUrlII
+                }
+                else {
+                    this.apiUrl = config.chirpstack.apiUrl
+                }
+                this.gatewayServiceClient = new gatewayService.GatewayServiceClient(
+                this.apiUrl,
+                grpc.credentials.createInsecure()
+            )
             this.streamEvents()
+            }
         });
     }
 
