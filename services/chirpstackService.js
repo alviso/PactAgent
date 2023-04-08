@@ -69,25 +69,24 @@ class chirpstackService {
         });
         clientReadableStream.on('error', (response)=>{
             console.log(response)
+            if (response.includes('authorized')) {
+                if (this.apiUrl === config.chirpstack.apiUrl) {
+                    this.apiUrl = config.chirpstack.apiUrlII
+                } else {
+                    this.apiUrl = config.chirpstack.apiUrl
+                }
+                this.gatewayServiceClient = new gatewayService.GatewayServiceClient(
+                    this.apiUrl,
+                    grpc.credentials.createInsecure()
+                )
+            }
             console.log('Disconnected (error)!!!')
         });
         clientReadableStream.on('end', async (response)=>{
             console.log('Disconnected (end)!!!')
             console.log('Reconnecting!!! (10s sleep)')
             await this.sleep(10 * 1000)
-            if (response.includes('authorized')) {
-                if (this.apiUrl === config.chirpstack.apiUrl) {
-                    this.apiUrl = config.chirpstack.apiUrlII
-                }
-                else {
-                    this.apiUrl = config.chirpstack.apiUrl
-                }
-                this.gatewayServiceClient = new gatewayService.GatewayServiceClient(
-                this.apiUrl,
-                grpc.credentials.createInsecure()
-            )
             this.streamEvents()
-            }
         });
     }
 
