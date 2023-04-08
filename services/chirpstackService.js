@@ -69,9 +69,9 @@ class chirpstackService {
         });
         clientReadableStream.on('error', (response)=>{
             console.log(response)
-            if (response.includes('authorized')) {
+            if (response?.code === 16) {
                 if (this.apiUrl === config.chirpstack.apiUrl) {
-                    this.apiUrl = config.chirpstack.apiUrlII
+                    this.apiUrl = config.chirpstack.apiUrl2
                 } else {
                     this.apiUrl = config.chirpstack.apiUrl
                 }
