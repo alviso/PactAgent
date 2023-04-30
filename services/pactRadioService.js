@@ -127,16 +127,6 @@ class pactRadioService {
             }
         }, 30 * 1000)
 
-        // setInterval(async ()=>{
-        //     if (await this.goodToGo() === false) return
-        //         const nodes = await this.pactCall('L', 'free.radio02.get-nodes')
-        //         console.log("Number of nodes:", nodes.length)
-        //         for (const node of nodes) {
-        //             const gwDetail = await this.pactCall('L', 'free.radio02.get-gateway-details', node.gatewayId)
-        //             if (node.address !== gwDetail.address) console.log(node.gatewayId, node.address, gwDetail.address)
-        //         }
-        //     }, 10 * 60 * 1000)
-
         setInterval(async ()=>{
             if (await this.goodToGo() === false) return
             if (await this.allowedToGo() !== 0) return
@@ -176,12 +166,10 @@ class pactRadioService {
                     const sendNode = checkableNodes[i]
                     sendNode.gps = await this.cS.getGatewayGPS(sendNode.gatewayId)
                     let sent = this.decrypt(asKey[0].priv, sendNode.sent)
-                    // sent = '111111'
                     const resp = await this.pactCall('L', 'free.radio02.get-gateway', sendNode.gatewayId)
                     const receives = JSON.parse(resp.replaceAll('} {','},{')) || []
                     for (let j in receives) {
                         receives[j].mic = this.decrypt(asKey[0].priv, receives[j].mic)
-                        // receives[j].mic = sent
                         receives[j].gatewayId = sendNode.gatewayId
                     }
                     //Analyze and reward here
@@ -196,14 +184,6 @@ class pactRadioService {
                         node.gps = await this.cS.getGatewayGPS(node.gatewayId)
                         const distance = this.calcCrow(node.gps.latitude, node.gps.longitude, sendNode.gps.latitude, sendNode.gps.longitude)
                         gateways.push({id:node.gatewayId, distance})
-                    }
-                    if (unique.length === 0) {
-                        const sample = await this.getSample(sendNode.address)
-                        if (Array.isArray(sample.unique) && Array.isArray(sample.gateways)) {
-                            unique = sample.unique
-                            gateways = sample.gateways
-                        }
-                        console.log('........................', unique, gateways)
                     }
                     await this.pactCall('S', 'free.radio02.close-send-receive', sendNode.address, unique, gateways)
                     // console.log(sent, receives)
@@ -391,17 +371,6 @@ class pactRadioService {
         const url = `https://reporter.crankk.io/balances?coin=${coin}&address=${this.wallet}`
         const resp = await axios.get(url)
         return resp?.data || []
-    }
-
-    async getSample(address) {
-        try {
-            const url = `https://reporter.crankk.io/sample?wallet=${address}`
-            const resp = await axios.get(url)
-            return resp?.data || []
-        } catch (e) {
-            console.error('.........')
-            return []
-        }
     }
 
     async getBalances() {

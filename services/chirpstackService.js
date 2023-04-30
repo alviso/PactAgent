@@ -134,12 +134,6 @@ class chirpstackService {
 
     getPayload() {
         this.payload = this.payload.sort((a,b) => (b.publishedAt.seconds - b.publishedAt.seconds))
-        // for (let i in this.payload) {
-        //     const str = ''+this.payload[i].rxInfoList[0].gatewayId
-        //     console.log(str)
-        //     const buff = new Buffer(str, 'base64');
-        //     this.payload[i].rxInfoList[0].gatewayId = buff.toString('ascii');
-        // }
         if (this.technical) return this.payload
         else return []
     }
@@ -158,16 +152,4 @@ class chirpstackService {
 
 
 module.exports = chirpstackService
-
-// clientReadableStream.on('status', function(response){ //status, error, close
-//     console.log('Disconnected (status)!!!', response)
-// });
-// clientReadableStream.on('end', function(response){ //status, error, close
-//     console.log('Disconnected (end)!!!')
-// });
-// clientReadableStream.on('error', function(response){ //status, error, close
-//     console.log('Disconnected (error)!!!', response)
-// });
-// const internalService = require('@crankk.io/chirpstack-api-fork/as/external/api/internal_grpc_pb')
-// const internalMessages = require('@crankk.io/chirpstack-api-fork/as/external/api/internal_pb')
 

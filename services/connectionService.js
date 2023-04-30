@@ -14,10 +14,8 @@ class connectionService {
         dns.resolve('google.com',  (err) => {
             if (err) {
                 this.online = false
-                // console.log('offline')
             } else {
                 this.online = true
-                // console.log('online')
             }
         });
     }
