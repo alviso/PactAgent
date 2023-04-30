@@ -44,7 +44,6 @@ class chirpstackService {
         this.startupTs = Date.now() //In case of disconnect, don't react to messages already in the queue
 
         clientReadableStream.on('data', (response) => {
-            // console.log('Data received')
             const obj = response.toObject()
             const payloadJson = obj.uplinkFrame?.phyPayloadJson
             if (!payloadJson) return
@@ -53,7 +52,6 @@ class chirpstackService {
             if (!payload?.macPayload?.bytes) return  //Not our proprietary perhaps
             const buff = new Buffer(payload.macPayload.bytes, 'base64');
             const gatewayId = buff.toString('ascii');
-            // console.log('gateway id middle part', gatewayId.substr(6,3))
             if (gatewayId.substr(6,3) !== 'fff'
                 && gatewayId.substr(6,3) !== '01f'
                 && gatewayId.substr(12,4) !== '4150') return //Not our proprietary perhaps
@@ -117,11 +115,9 @@ class chirpstackService {
             request.setId(gatewayId)
             this.gatewayServiceClient.get(request, this.metadata, function (err, res) {
                 if (err) {
-                    // console.log(err)
                     return resolve({latitude:45.5251384, longitude:-122.8898411})
                 }
                 const gpsObject = res.getGateway().getLocation().toObject()
-                // console.log(gpsObject)
                 return resolve(gpsObject)
             })
         })

@@ -494,10 +494,6 @@ class pactRadioService {
         this.wallet = ''
     }
 
-    getPubKey() {
-        return this.KP.publicKey
-    }
-
     getWallet() {
         return this.wallet
     }
@@ -537,12 +533,6 @@ class pactRadioService {
 
     creationTime() {
         return Math.round(new Date().getTime() / 1000) - 15
-    }
-
-    timeToAgoNodes(nodes) {
-        for (let i in nodes) {
-            nodes[i].lastAction.timep = moment(nodes[i].lastAction.timep).fromNow()
-        }
     }
 
     round(value, decimals) {
