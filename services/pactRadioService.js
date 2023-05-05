@@ -483,7 +483,7 @@ class pactRadioService {
     }
 
     setKey(KP) {
-        this.KP.publicKey = KP.publicKey.replace('k:','')
+        this.KP.publicKey = KP.publicKey?.replace('k:','')
         this.KP.secretKey = KP.secretKey
         this.wallet = 'k:'+this.KP.publicKey
         this.save()
