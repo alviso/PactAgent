@@ -48,6 +48,7 @@ class pactRadioService {
             this.rate = 1
         console.log(this.rate)
 
+
         this.asKeyManage()
 
         setInterval(async ()=>{
@@ -149,6 +150,13 @@ class pactRadioService {
                     const ind = Math.floor(Math.random() * len)
                     const sel = directableNodes[ind]
                     await this.pactCall('S', 'free.radio02.direct-to-send', sel.address)
+                }
+                if (len > 0 && ratio > 1 && (await this.goodToDirect() === true)) { //too few consensus, do ratio times
+                    for (let i = 0; i < ratio - 1; i++) {
+                        const ind = Math.floor(Math.random() * len)
+                        const sel = directableNodes[ind]
+                        await this.pactCall('S', 'free.radio02.direct-to-send', sel.address)
+                    }
                 }
             }
             if (this.consMember === true || this.consMemberCleanUp === true) {
