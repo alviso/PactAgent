@@ -151,7 +151,8 @@ class pactRadioService {
                     const sel = directableNodes[ind]
                     await this.pactCall('S', 'free.radio02.direct-to-send', sel.address)
                 }
-                if (len > 0 && ratio > 1 && (await this.goodToDirect() === true)) { //too few consensus, do ratio * 3 times
+                if (len > 0 && ratio > 1 && (await this.goodToDirect() === true)) {
+                    //TODO too few consensus, do ratio * 5 times to work off backlog quickly
                     for (let i = 0; i < ratio * 5 - 1; i++) {
                         const ind = Math.floor(Math.random() * len)
                         const sel = directableNodes[ind]
