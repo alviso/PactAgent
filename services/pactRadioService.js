@@ -130,7 +130,7 @@ class pactRadioService {
 
         setInterval(async ()=>{
             if (await this.goodToGo() === false) return
-            if (await this.allowedToGo() !== 0) return
+            // if (await this.allowedToGo() !== 0) return //not necessary precaution
             if (this.consMember === true) {
                 const nodes = await this.pactCall('L', 'free.radio02.get-nodes')
                 console.log("Number of nodes:", nodes.length)
