@@ -60,7 +60,7 @@ class pactRadioService {
                     const elapsedSec = (tsf - txns[i]?.tsc) / 1000
                     const resp = await Pact.fetch.poll({requestKeys: [txn]}, this.API_HOST)
                     if (!resp[txn]) {
-                        console.log('Pending txn:', txn)
+                        // console.log('Pending txn:', txn)
                         if (elapsedSec > 300) this.txnColl.remove({"txn": txn})
                         continue
                     }
