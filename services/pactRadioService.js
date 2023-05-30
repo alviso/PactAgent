@@ -339,6 +339,7 @@ class pactRadioService {
             cmdObj.meta.gasLimit = cmdObj.meta.gasLimit * 20
             try {
                 const resp = await Pact.fetch.local(cmdObj, this.API_HOST)
+                if (cmdObj.pactCode.includes('close-send-receive')) console.log(resp)
                 return resp.result?.data || {}
             } catch (e) {
                 return {}
