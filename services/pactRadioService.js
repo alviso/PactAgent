@@ -195,7 +195,7 @@ class pactRadioService {
                         const distance = this.calcCrow(node.gps.latitude, node.gps.longitude, sendNode.gps.latitude, sendNode.gps.longitude)
                         gateways.push({id:node.gatewayId, distance})
                     }
-                    await this.pactCall('L', 'free.radio02.close-send-receive', sendNode.address, unique, gateways)
+                    await this.pactCall('S', 'free.radio02.close-send-receive', sendNode.address, unique, gateways)
                     // console.log(sent, receives)
                 }
             }
