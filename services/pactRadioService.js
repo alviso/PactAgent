@@ -275,10 +275,10 @@ class pactRadioService {
                 }
             }
         } else {
-            if (myNode?.address && !myNode.pubkey && (await this.allowedToGo()) === 0) { //TODO: check should be if the key on chain matches.
-                const asKey = await this.getAsKeyDB()
-                const buff = new Buffer(asKey[0].pub)
-                const base64data = buff.toString('base64')
+            const asKey = await this.getAsKeyDB()
+            const buff = new Buffer(asKey[0].pub)
+            const base64data = buff.toString('base64')
+            if (myNode?.address && (myNode.pubkey !== base64data) && (await this.allowedToGo()) === 0) { //TODO: check should be if the key on chain matches.
                 await this.pactCall('S', 'free.radio02.set-my-pubkey', base64data)
             }
             if (this.consMember && !myNode.consMember) { //being turned off
