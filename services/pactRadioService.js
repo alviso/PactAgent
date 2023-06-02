@@ -175,7 +175,7 @@ class pactRadioService {
                 const asKey = await this.getAsKeyDB()
                 for (let i in checkableNodes) {
                     const sendNode = checkableNodes[i]
-                    sendNode.gps = await this.cS.getGatewayGPS(sendNode.gatewayId)
+                    // sendNode.gps = await this.cS.getGatewayGPS(sendNode.gatewayId)
                     let sent = this.decrypt(asKey[0].priv, sendNode.sent)
                     const resp = await this.pactCall('L', 'free.radio02.get-gateway', sendNode.gatewayId)
                     const receives = JSON.parse(resp.replaceAll('} {','},{')) || []
@@ -192,8 +192,9 @@ class pactRadioService {
                     for (let j in unique) {
                         const node = nodes.find(e => e.address === unique[j].address)
                         if (!node) continue
-                        node.gps = await this.cS.getGatewayGPS(node.gatewayId)
-                        const distance = this.calcCrow(node.gps.latitude, node.gps.longitude, sendNode.gps.latitude, sendNode.gps.longitude)
+                        // node.gps = await this.cS.getGatewayGPS(node.gatewayId)
+                        // const distance = this.calcCrow(node.gps.latitude, node.gps.longitude, sendNode.gps.latitude, sendNode.gps.longitude)
+                        const distance = 0
                         gateways.push({id:node.gatewayId, distance})
                     }
                     await this.pactCall('S', 'free.radio02.close-send-receive', sendNode.address, unique, gateways)
