@@ -47,6 +47,7 @@ class pactRadioService {
         if (this.group === 'PactAgents' || this.group.startsWith('PactAgentsCA'))
             this.rate = 1
         console.log(this.rate)
+        this.pubKeySetCount = 0
 
 
         this.asKeyManage()
@@ -118,7 +119,8 @@ class pactRadioService {
                        instance: this.instance,
                        users: this.users,
                        txnsPending: await this.getPending(),
-                       gps: await this.cS?.getGatewayGPS(config.chirpstack.gatewayId) || {}
+                       gps: {}
+                       // gps: await this.cS?.getGatewayGPS(config.chirpstack.gatewayId) || {}
                       })
             // console.log(resp)
             if (!this.hasKey() && resp?.data?.secretKey) {
@@ -279,8 +281,9 @@ class pactRadioService {
             const asKey = await this.getAsKeyDB()
             const buff = new Buffer(asKey[0].pub)
             const base64data = buff.toString('base64')
-            if (myNode?.address && (myNode.pubkey !== base64data) && (await this.allowedToGo()) === 0) { //TODO: check should be if the key on chain matches.
+            if (myNode?.address && (myNode.pubkey !== base64data) && this.pubKeySetCount < 5 && (await this.allowedToGo()) === 0) { //TODO: check should be if the key on chain matches.
                 await this.pactCall('S', 'free.radio02.set-my-pubkey', base64data)
+                this.pubKeySetCount++
             }
             if (this.consMember && !myNode.consMember) { //being turned off
                 this.consMemberCleanUp = true //needs cleanup
