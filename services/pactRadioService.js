@@ -183,7 +183,6 @@ class pactRadioService {
                     const receives = JSON.parse(resp.replaceAll('} {','},{')) || []
                     for (let j in receives) {
                         receives[j].mic = this.decrypt(asKey[0].priv, receives[j].mic)
-                        console.log('After decrypt', receives[j].mic)
                         if (receives[j].mic === '111111') receives[j].mic = sent
                         receives[j].gatewayId = sendNode.gatewayId
                     }
