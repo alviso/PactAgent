@@ -200,6 +200,7 @@ class pactRadioService {
                         const distance = 0
                         gateways.push({id:node.gatewayId, distance})
                     }
+                    console.log('Accepted witnesses:', unique.length)
                     await this.pactCall('S', 'free.radio02.close-send-receive', sendNode.address, unique, gateways)
                     // console.log(sent, receives)
                 }
