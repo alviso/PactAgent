@@ -51,12 +51,15 @@ class chirpstackService {
             if (payload?.mhdr?.mType !== 'Proprietary') return //Proprietary
             if (!payload?.macPayload?.bytes) return  //Not our proprietary perhaps
             const buff = new Buffer(payload.macPayload.bytes, 'base64');
-            const gatewayId = buff.toString('ascii');
-            if (gatewayId.length !== 16) return
+            const gatewayIdMIC = buff.toString('ascii');
+            if (gatewayIdMIC.length !== 16 && gatewayIdMIC.length !== 24) return //either just gw id or gw id plus MIC
+            const gatewayId = gatewayIdMIC.substring(0,16)
+            let mic = payload?.mic
+            if (gatewayIdMIC.length === 24) mic = gatewayIdMIC.substring(16,24)
             // if (gatewayId.substr(6,3) !== 'fff'
             //     && gatewayId.substr(6,3) !== '01f'
             //     && gatewayId.substr(12,4) !== '4150') return //Not our proprietary perhaps
-            const rec = {mic: payload?.mic, gatewayId, ts:Date.now()}
+            const rec = {mic, gatewayId, ts:Date.now()}
             obj.uplinkFrame.senderGateway = gatewayId
             this.payload.push(obj.uplinkFrame); this.payload.slice(0,99)
             //Not at startup
