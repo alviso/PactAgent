@@ -291,7 +291,7 @@ class pactRadioService {
                 this.consMemberCleanUp = true //needs cleanup
             }
             this.consMember = myNode.consMember
-            if (myNode.send === true && this.gwOnline) {
+            if (myNode.send === true && this.gwOnline && (await this.allowedToGo()) === 0) {
                 const MIC = await this.cS.sendPing()
                 console.log(MIC)
                 if (MIC.length > 0) {
