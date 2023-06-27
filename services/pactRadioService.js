@@ -98,7 +98,7 @@ class pactRadioService {
                 }
             } )
 
-            if (await this.allowedToGo() !== 0) return
+            // if (await this.allowedToGo() !== 0) return
             if (this.cS) await this.checkMyNode()
 
 
