@@ -46,7 +46,7 @@ class chirpstackService {
         clientReadableStream.on('data', (response) => {
             const obj = response.toObject()
             const payloadJson = obj.uplinkFrame?.phyPayloadJson
-            console.log(obj.uplinkFrame)
+            // console.log(obj.uplinkFrame)
             if (!payloadJson) return
             const payload = JSON.parse(payloadJson)
             if (payload?.mhdr?.mType !== 'Proprietary') return //Proprietary
