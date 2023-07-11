@@ -158,11 +158,10 @@ class pactRadioService {
                     //TODO too few consensus, do ratio * 5 times to work off backlog quickly
                     // for (let i = 0; i < (ratio -1) * 5; i++) {
                     // tone it down
-                    for (let i = 0; i < 3; i++) {
-                        const ind = Math.floor(Math.random() * len)
-                        const sel = directableNodes[ind]
-                        await this.pactCall('S', 'free.radio02.direct-to-send', sel.address)
-                    }
+                    const ind = Math.floor(Math.random() * len)
+                    const sel = directableNodes[ind]
+                    await this.pactCall('S', 'free.radio02.direct-to-send', sel.address)
+                    // }
                 }
             }
             if (this.consMember === true || this.consMemberCleanUp === true) {
