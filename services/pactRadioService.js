@@ -157,6 +157,7 @@ class pactRadioService {
                 if (len > 0 && ratio > 1 && (await this.goodToDirect() === true)) {
                     //TODO too few consensus, do ratio * 5 times to work off backlog quickly
                     // for (let i = 0; i < (ratio -1) * 5; i++) {
+                    // tone it down
                     for (let i = 0; i < 3; i++) {
                         const ind = Math.floor(Math.random() * len)
                         const sel = directableNodes[ind]
