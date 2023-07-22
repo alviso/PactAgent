@@ -348,7 +348,9 @@ class pactRadioService {
             try {
                 const resp = await Pact.fetch.local(cmdObj, this.API_HOST)
                 if (cmdObj.pactCode.includes('close-send-receive')) console.log(resp)
-                const ago = Date.now() - resp?.metaData?.blockTime / 1000
+                const ago = Math.floor(Date.now()) - Math.floor(resp?.metaData?.blockTime / 1000)
+                console.log(Math.floor(Date.now()))
+                console.log(Math.floor(resp?.metaData?.blockTime / 1000))
                 console.log('stale by:', ago)
                 if (ago > 5 * 60 * 1000) {
                     delete resp.result?.data
