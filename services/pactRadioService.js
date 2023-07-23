@@ -45,7 +45,7 @@ class pactRadioService {
         this.instance = this.tree[this.tree.length - 2]
         console.log(this.instance)
         if (this.group === 'PactAgents' || this.group.startsWith('PactAgentsCA'))
-            this.rate = 1
+            this.rate = 0.5
         console.log(this.rate)
         this.pubKeySetCount = 0
 
@@ -154,15 +154,15 @@ class pactRadioService {
                     const sel = directableNodes[ind]
                     await this.pactCall('S', 'free.radio02.direct-to-send', sel.address)
                 }
-                if (len > 0 && ratio > 1 && (await this.goodToDirect() === true)) {
-                    //TODO too few consensus, do ratio * 5 times to work off backlog quickly
-                    // for (let i = 0; i < (ratio -1) * 5; i++) {
-                    // tone it down
-                    const ind = Math.floor(Math.random() * len)
-                    const sel = directableNodes[ind]
-                    await this.pactCall('S', 'free.radio02.direct-to-send', sel.address)
-                    // }
-                }
+                // if (len > 0 && ratio > 1 && (await this.goodToDirect() === true)) {
+                //     //TODO too few consensus, do ratio * 5 times to work off backlog quickly
+                //     // for (let i = 0; i < (ratio -1) * 5; i++) {
+                //     // tone it down
+                //     const ind = Math.floor(Math.random() * len)
+                //     const sel = directableNodes[ind]
+                //     await this.pactCall('S', 'free.radio02.direct-to-send', sel.address)
+                //     // }
+                // }
             }
             if (this.consMember === true || this.consMemberCleanUp === true) {
                 //this is seconds, let it be 5 min old to not miss receive updates
