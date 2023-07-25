@@ -179,6 +179,13 @@ class pactRadioService {
                 if (checkableNodes.length === 0) { //no more to close
                     this.consMemberCleanUp = false //no more to clean up
                 }
+
+                for (const it of totalCheckableNodes) {
+                    const diff = moment(it.lastAction.timep || it.lastAction.time).unix() -  moment(it.net.timep || it.net.time).unix()
+                    console.log('Last action minus net in secs:', diff)
+                }
+
+
                 const asKey = await this.getAsKeyDB()
                 for (let i in checkableNodes) {
                     const sendNode = checkableNodes[i]
