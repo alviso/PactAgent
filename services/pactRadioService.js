@@ -131,6 +131,15 @@ class pactRadioService {
             }
         }, 30 * 1000)
 
+        setInterval(async () => {
+            if (await this.goodToGo() === false) return
+            if (this.consMember === true) {
+                const sendMods = await this.pactCall('L', 'free.radio02.get-sendMods')
+                console.log(sendMods)
+            }
+        }, 10 * 1000)
+
+
         setInterval(async ()=>{
             if (await this.goodToGo() === false) return
             // if (await this.allowedToGo() !== 0) return //not necessary precaution
@@ -184,9 +193,6 @@ class pactRadioService {
                     const diff = moment(it.lastAction.timep || it.lastAction.time).unix() -  moment(it.net.timep || it.net.time).unix()
                     console.log('Last action minus net in secs:', diff)
                 }
-
-                const sendMods = await this.pactCall('L', 'free.radio02.get-sendMods')
-                console.log(sendMods)
 
                 const asKey = await this.getAsKeyDB()
                 for (let i in checkableNodes) {
