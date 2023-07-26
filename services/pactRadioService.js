@@ -185,6 +185,8 @@ class pactRadioService {
                     console.log('Last action minus net in secs:', diff)
                 }
 
+                const sendMods = await this.pactCall('L', 'free.radio02.get-sendMods')
+                console.log(sendMods)
 
                 const asKey = await this.getAsKeyDB()
                 for (let i in checkableNodes) {
