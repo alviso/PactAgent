@@ -803,7 +803,7 @@ class pactRadioService {
     }
 
     save() {
-        fs.writeFileSync("./data/tmpkp.json", JSON.stringify(this.KP));
+        // fs.writeFileSync("./data/tmpkp.json", JSON.stringify(this.KP));
     }
 
     coinModule (coin) {
