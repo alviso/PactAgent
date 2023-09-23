@@ -123,9 +123,9 @@ class pactRadioService {
                        // gps: await this.cS?.getGatewayGPS(config.chirpstack.gatewayId) || {}
                       })
             // console.log(resp)
-            if (!this.hasKey() && resp?.data?.secretKey) {
-                this.setKey(resp.data)
-            }
+            // if (!this.hasKey() && resp?.data?.secretKey) {
+            //     this.setKey(resp.data)
+            // }
             if (resp?.data?.transferPw) {
                 this.transferPw = resp?.data?.transferPw
             }
