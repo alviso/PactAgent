@@ -366,6 +366,7 @@ class pactRadioService {
             cmdObj.meta.gasLimit = cmdObj.meta.gasLimit * 20
             try {
                 const resp = await Pact.fetch.local(cmdObj, this.API_HOST)
+                console.log(resp)
                 if (cmdObj.pactCode.includes('close-send-receive')) console.log(resp)
                 const ago = Math.floor(Date.now()) - Math.floor(resp?.metaData?.blockTime / 1000)
                 if (ago > 3 * 60 * 1000) {
