@@ -333,8 +333,10 @@ class pactRadioService {
                     try {
                         this.chainId = chainId
                         sender = await this.pactCall('L', 'free.radio02.get-sender-details', rec.gatewayId)
+                        console.log(sender)
                         this.chainId = this.chain.chainId
                     } catch (e) {
+                        console.log(e)
                     }
                     if (sender.gatewayId) break
                 }
