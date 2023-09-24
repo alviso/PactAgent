@@ -308,7 +308,7 @@ class pactRadioService {
                 this.pubKeySetCount++
             }
             if (this.consMember && !myNode.consMember) { //being turned off
-                this.consMemberCleanUp = true //needs cleanup
+                this.consMemberCleanUp = true //needs cleanup..
             }
             this.consMember = myNode.consMember
             if (myNode.send === true && this.gwOnline && (await this.allowedToGo()) === 0) {
