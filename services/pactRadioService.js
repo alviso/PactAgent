@@ -334,7 +334,7 @@ class pactRadioService {
                         this.chainId = chainId
                         sender = await this.pactCall('L', 'free.radio02.get-sender-details', rec.gatewayId)
                         console.log(sender)
-                        this.chainId = this.chain.chainId
+                        //
                     } catch (e) {
                         console.log(e)
                     }
@@ -342,10 +342,10 @@ class pactRadioService {
                 }
                 if (!sender.gatewayId) {
                     console.log('No sender found...')
+                    this.chainId = this.chain.chainId
                     continue
                 }
                 const result = this.encrypt(sender.pubkeyd, rec.mic) //encrypt rec.mic with director's public key
-                this.chainId = chainId
                 await this.pactCall('S', 'free.radio02.add-received', rec.gatewayId, result)
                 this.chainId = this.chain.chainId
             }
