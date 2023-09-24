@@ -28,6 +28,7 @@ module.exports = {
         // {name: 'test', host: 'testnet.crankk.io', color: 'danger', networkId: 'testnet04', chainId: '1'}
         {name: 'main', host: 'kda.crankk.io', host2: 'mainnet2.crankk.io', color: 'success', networkId: 'mainnet01', chainId: '19'} //api.chainweb.com
     ],
+    activeChains: ['0','19'],
     kadena: {
         radioModule: 'free.radio02',
         radioBank: 'radio01-bank',

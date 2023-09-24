@@ -327,8 +327,15 @@ class pactRadioService {
                     console.log('ignored...')
                     continue
                 }
-                const sender = await this.pactCall('L', 'free.radio02.get-sender-details', rec.gatewayId)
-                if (!sender) {
+                let sender = {}
+                for (const chainId of config.activeChains) {
+                    try {
+                        sender = await this.pactCall('L', 'free.radio02.get-sender-details', rec.gatewayId, chainId)
+                    } catch (e) {
+                    }
+                    if (sender.gatewayId) break
+                }
+                if (!sender.gatewayId) {
                     console.log('No sender found...')
                     continue
                 }
@@ -339,7 +346,7 @@ class pactRadioService {
         }
     }
 
-    async pactCall(mode, module) {
+    async pactCall(mode, module, chainId) {
         const envData = {
             keyset: {
                 pred: "keys-all",
@@ -362,11 +369,16 @@ class pactRadioService {
             else cmdObj.pactCode += ' ' + `\"${arguments[i]}\"`
         }
         cmdObj.pactCode += ' )'
+        let host = this.API_HOST
+        if (chainId) {
+            cmdObj.meta.chainId = chainId
+            host = host.replace(`/chain/${this.chain.chainId}/pact`,`/chain/${chainId}/pact`)
+        }
         if (mode === 'L') {
             cmdObj.meta.gasLimit = cmdObj.meta.gasLimit * 20
             try {
                 // console.log(cmdObj)
-                const resp = await Pact.fetch.local(cmdObj, this.API_HOST)
+                const resp = await Pact.fetch.local(cmdObj, host)
                 // console.log(resp)
                 if (cmdObj.pactCode.includes('close-send-receive')) console.log(resp)
                 const ago = Math.floor(Date.now()) - Math.floor(resp?.metaData?.blockTime / 1000)
@@ -379,7 +391,7 @@ class pactRadioService {
                 return {}
             }
         } else {
-            const lresp = await Pact.fetch.local(cmdObj, this.API_HOST)
+            const lresp = await Pact.fetch.local(cmdObj, host)
             const ncmdObj = this.clone(cmdObj)
             if (lresp?.gas) {
                 if (cmdObj.pactCode.includes('close-send-receive')) ncmdObj.meta.gasLimit = this.closeFee //lresp.gas + 3400
@@ -389,7 +401,7 @@ class pactRadioService {
                 console.log('Gas corrected!')
             }
             try {
-                const resp = await Pact.fetch.send(ncmdObj, this.API_HOST)
+                const resp = await Pact.fetch.send(ncmdObj, host)
                 console.log(moment().format(), module, resp)
                 if (resp?.requestKeys) await this.addTxn(resp?.requestKeys[0], module, ncmdObj)
                 return resp || {}
