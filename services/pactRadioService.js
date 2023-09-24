@@ -26,6 +26,7 @@ class pactRadioService {
         } catch (e) { }
         this.setKey(JSON.parse(KPString))
         this.chain = chain
+        this.chainId = chain.chainId
         this.consMember = false
         this.consMemberCleanUp = false
         this.cS = cS
@@ -330,7 +331,9 @@ class pactRadioService {
                 let sender = {}
                 for (const chainId of config.activeChains) {
                     try {
-                        sender = await this.pactCall('L', 'free.radio02.get-sender-details', rec.gatewayId, chainId)
+                        this.chainId = chainId
+                        sender = await this.pactCall('L', 'free.radio02.get-sender-details', rec.gatewayId)
+                        this.chainId = this.chain.chainId
                     } catch (e) {
                     }
                     if (sender.gatewayId) break
@@ -340,13 +343,15 @@ class pactRadioService {
                     continue
                 }
                 const result = this.encrypt(sender.pubkeyd, rec.mic) //encrypt rec.mic with director's public key
-                await this.pactCall('S', 'free.radio02.add-received', rec.gatewayId, result, chainId)
+                this.chainId = chainId
+                await this.pactCall('S', 'free.radio02.add-received', rec.gatewayId, result)
+                this.chainId = this.chain.chainId
             }
             this.cS.rmRecs()
         }
     }
 
-    async pactCall(mode, module, chainId) {
+    async pactCall(mode, module) {
         const envData = {
             keyset: {
                 pred: "keys-all",
@@ -370,9 +375,9 @@ class pactRadioService {
         }
         cmdObj.pactCode += ' )'
         let host = this.API_HOST
-        if (chainId) {
+        if (this.chainId !== this.chain.chainId) {
             cmdObj.meta.chainId = chainId
-            host = host.replace(`/chain/${this.chain.chainId}/pact`,`/chain/${chainId}/pact`)
+            host = host.replace(`/chain/${this.chain.chainId}/pact`,`/chain/${this.chainId}/pact`)
         }
         if (mode === 'L') {
             cmdObj.meta.gasLimit = cmdObj.meta.gasLimit * 20
