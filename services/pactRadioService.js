@@ -378,7 +378,7 @@ class pactRadioService {
         cmdObj.pactCode += ' )'
         let host = this.API_HOST
         if (this.chainId !== this.chain.chainId) {
-            cmdObj.meta.chainId = chainId
+            cmdObj.meta.chainId = this.chainId
             host = host.replace(`/chain/${this.chain.chainId}/pact`,`/chain/${this.chainId}/pact`)
         }
         if (mode === 'L') {
