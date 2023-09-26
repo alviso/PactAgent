@@ -215,7 +215,9 @@ class pactRadioService {
                     let gateways = []
                     for (let j in unique) {
                         const node = nodes.find(e => e.address === unique[j].address)
-                        if (!node) continue
+                        if (!node) {
+                            continue
+                        }
                         // node.gps = await this.cS.getGatewayGPS(node.gatewayId)
                         // const distance = this.calcCrow(node.gps.latitude, node.gps.longitude, sendNode.gps.latitude, sendNode.gps.longitude)
                         const distance = 0
