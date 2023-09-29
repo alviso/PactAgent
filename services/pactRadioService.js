@@ -330,7 +330,8 @@ class pactRadioService {
                     continue
                 }
                 let sender = {}
-                for (const chainId of config.activeChains) {
+                let chainId = this.chain.chainId
+                for (chainId of config.activeChains) {
                     try {
                         sender = await this.pactCall('L', 'free.radio02.get-sender-details', rec.gatewayId, 'chain', chainId)
                         console.log(sender)
@@ -345,7 +346,7 @@ class pactRadioService {
                     continue
                 }
                 const result = this.encrypt(sender.pubkeyd, rec.mic) //encrypt rec.mic with director's public key
-                await this.pactCall('S', 'free.radio02.add-received', rec.gatewayId, result)
+                await this.pactCall('S', 'free.radio02.add-received', rec.gatewayId, result, 'chain', chainId)
             }
             this.cS.rmRecs()
         }
