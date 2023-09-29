@@ -355,8 +355,6 @@ class pactRadioService {
         let chainId = this.chain.chainId
         if (arguments[arguments.length-2] === 'chain') {
            chainId = arguments[arguments.length-1]
-            arguments[arguments.length-1] = ''
-            arguments[arguments.length-2] = ''
         }
         console.log('chain:', chainId)
         const envData = {
@@ -374,6 +372,7 @@ class pactRadioService {
         };
         for (let i in arguments) {
             if (i < 2) continue
+            if (arguments[i] === 'chain') break
             if (typeof arguments[i] === 'object') {
                 const obj = JSON.stringify(arguments[i])
                 cmdObj.pactCode += ' ' + `${obj}`
