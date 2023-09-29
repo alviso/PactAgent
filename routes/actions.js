@@ -48,7 +48,7 @@ router.get('/exchange', isLoggedIn, asyncHandler(async (req, res, next) => {
 router.post('/addTxn', asyncHandler(async (req, res, next) => {
     const service = res.app.locals.pAS[res.app.locals.chain.name]
     const {txn, type} = req.body
-    await service.addTxn(txn, type)
+    await service.addTxn(txn, type, 0)
     res.json({})
 }))
 

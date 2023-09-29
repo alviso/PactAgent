@@ -56,10 +56,14 @@ class pactRadioService {
             if (await this.goodToGo() === false) return  //nothing happens if low KDA balance
             this.txnColl.find({ }).toArray(async (err, txns) => {
                 for (let i in txns) {
+                    let host = this.API_HOST
+                    if (txns[i].chainId !== this.chain.chainId) {
+                        host = host.replace(`/chain/${this.chain.chainId}/pact`,`/chain/${chainId}/pact`)
+                    }
                     const txn = txns[i].txn
                     const tsf = Date.now()
                     const elapsedSec = (tsf - txns[i]?.tsc) / 1000
-                    const resp = await Pact.fetch.poll({requestKeys: [txn]}, this.API_HOST)
+                    const resp = await Pact.fetch.poll({requestKeys: [txn]}, host)
                     if (!resp[txn]) {
                         // console.log('Pending txn:', txn)
                         if (elapsedSec > 300) this.txnColl.remove({"txn": txn})
@@ -163,15 +167,6 @@ class pactRadioService {
                     const sel = directableNodes[ind]
                     await this.pactCall('S', 'free.radio02.direct-to-send', sel.address)
                 }
-                // if (len > 0 && ratio > 1 && (await this.goodToDirect() === true)) {
-                //     //TODO too few consensus, do ratio * 5 times to work off backlog quickly
-                //     // for (let i = 0; i < (ratio -1) * 5; i++) {
-                //     // tone it down
-                //     const ind = Math.floor(Math.random() * len)
-                //     const sel = directableNodes[ind]
-                //     await this.pactCall('S', 'free.radio02.direct-to-send', sel.address)
-                //     // }
-                // }
             }
             if (this.consMember === true || this.consMemberCleanUp === true) {
                 //this is seconds, let it be 5 min old to not miss receive updates
@@ -415,7 +410,7 @@ class pactRadioService {
             try {
                 const resp = await Pact.fetch.send(ncmdObj, host)
                 console.log(moment().format(), module, resp)
-                if (resp?.requestKeys) await this.addTxn(resp?.requestKeys[0], module, ncmdObj)
+                if (resp?.requestKeys) await this.addTxn(resp?.requestKeys[0], module, ncmdObj, chainId)
                 return resp || {}
             } catch (e) {
                 return {}
@@ -596,8 +591,8 @@ class pactRadioService {
         fs.writeFileSync("./data/apikey.json", JSON.stringify({apikey}));
     }
 
-    async addTxn(txn, type) {
-        this.txnColl.insert({txn, type, tsc:Date.now()})
+    async addTxn(txn, type, chainId) {
+        this.txnColl.insert({txn, type, tsc:Date.now(), chainId})
     }
 
     creationTime() {
