@@ -58,7 +58,7 @@ class pactRadioService {
                 for (let i in txns) {
                     let host = this.API_HOST
                     if (txns[i].chainId !== this.chain.chainId) {
-                        host = host.replace(`/chain/${this.chain.chainId}/pact`,`/chain/${chainId}/pact`)
+                        host = host.replace(`/chain/${this.chain.chainId}/pact`,`/chain/${txns[i].chainId}/pact`)
                     }
                     const txn = txns[i].txn
                     const tsf = Date.now()
