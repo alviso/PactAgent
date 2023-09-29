@@ -789,8 +789,8 @@ class pactRadioService {
         return ret
     }
 
-    async addTxn(txn, type) {
-        this.txnColl.insert({txn, type, tsc:Date.now()})
+    async addTxn(txn, type, chainId) {
+        this.txnColl.insert({txn, type, tsc:Date.now(), chainId})
     }
 
     decrypt(privkey, result) {
