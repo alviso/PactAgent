@@ -355,6 +355,7 @@ class pactRadioService {
         let chainId = this.chain.chainId
         if (arguments[arguments.length-2] === 'chain') {
            chainId = arguments[arguments.length-1]
+           arguments.splice(arguments.length-2, 2)
         }
         console.log('chain:', chainId)
         const envData = {
