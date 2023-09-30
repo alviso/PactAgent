@@ -200,6 +200,7 @@ class pactRadioService {
                         receives[j].mic = this.decrypt(asKey[0].priv, receives[j].mic)
                         receives[j].mic = sent //if (receives[j].mic === '111111')
                         receives[j].gatewayId = sendNode.gatewayId
+                        if (receives[j].chain) delete receives[j].chain
                     }
                     //Analyze and reward here
                     const validReceives = receives.filter(e => e.mic === sent)
