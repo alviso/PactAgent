@@ -279,6 +279,20 @@ class pactRadioService {
     }
 
     async checkMyNode() {
+        let chainId = this.chain.chainId
+        for (chainId of config.activeChains) {
+            try {
+                console.log(chainId)
+                const sender = await this.pactCall('L', 'free.radio02.get-sender-details', config.chirpstack.gatewayId, 'chain', chainId)
+                console.log(sender)
+                if (sender.address) {
+                    this.chain.chainId = chainId
+                    break
+                }
+            } catch (e) {
+                console.log(e)
+            }
+        }
         const myNode = await this.pactCall('L', 'free.radio02.get-my-node')
         // console.log(myNode)
         if (!myNode?.address && !this.haveANode) {
