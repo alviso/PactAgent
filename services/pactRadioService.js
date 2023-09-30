@@ -60,6 +60,9 @@ class pactRadioService {
                         console.log(sender)
                         if (sender.address) {
                             this.chain.chainId = chainId
+                            this.API_HOST1 = `https://${chain.host}/chainweb/0.0/${chain.networkId}/chain/${chainId}/pact`
+                            this.API_HOST2 = `https://${chain.host2}/chainweb/0.0/${chain.networkId}/chain/${chainId}/pact`
+                            this.API_HOST = this.API_HOST1
                             break
                         }
                     } catch (e) {
