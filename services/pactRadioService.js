@@ -212,7 +212,6 @@ class pactRadioService {
                 const asKey = await this.getAsKeyDB()
                 for (let i in checkableNodes) {
                     const sendNode = checkableNodes[i]
-                    // sendNode.gps = await this.cS.getGatewayGPS(sendNode.gatewayId)
                     let sent = this.decrypt(asKey[0].priv, sendNode.sent)
                     const resp = await this.pactCall('L', 'free.radio02.get-gateway', sendNode.gatewayId)
                     const receives = JSON.parse(resp.replaceAll('} {','},{')) || []
@@ -220,6 +219,12 @@ class pactRadioService {
                         receives[j].mic = this.decrypt(asKey[0].priv, receives[j].mic)
                         receives[j].mic = sent //if (receives[j].mic === '111111')
                         receives[j].gatewayId = sendNode.gatewayId
+
+                        const staked = await this.pactCall('L', 'free.radio02.is-staked', receives[j].address, 'chain', receives[j].chain)
+                        if (!staked) {
+                            receives.splice(parseInt(j), 1)
+                            continue
+                        }
                         if (receives[j].chain) delete receives[j].chain
                     }
                     //Analyze and reward here
@@ -227,18 +232,9 @@ class pactRadioService {
                     let unique = [...new Map(validReceives.map(item => [item['address'], item])).values()]
                     unique = unique.filter(e => e.address !== sendNode.address) //exclude the sender from being a receiver as well
                     unique = unique.filter(e => e.address !== this.wallet) //don't let the director be a receiver as well
-                    let gateways = []
-                    for (let j in unique) {
-                        const node = nodes.find(e => e.address === unique[j].address)
-                        if (!node) {
-                            continue
-                        }
-                        // node.gps = await this.cS.getGatewayGPS(node.gatewayId)
-                        // const distance = this.calcCrow(node.gps.latitude, node.gps.longitude, sendNode.gps.latitude, sendNode.gps.longitude)
-                        const distance = 0
-                        gateways.push({id:node.gatewayId, distance})
-                    }
                     console.log('Accepted witnesses:', unique.length)
+
+                    let gateways = []
                     await this.pactCall('S', 'free.radio02.close-send-receive', sendNode.address, unique, gateways)
                     // console.log(sent, receives)
                 }
