@@ -134,26 +134,26 @@ class pactRadioService {
             this.gwOnline = gatewayExtras.online || true
         }, 60 * 1000)
 
-        setInterval(async ()=>{
-            const url = `https://onboarder.crankk.io/checkin`
-            const resp = await axios.post(url,
-                {wallet: this.wallet,
-                       apiKey: config.chirpstack.apiKey,
-                       gatewayId: config.chirpstack.gatewayId,
-                       instance: this.instance,
-                       users: this.users,
-                       txnsPending: await this.getPending(),
-                       gps: {}
-                       // gps: await this.cS?.getGatewayGPS(config.chirpstack.gatewayId) || {}
-                      })
-            // console.log(resp)
-            // if (!this.hasKey() && resp?.data?.secretKey) {
-            //     this.setKey(resp.data)
-            // }
-            if (resp?.data?.transferPw) {
-                this.transferPw = resp?.data?.transferPw
-            }
-        }, 30 * 1000)
+        // setInterval(async ()=>{
+        //     const url = `https://onboarder.crankk.io/checkin`
+        //     const resp = await axios.post(url,
+        //         {wallet: this.wallet,
+        //                apiKey: config.chirpstack.apiKey,
+        //                gatewayId: config.chirpstack.gatewayId,
+        //                instance: this.instance,
+        //                users: this.users,
+        //                txnsPending: await this.getPending(),
+        //                gps: {}
+        //                // gps: await this.cS?.getGatewayGPS(config.chirpstack.gatewayId) || {}
+        //               })
+        //     // console.log(resp)
+        //     // if (!this.hasKey() && resp?.data?.secretKey) {
+        //     //     this.setKey(resp.data)
+        //     // }
+        //     if (resp?.data?.transferPw) {
+        //         this.transferPw = resp?.data?.transferPw
+        //     }
+        // }, 30 * 1000)
 
         setInterval(async () => {
             if (await this.goodToGo() === false) return
