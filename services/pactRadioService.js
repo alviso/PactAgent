@@ -369,7 +369,7 @@ class pactRadioService {
         if (arguments[arguments.length-2] === 'chain') {
            chainId = arguments[arguments.length-1]
         }
-        console.log('chain:', chainId)
+        // console.log('chain:', chainId)
         const envData = {
             keyset: {
                 pred: "keys-all",
