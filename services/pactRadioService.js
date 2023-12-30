@@ -467,11 +467,11 @@ class pactRadioService {
         if (!data?.balance && coin === this.coinModule('KDA')) {
             if (this.API_HOST === this.API_HOST1) {
                 this.API_HOST = this.API_HOST2
-                console.log('Host toggle to ...', this.API_HOST2)
+                console.log('Host toggle...') // to ...', this.API_HOST2)
             }
             else {
                 this.API_HOST = this.API_HOST1
-                console.log('Host toggle to ...', this.API_HOST1)
+                console.log('Host toggle...') // to ...', this.API_HOST1)
             }
         }
         return data?.balance || 0
