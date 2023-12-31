@@ -346,8 +346,7 @@ class pactRadioService {
                 for (chainId of config.activeChains) {
                     try {
                         sender = await this.pactCall('L', 'free.radio02.get-sender-details', rec.gatewayId, 'chain', chainId)
-                        console.log(sender)
-                        //
+                        // console.log(sender)
                     } catch (e) {
                         console.log(e)
                     }
