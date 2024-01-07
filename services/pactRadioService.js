@@ -221,6 +221,7 @@ class pactRadioService {
                         receives[j].gatewayId = sendNode.gatewayId
 
                         const staked = await this.pactCall('L', 'free.radio02.is-staked', receives[j].address, 'PONP', 'chain', receives[j].chain)
+                        console.log('Chain and Staked:', receives[j].chain, staked)
                         if (!staked) {
                             receives.splice(parseInt(j), 1)
                             continue
