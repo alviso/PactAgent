@@ -199,7 +199,7 @@ class pactRadioService {
                         if (!receives[j].chain) receives[j].chain = this.chain.chainId
                         const staked = await this.pactCall('L', 'free.radio02.is-staked', receives[j].address, 'PONP', 'chain', receives[j].chain)
                         console.log('Chain and Staked:', receives[j].chain, staked)
-                        if (staked !== true && receives[j].chain !== this.chain.chainId) {
+                        if (staked !== true) {
                             receives.splice(parseInt(j), 1)
                             continue
                         }
