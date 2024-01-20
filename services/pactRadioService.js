@@ -190,6 +190,7 @@ class pactRadioService {
                     const sendNode = checkableNodes[i]
                     let sent = this.decrypt(asKey[0].priv, sendNode.sent)
                     const resp = await this.pactCall('L', 'free.radio02.get-gateway', sendNode.gatewayId)
+                    console.log(resp)
                     const receives = JSON.parse(resp.replaceAll('} {','},{')) || []
                     for (let j in receives) {
                         receives[j].mic = this.decrypt(asKey[0].priv, receives[j].mic)
