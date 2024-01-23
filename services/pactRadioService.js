@@ -99,7 +99,7 @@ class pactRadioService {
                             console.log('New close fee:',this.closeFee)
                         }
                     }
-                    if (txns[i].type === 'free.radio02.add-received') {
+                    if (txns[i].type.includes('free.radio02.add-received')) {
                         if (resp[txn].result?.status.includes('failure')
                             || resp[txn].result?.data.includes('Maximum')) { //error?.message.includes('exceeded')) {
                             if (this.rate >= 0.2) {
@@ -336,7 +336,7 @@ class pactRadioService {
                     continue
                 }
                 const result = this.encrypt(sender.pubkeyd, rec.mic) //encrypt rec.mic with director's public key
-                await this.pactCall('S', 'free.radio02.add-received', rec.gatewayId, result, 'chain', chainId)
+                await this.pactCall('S', 'free.radio02.add-received-with-chain', rec.gatewayId, result, this.chain.chainId, 'chain', chainId)
             }
             this.cS.rmRecs()
         }
