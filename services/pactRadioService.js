@@ -336,7 +336,7 @@ class pactRadioService {
                     continue
                 }
                 const result = this.encrypt(sender.pubkeyd, rec.mic) //encrypt rec.mic with director's public key
-                await this.pactCall('S', 'free.radio02.add-received', rec.gatewayId, result, 'chain', chainId)
+                await this.pactCall('S', 'free.radio02.add-received-with-chain', rec.gatewayId, result, this.chain.chainId, 'chain', chainId)
             }
             this.cS.rmRecs()
         }
