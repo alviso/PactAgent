@@ -158,10 +158,12 @@ class pactRadioService {
                 console.log("Number of directable nodes:", len)
                 const ratio = directableNodes.length / consNodes.length //if I'm a consensus node then there is at least one
                 const rand = Math.random()
-                if (len > 0 && rand < ratio && (await this.goodToDirect() === true)) { //try to minimize missed directing
-                    const ind = Math.floor(Math.random() * len)
-                    const sel = directableNodes[ind]
-                    await this.pactCall('S', 'free.radio02.direct-to-send', sel.address)
+                for (let i = 0; i < 30 ; i++) {
+                    if (len > 0 && rand < ratio && (await this.goodToDirect() === true)) { //try to minimize missed directing
+                        const ind = Math.floor(Math.random() * len)
+                        const sel = directableNodes[ind]
+                        await this.pactCall('S', 'free.radio02.direct-to-send', sel.address)
+                    }
                 }
             }
             if (this.consMember === true || this.consMemberCleanUp === true) {
