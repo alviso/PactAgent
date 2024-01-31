@@ -405,7 +405,7 @@ class pactRadioService {
             try {
                 const resp = await Pact.fetch.send(ncmdObj, host)
                 console.log(moment().format(), module, resp)
-                if (resp?.requestKeys) await this.addTxn(resp?.requestKeys[0], module, ncmdObj, chainId)
+                if (resp?.requestKeys) await this.addTxn(resp?.requestKeys[0], module, chainId)
                 return resp || {}
             } catch (e) {
                 return {}
@@ -584,10 +584,6 @@ class pactRadioService {
     setApikey(apikey) {
         config.chirpstack.apiKey = apikey
         fs.writeFileSync("./data/apikey.json", JSON.stringify({apikey}));
-    }
-
-    async addTxn(txn, type, chainId) {
-        this.txnColl.insert({txn, type, tsc:Date.now(), chainId})
     }
 
     creationTime() {
