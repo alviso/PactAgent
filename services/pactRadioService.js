@@ -15,6 +15,7 @@ class pactRadioService {
         this.haveANode = false
         this.wallet = ''
         this.transferPw = ''
+        this.recentlyClosed = []
         this.gwOnline = true
         this.nodes = []
         this.closeFee = 8000
@@ -195,6 +196,8 @@ class pactRadioService {
                 const asKey = await this.getAsKeyDB()
                 for (let i in checkableNodes) {
                     const sendNode = checkableNodes[i]
+                    const recentlyDone = this.recentlyClosed.find(e => e.address === sendNode.address)
+                    if (recentlyDone) continue
                     let sent = this.decrypt(asKey[0].priv, sendNode.sent)
                     const resp = await this.pactCall('L', 'free.radio02.get-gateway', sendNode.gatewayId)
                     // console.log(sendNode.gatewayId, resp)
@@ -221,6 +224,9 @@ class pactRadioService {
                     console.log('Accepted witnesses:', unique.length)
 
                     let gateways = []
+                    this.recentlyClosed.push({address: sendNode.address, ts:Date.now()})
+                    this.recentlyClosed = this.recentlyClosed.filter(e => e.ts > Date.now() - 30 * 60 * 1000) //Keep ones added in past 30 min
+                    console.log(this.recentlyClosed)
                     await this.pactCall('S', 'free.radio02.close-send-receive', sendNode.address, unique, gateways)
                     // console.log(sent, receives)
                 }
@@ -403,7 +409,10 @@ class pactRadioService {
             const lresp = await Pact.fetch.local(cmdObj, host)
             const ncmdObj = this.clone(cmdObj)
             if (lresp?.gas) {
-                if (cmdObj.pactCode.includes('close-send-receive')) ncmdObj.meta.gasLimit = this.closeFee //lresp.gas + 3400
+                if (cmdObj.pactCode.includes('close-send-receive')) {
+                    ncmdObj.meta.gasLimit = this.closeFee //lresp.gas + 3400
+                    ncmdObj.meta.gasPrice = 0.0000001
+                }
                 else if (cmdObj.pactCode.includes('direct-to-send')) ncmdObj.meta.gasLimit = 1000
                 else if (cmdObj.pactCode.includes('add-received')) ncmdObj.meta.gasLimit = 1000
                 //not willing to pay more than x then put a limit here and return {}
