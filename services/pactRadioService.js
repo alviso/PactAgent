@@ -44,7 +44,7 @@ class pactRadioService {
         this.group = this.tree[this.tree.length - 3]
         console.log(this.group)
         this.instance = this.tree[this.tree.length - 2]
-        console.log(this.instance)
+        console.log("This instance:", this.instance)
         this.pubKeySetCount = 0
 
 
@@ -163,13 +163,13 @@ class pactRadioService {
                     const ind = Math.floor(Math.random() * len)
                     const sel = directableNodes[ind]
                     await this.pactCall('S', 'free.radio02.direct-to-send', sel.address)
-                    // if (ratio > 2) {
-                    //     for (let r = 0; r < ratio; r++) {
-                    //         const ind = Math.floor(Math.random() * len)
-                    //         const sel = directableNodes[ind]
-                    //         await this.pactCall('S', 'free.radio02.direct-to-send', sel.address)
-                    //     }
-                    // }
+                    if (this.instance == '5813d3ffff27ea16' && ratio > 2) {
+                        for (let r = 0; r < ratio; r++) {
+                            const ind = Math.floor(Math.random() * len)
+                            const sel = directableNodes[ind]
+                            await this.pactCall('S', 'free.radio02.direct-to-send', sel.address)
+                        }
+                    }
                 }
             }
             if (this.consMember === true || this.consMemberCleanUp === true) {
