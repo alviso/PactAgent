@@ -163,13 +163,13 @@ class pactRadioService {
                     const ind = Math.floor(Math.random() * len)
                     const sel = directableNodes[ind]
                     await this.pactCall('S', 'free.radio02.direct-to-send', sel.address)
-                    if (ratio > 2) {
-                        for (let r = 0; r < ratio; r++) {
-                            const ind = Math.floor(Math.random() * len)
-                            const sel = directableNodes[ind]
-                            await this.pactCall('S', 'free.radio02.direct-to-send', sel.address)
-                        }
-                    }
+                    // if (ratio > 2) {
+                    //     for (let r = 0; r < ratio; r++) {
+                    //         const ind = Math.floor(Math.random() * len)
+                    //         const sel = directableNodes[ind]
+                    //         await this.pactCall('S', 'free.radio02.direct-to-send', sel.address)
+                    //     }
+                    // }
                 }
             }
             if (this.consMember === true || this.consMemberCleanUp === true) {
@@ -226,7 +226,7 @@ class pactRadioService {
                     let gateways = []
                     this.recentlyClosed.push({address: sendNode.address, ts:Date.now()})
                     this.recentlyClosed = this.recentlyClosed.filter(e => e.ts > Date.now() - 30 * 60 * 1000) //Keep ones added in past 30 min
-                    console.log(this.recentlyClosed)
+                    console.log(this.recentlyClosed.length)
                     await this.pactCall('S', 'free.radio02.close-send-receive', sendNode.address, unique, gateways)
                     // console.log(sent, receives)
                 }
