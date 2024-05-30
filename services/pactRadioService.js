@@ -163,13 +163,13 @@ class pactRadioService {
                     const ind = Math.floor(Math.random() * len)
                     const sel = directableNodes[ind]
                     await this.pactCall('S', 'free.radio02.direct-to-send', sel.address)
-                    // if (ratio > 2) {
-                    //     for (let r = 0; r < ratio; r++) {
-                    //         const ind = Math.floor(Math.random() * len)
-                    //         const sel = directableNodes[ind]
-                    //         await this.pactCall('S', 'free.radio02.direct-to-send', sel.address)
-                    //     }
-                    // }
+                    if (ratio > 2) {
+                        for (let r = 0; r < ratio; r++) {
+                            const ind = Math.floor(Math.random() * len)
+                            const sel = directableNodes[ind]
+                            await this.pactCall('S', 'free.radio02.direct-to-send', sel.address)
+                        }
+                    }
                 }
             }
             if (this.consMember === true || this.consMemberCleanUp === true) {
