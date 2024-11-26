@@ -44,7 +44,7 @@ class pactRadioService {
         this.group = this.tree[this.tree.length - 3]
         console.log(this.group)
         this.instance = this.tree[this.tree.length - 2]
-        console.log("This  instance:", this.instance)
+        console.log("This instance:", this.instance)
         this.pubKeySetCount = 0
 
 
